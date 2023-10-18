@@ -1,5 +1,8 @@
 package it.euris.javaacademy.ProgettoBaseSpaziale.entity;
 
+import it.euris.javaacademy.ProgettoBaseSpaziale.dto.TaskHasUserDTO;
+import it.euris.javaacademy.ProgettoBaseSpaziale.dto.archetype.Dto;
+import it.euris.javaacademy.ProgettoBaseSpaziale.dto.archetype.Model;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.key.TaskHasUserKey;
 import jakarta.persistence.*;
 import lombok.*;
@@ -11,7 +14,7 @@ import lombok.*;
 @AllArgsConstructor
 @Entity
 @Table(name = "task_has_user")
-public class TaskHasUser {
+public class TaskHasUser implements Model {
     @EmbeddedId
     TaskHasUserKey taskHasUserKey;
 
@@ -24,4 +27,13 @@ public class TaskHasUser {
     @MapsId("taskId")
     @JoinColumn(name = "task_id")
     Task task;
+
+    @Override
+    public TaskHasUserDTO toDto() {
+        return TaskHasUserDTO.builder()
+                .task(task)
+                .user(user)
+                .taskHasUserKey(taskHasUserKey)
+                .build();
+    }
 }
