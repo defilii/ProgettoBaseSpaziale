@@ -16,17 +16,17 @@
 
         <createTable tableName="task_has_user">
             <column name="user_id" type="INT">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_TASK_HASE_USER"/>
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_TASK_HAS_USER"/>
             </column>
             <column name="task_id" type="INT">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_TASK_HASE_TASK"/>
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_TASK_HAS_TASK"/>
             </column>
         </createTable>
         <addForeignKeyConstraint baseTableName="task_has_user" baseColumnNames="user_id"
-                                 constraintName="fk_task_has_user_on_checklist" referencedTableName="user"
+                                 constraintName="fk_task_has_user_on_user" referencedTableName="user"
                                  referencedColumnNames="id"/>
         <addForeignKeyConstraint baseTableName="task_has_user" baseColumnNames="task_id"
-                                 constraintName="fk_task_has_user_on_checklist"
+                                 constraintName="fk_task_has_user_on_task"
                                  referencedTableName="task"
                                  referencedColumnNames="id"/>
 
