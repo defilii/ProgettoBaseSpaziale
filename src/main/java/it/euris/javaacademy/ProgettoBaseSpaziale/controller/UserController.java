@@ -66,7 +66,7 @@ public class UserController {
 
     @DeleteMapping("/v1/{id}")
     @Operation(description = """
-            This method is used to delete oen user from the database<br>
+            This method is used to delete one user from the database<br>
             """)
     public Boolean deleteUser(@PathVariable("id") Integer idUser) {
         return userService.deleteById(idUser);
