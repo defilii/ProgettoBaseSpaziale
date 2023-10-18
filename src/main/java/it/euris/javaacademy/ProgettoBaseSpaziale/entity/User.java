@@ -36,12 +36,6 @@ public class User implements Model {
     @Builder.Default
     private List<TaskHasUser> usersAssigned = new ArrayList<>();
 
-
-    @OneToMany(mappedBy = "commento", fetch = FetchType.EAGER)
-    @JsonIgnore
-    @Builder.Default
-    private List<Commento> checklist = new ArrayList<>();
-
     @Override
     public UserDTO toDto() {
         return UserDTO.builder()
