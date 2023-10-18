@@ -1,5 +1,7 @@
 package it.euris.javaacademy.ProgettoBaseSpaziale.utils;
 
+import it.euris.javaacademy.ProgettoBaseSpaziale.entity.enums.Priorita;
+
 import java.time.LocalDateTime;
 
 public class Converter {
@@ -12,4 +14,15 @@ public class Converter {
         return value == null ? null : value.toString();
     }
 
+    public static Priorita stringToPriorita(String value){
+        for(Priorita valorePriorita : Priorita.values()){
+            if (valorePriorita.name().equalsIgnoreCase(value))
+                return valorePriorita;
+        }
+        return null;
+    }
+
+    public static String prioritaToString(Priorita value){
+        return  value== null? null : value.name();
+    }
 }

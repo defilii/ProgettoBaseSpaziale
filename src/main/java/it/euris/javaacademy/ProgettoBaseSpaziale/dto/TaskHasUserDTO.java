@@ -3,35 +3,31 @@ package it.euris.javaacademy.ProgettoBaseSpaziale.dto;
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.archetype.Dto;
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.archetype.Model;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Task;
+import it.euris.javaacademy.ProgettoBaseSpaziale.entity.TaskHasUser;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.User;
-import jakarta.persistence.Column;
+import it.euris.javaacademy.ProgettoBaseSpaziale.entity.key.TaskHasUserKey;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MapsId;
 import lombok.*;
-
-import java.util.List;
 
 @Builder
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserDTO implements Dto {
-    private Integer idUser;
+public class TaskHasUserDTO implements Dto {
+    TaskHasUserKey taskHasUserKey;
+    User user;
 
-    private String username;
-
-    private String email;
-
-    private Task task;
-
+    Task task;
 
     @Override
-    public User toModel() {
-        return User.builder()
-                .idUser(idUser)
-                .username(username)
-                .email(email)
+    public TaskHasUser toModel() {
+        return TaskHasUser.builder()
+                .taskHasUserKey(taskHasUserKey)
+                .user(user)
+                .task(task)
                 .build();
     }
 }

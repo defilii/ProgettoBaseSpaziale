@@ -31,9 +31,11 @@ public class User implements Model {
     @Column(name = "email", nullable = false)
     private String email;
 
-    @ManyToOne
-    @JoinColumn(name="id_task", nullable=true)
-    private Task task;
+    @OneToMany(mappedBy = "task")
+    @JsonIgnore
+    @Builder.Default
+    private List<TaskHasUser> usersAssigned = new ArrayList<>();
+
 
     @OneToMany(mappedBy = "commento", fetch = FetchType.EAGER)
     @JsonIgnore
@@ -46,7 +48,6 @@ public class User implements Model {
                 .idUser(idUser)
                 .username(username)
                 .email(email)
-                .task(task)
                 .build();
     }
 }
