@@ -17,9 +17,6 @@
             <column name="id" type="INT" autoIncrement="true">
                 <constraints primaryKey="true"/>
             </column>
-            <column name="id_task" type="INT">
-                <constraints nullable="false"/>
-            </column>
             <column name="username" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
@@ -27,9 +24,6 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
-        <addForeignKeyConstraint baseTableName="user" baseColumnNames="id_task"
-                                 constraintName="fk_user_on_task" referencedTableName="task"
-                                 referencedColumnNames="id"/>
 
         <rollback>
             <dropTable tableName="user"/>
