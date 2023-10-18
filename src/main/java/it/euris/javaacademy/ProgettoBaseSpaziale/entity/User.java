@@ -1,6 +1,9 @@
 package it.euris.javaacademy.ProgettoBaseSpaziale.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import it.euris.javaacademy.ProgettoBaseSpaziale.dto.UserDTO;
+import it.euris.javaacademy.ProgettoBaseSpaziale.dto.archetype.Dto;
+import it.euris.javaacademy.ProgettoBaseSpaziale.dto.archetype.Model;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,7 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "user")
-public class User {
+public class User implements Model {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,12 +31,22 @@ public class User {
     @Column(name = "email", nullable = false)
     private String email;
 
+    @ManyToOne
+    @JoinColumn(name="id_task", nullable=true)
+    private Task task;
+
     @OneToMany(mappedBy = "commento", fetch = FetchType.EAGER)
     @JsonIgnore
     @Builder.Default
     private List<Commento> checklist = new ArrayList<>();
 
-    @ManyToOne
-    @JoinColumn(name="id_task", nullable=true)
-    private Task task;
+    @Override
+    public UserDTO toDto() {
+        return UserDTO.builder()
+                .idUser(idUser)
+                .username(username)
+                .email(email)
+                .task(task)
+                .build();
+    }
 }

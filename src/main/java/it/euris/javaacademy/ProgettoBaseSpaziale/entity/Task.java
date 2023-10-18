@@ -1,6 +1,9 @@
 package it.euris.javaacademy.ProgettoBaseSpaziale.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import it.euris.javaacademy.ProgettoBaseSpaziale.dto.TaskDTO;
+import it.euris.javaacademy.ProgettoBaseSpaziale.dto.archetype.Dto;
+import it.euris.javaacademy.ProgettoBaseSpaziale.dto.archetype.Model;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.enums.Priorita;
 import jakarta.persistence.*;
 import lombok.*;
@@ -9,6 +12,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.localDateTimeToString;
+import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.stringToLocalDateTime;
+
 @Builder
 @Getter
 @Setter
@@ -16,7 +22,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "task")
-public class Task {
+public class Task implements Model {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -55,4 +61,15 @@ public class Task {
     @Builder.Default
     private List<Checklist> checklist = new ArrayList<>();
 
+    @Override
+    public TaskDTO toDto() {
+        return TaskDTO.builder()
+                .idTask(idTask)
+                .tabella(tabella)
+                .taskName(taskName)
+                .priorita(String.valueOf(priorita))
+                .descrizione(descrizione)
+                .dataScadenza(localDateTimeToString(dataScadenza))
+                .build();
+    }
 }

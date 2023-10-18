@@ -1,5 +1,8 @@
 package it.euris.javaacademy.ProgettoBaseSpaziale.entity;
 
+import it.euris.javaacademy.ProgettoBaseSpaziale.dto.CheckmarkDTO;
+import it.euris.javaacademy.ProgettoBaseSpaziale.dto.archetype.Dto;
+import it.euris.javaacademy.ProgettoBaseSpaziale.dto.archetype.Model;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,7 +14,7 @@ import lombok.*;
 @AllArgsConstructor
 @Entity
 @Table(name = "checkmark")
-public class Checkmark {
+public class Checkmark implements Model {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,4 +31,14 @@ public class Checkmark {
     @ManyToOne
     @JoinColumn(name = "id_checklist", nullable = false)
     private Checklist checklist;
+
+    @Override
+    public CheckmarkDTO toDto() {
+        return CheckmarkDTO.builder()
+                .idCheckmark(idCheckmark)
+                .descrizione(descrizione)
+                .isItDone(isItDone)
+                .checklist(checklist)
+                .build();
+    }
 }

@@ -1,6 +1,9 @@
 package it.euris.javaacademy.ProgettoBaseSpaziale.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import it.euris.javaacademy.ProgettoBaseSpaziale.dto.ChecklistDTO;
+import it.euris.javaacademy.ProgettoBaseSpaziale.dto.archetype.Dto;
+import it.euris.javaacademy.ProgettoBaseSpaziale.dto.archetype.Model;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,7 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "checklist")
-public class Checklist {
+public class Checklist implements Model {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,4 +36,13 @@ public class Checklist {
     @JsonIgnore
     @Builder.Default
     private List<Checkmark> checklist = new ArrayList<>();
+
+    @Override
+    public ChecklistDTO toDto() {
+        return ChecklistDTO.builder()
+                .idChecklist(idChecklist)
+                .nome(nome)
+                .task(task)
+                .build();
+    }
 }
