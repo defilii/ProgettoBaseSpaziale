@@ -14,7 +14,7 @@
         </preConditions>
         <comment>checkmark create</comment>
 
-        <createTable tableName="checklist">
+        <createTable tableName="checkmark">
             <column name="id" type="INT" autoIncrement="true">
                 <constraints primaryKey="true"/>
             </column>
