@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <include file="db/changelogs/2023-10-18-01-tabella-create.xml"/>
+    <include file="db/changelogs/2023-10-18-02-task-create.xml"/>
+    <include file="db/changelogs/2023-10-18-03-user-create.xml"/>
+    <include file="db/changelogs/2023-10-18-04-commento-create.xml"/>
+    <include file="db/changelogs/2023-10-18-05-checklist-create.xml"/>
+    <include file="db/changelogs/2023-10-18-06-checkmark-create.xml"/>
+
+</databaseChangeLog>
