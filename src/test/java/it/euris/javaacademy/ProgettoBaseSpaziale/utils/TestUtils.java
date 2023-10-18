@@ -64,7 +64,21 @@ public class TestUtils {
                 .build();
     }
 
-    private static Tabella getTabella(Integer id) {
+    public static TaskHasUser getTaskHasUser(Integer id) {
+        User user = getUser(id);
+        Task task = getTask(id);
+
+        return TaskHasUser.builder()
+                .task(task)
+                .user(user)
+                .taskHasUserKey(TaskHasUserKey.builder()
+                        .taskId(task.getIdTask())
+                        .userId(user.getIdUser())
+                        .build())
+                .build();
+    }
+
+    public static Tabella getTabella(Integer id) {
         return Tabella.builder()
                 .id(id)
                 .nome("Test nome")

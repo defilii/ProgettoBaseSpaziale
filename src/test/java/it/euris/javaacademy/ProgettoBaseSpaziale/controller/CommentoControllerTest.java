@@ -1,9 +1,10 @@
 package it.euris.javaacademy.ProgettoBaseSpaziale.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.euris.javaacademy.ProgettoBaseSpaziale.entity.User;
-import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.UserRepository;
-import it.euris.javaacademy.ProgettoBaseSpaziale.service.UserService;
+import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Commento;
+import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.CommentoRepository;
+import it.euris.javaacademy.ProgettoBaseSpaziale.service.CommentoService;
+import it.euris.javaacademy.ProgettoBaseSpaziale.service.CommentoService;
 import it.euris.javaacademy.ProgettoBaseSpaziale.utils.TestUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,83 +23,84 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 @SpringBootTest
 @AutoConfigureMockMvc
-public class UserControllerTest {
+public class CommentoControllerTest {
 
     @Autowired
     MockMvc mockMvc;
 
     @MockBean
-    UserService userService;
+    CommentoService commentoService;
 
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
-    private UserRepository userRepository;
+    private CommentoRepository CommentoRepository;
 
 
     @Test
-    void shouldGetOneUser() throws Exception {
+    void shouldGetOneCommento() throws Exception {
 
         Integer id = 1;
-        User User = TestUtils.getUser(id);
-        List<User> Users = List.of(User);
+        Commento commento = TestUtils.getCommento(id);
+        List<Commento> commenti = List.of(commento);
 
-        when(userService.findAll()).thenReturn(Users);
+        when(commentoService.findAll()).thenReturn(commenti);
 
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/users/v1"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/commenti/v1"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$.length()").value(1))
-                .andExpect(jsonPath("$[0].idUser").value(User.getIdUser()));
+                .andExpect(jsonPath("$[0].idCommento").value(commento.getIdCommento()));
     }
 
     @Test
-    void shouldInsertAUser() throws Exception {
+    void shouldInsertACommento() throws Exception {
         Integer id = 1;
-        User User = TestUtils.getUser(id);
-        when(userService.insert(any())).thenReturn(User);
+        Commento commento = TestUtils.getCommento(id);
+        when(commentoService.insert(any())).thenReturn(commento);
 
-        mockMvc.perform(post("/users/v1")
+        mockMvc.perform(post("/commenti/v1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(User.toDto())))
+                        .content(objectMapper.writeValueAsString(commento.toDto())))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(jsonPath("$.idUser").value(User.getIdUser()));
+                .andExpect(jsonPath("$.idCommento").value(commento.getIdCommento()));
     }
 
     @Test
-    void shouldUpdateAUser() throws Exception {
+    void shouldUpdateACommento() throws Exception {
         Integer id = 1;
-        User User = TestUtils.getUser(id);
-        when(userService.update(any())).thenReturn(User);
+        Commento commento = TestUtils.getCommento(id);
+        when(commentoService.update(any())).thenReturn(commento);
 
-        mockMvc.perform(put("/users/v1")
+        mockMvc.perform(put("/commenti/v1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(User.toDto())))
+                        .content(objectMapper.writeValueAsString(commento.toDto())))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(jsonPath("$.idUser").value(User.getIdUser()));
+                .andExpect(jsonPath("$.idCommento").value(commento.getIdCommento()));
     }
 
 
     @Test
     void shouldDelete() throws Exception {
         Integer id = 1;
-        User user = TestUtils.getUser(id);
+        Commento commento = TestUtils.getCommento(id);
 
-        when(userService.deleteById(id)).thenReturn(true);
+        when(commentoService.deleteById(id)).thenReturn(true);
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .delete("/users/v1/{id}", id)
+                        .delete("/commenti/v1/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());

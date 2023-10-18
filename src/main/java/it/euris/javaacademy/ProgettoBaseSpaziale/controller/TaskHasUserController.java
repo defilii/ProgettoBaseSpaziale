@@ -65,12 +65,12 @@ public class TaskHasUserController {
         }
     }
 
-    @DeleteMapping("/v1/{id}")
-    @Operation(description = """
-            This method is used to delete one TaskHasUser from the database<br>
-            """)
-    public Boolean deleteTaskHasUser(@PathVariable("id") TaskHasUserKey idTaskHasUser) {
-        return taskHasUserService.deleteById(idTaskHasUser);
-    }
+//    @DeleteMapping("/v1/{id}")
+//    @Operation(description = """
+//            This method is used to delete one TaskHasUser from the database<br>
+//            """)
+//    public Boolean deleteTaskHasUser(@PathVariable("id") TaskHasUserKey idTaskHasUser) {
+//        return taskHasUserService.deleteById(idTaskHasUser);
+//    }
 }
 

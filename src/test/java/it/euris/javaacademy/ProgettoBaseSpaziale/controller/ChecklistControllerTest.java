@@ -1,9 +1,11 @@
 package it.euris.javaacademy.ProgettoBaseSpaziale.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.euris.javaacademy.ProgettoBaseSpaziale.entity.User;
-import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.UserRepository;
-import it.euris.javaacademy.ProgettoBaseSpaziale.service.UserService;
+import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Checklist;
+import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Checklist;
+import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.ChecklistRepository;
+import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.ChecklistRepository;
+import it.euris.javaacademy.ProgettoBaseSpaziale.service.ChecklistService;
 import it.euris.javaacademy.ProgettoBaseSpaziale.utils.TestUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,83 +24,84 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 @SpringBootTest
 @AutoConfigureMockMvc
-public class UserControllerTest {
+public class ChecklistControllerTest {
 
     @Autowired
     MockMvc mockMvc;
 
     @MockBean
-    UserService userService;
+    ChecklistService checklistService;
 
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
-    private UserRepository userRepository;
+    private ChecklistRepository checklistRepository;
 
 
     @Test
-    void shouldGetOneUser() throws Exception {
+    void shouldGetOneChecklist() throws Exception {
 
         Integer id = 1;
-        User User = TestUtils.getUser(id);
-        List<User> Users = List.of(User);
+        Checklist checklist = TestUtils.getCheckList(id);
+        List<Checklist> checklists = List.of(checklist);
 
-        when(userService.findAll()).thenReturn(Users);
+        when(checklistService.findAll()).thenReturn(checklists);
 
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/users/v1"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/checklists/v1"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$.length()").value(1))
-                .andExpect(jsonPath("$[0].idUser").value(User.getIdUser()));
+                .andExpect(jsonPath("$[0].idChecklist").value(checklist.getIdChecklist()));
     }
 
     @Test
-    void shouldInsertAUser() throws Exception {
+    void shouldInsertAChecklist() throws Exception {
         Integer id = 1;
-        User User = TestUtils.getUser(id);
-        when(userService.insert(any())).thenReturn(User);
+        Checklist checklist = TestUtils.getCheckList(id);
+        when(checklistService.insert(any())).thenReturn(checklist);
 
-        mockMvc.perform(post("/users/v1")
+        mockMvc.perform(post("/checklists/v1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(User.toDto())))
+                        .content(objectMapper.writeValueAsString(checklist.toDto())))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(jsonPath("$.idUser").value(User.getIdUser()));
+                .andExpect(jsonPath("$.idChecklist").value(checklist.getIdChecklist()));
     }
 
     @Test
-    void shouldUpdateAUser() throws Exception {
+    void shouldUpdateAChecklist() throws Exception {
         Integer id = 1;
-        User User = TestUtils.getUser(id);
-        when(userService.update(any())).thenReturn(User);
+        Checklist checklists = TestUtils.getCheckList(id);
+        when(checklistService.update(any())).thenReturn(checklists);
 
-        mockMvc.perform(put("/users/v1")
+        mockMvc.perform(put("/checklists/v1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(User.toDto())))
+                        .content(objectMapper.writeValueAsString(checklists.toDto())))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(jsonPath("$.idUser").value(User.getIdUser()));
+                .andExpect(jsonPath("$.idChecklist").value(checklists.getIdChecklist()));
     }
 
 
     @Test
     void shouldDelete() throws Exception {
         Integer id = 1;
-        User user = TestUtils.getUser(id);
+        Checklist checklist = TestUtils.getCheckList(id);
 
-        when(userService.deleteById(id)).thenReturn(true);
+        when(checklistService.deleteById(id)).thenReturn(true);
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .delete("/users/v1/{id}", id)
+                        .delete("/checklists/v1/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());

@@ -1,9 +1,9 @@
 package it.euris.javaacademy.ProgettoBaseSpaziale.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.euris.javaacademy.ProgettoBaseSpaziale.entity.User;
-import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.UserRepository;
-import it.euris.javaacademy.ProgettoBaseSpaziale.service.UserService;
+import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Checkmark;
+import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.CheckmarkRepository;
+import it.euris.javaacademy.ProgettoBaseSpaziale.service.CheckmarkService;
 import it.euris.javaacademy.ProgettoBaseSpaziale.utils.TestUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,83 +22,84 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 @SpringBootTest
 @AutoConfigureMockMvc
-public class UserControllerTest {
+public class CheckmarkControllerTest {
 
     @Autowired
     MockMvc mockMvc;
 
     @MockBean
-    UserService userService;
+    CheckmarkService checkmarkService;
 
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
-    private UserRepository userRepository;
+    private CheckmarkRepository checkmarkRepository;
 
 
     @Test
-    void shouldGetOneUser() throws Exception {
+    void shouldGetOneCheckmark() throws Exception {
 
         Integer id = 1;
-        User User = TestUtils.getUser(id);
-        List<User> Users = List.of(User);
+        Checkmark checkmark = TestUtils.getCheckmark(id);
+        List<Checkmark> checkmarks = List.of(checkmark);
 
-        when(userService.findAll()).thenReturn(Users);
+        when(checkmarkService.findAll()).thenReturn(checkmarks);
 
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/users/v1"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/checkmarks/v1"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$.length()").value(1))
-                .andExpect(jsonPath("$[0].idUser").value(User.getIdUser()));
+                .andExpect(jsonPath("$[0].idCheckmark").value(checkmark.getIdCheckmark()));
     }
 
     @Test
-    void shouldInsertAUser() throws Exception {
+    void shouldInsertACheckmark() throws Exception {
         Integer id = 1;
-        User User = TestUtils.getUser(id);
-        when(userService.insert(any())).thenReturn(User);
+        Checkmark checkmark = TestUtils.getCheckmark(id);
+        when(checkmarkService.insert(any())).thenReturn(checkmark);
 
-        mockMvc.perform(post("/users/v1")
+        mockMvc.perform(post("/checkmarks/v1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(User.toDto())))
+                        .content(objectMapper.writeValueAsString(checkmark.toDto())))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(jsonPath("$.idUser").value(User.getIdUser()));
+                .andExpect(jsonPath("$.idCheckmark").value(checkmark.getIdCheckmark()));
     }
 
     @Test
-    void shouldUpdateAUser() throws Exception {
+    void shouldUpdateACheckmark() throws Exception {
         Integer id = 1;
-        User User = TestUtils.getUser(id);
-        when(userService.update(any())).thenReturn(User);
+        Checkmark checkmark = TestUtils.getCheckmark(id);
+        when(checkmarkService.update(any())).thenReturn(checkmark);
 
-        mockMvc.perform(put("/users/v1")
+        mockMvc.perform(put("/checkmarks/v1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(User.toDto())))
+                        .content(objectMapper.writeValueAsString(checkmark.toDto())))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(jsonPath("$.idUser").value(User.getIdUser()));
+                .andExpect(jsonPath("$.idCheckmark").value(checkmark.getIdCheckmark()));
     }
 
 
     @Test
     void shouldDelete() throws Exception {
         Integer id = 1;
-        User user = TestUtils.getUser(id);
+        Checkmark checkmark = TestUtils.getCheckmark(id);
 
-        when(userService.deleteById(id)).thenReturn(true);
+        when(checkmarkService.deleteById(id)).thenReturn(true);
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .delete("/users/v1/{id}", id)
+                        .delete("/checkmarks/v1/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());

@@ -1,9 +1,12 @@
 package it.euris.javaacademy.ProgettoBaseSpaziale.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.euris.javaacademy.ProgettoBaseSpaziale.entity.User;
-import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.UserRepository;
-import it.euris.javaacademy.ProgettoBaseSpaziale.service.UserService;
+import it.euris.javaacademy.ProgettoBaseSpaziale.entity.TaskHasUser;
+import it.euris.javaacademy.ProgettoBaseSpaziale.entity.key.TaskHasUserKey;
+import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.TaskHasUserRepository;
+import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.TaskHasUserRepository;
+import it.euris.javaacademy.ProgettoBaseSpaziale.service.TaskHasUserService;
+import it.euris.javaacademy.ProgettoBaseSpaziale.service.TaskHasUserService;
 import it.euris.javaacademy.ProgettoBaseSpaziale.utils.TestUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,83 +25,85 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 @SpringBootTest
 @AutoConfigureMockMvc
-public class UserControllerTest {
+public class TaskHasUserControllerTest {
 
     @Autowired
     MockMvc mockMvc;
 
     @MockBean
-    UserService userService;
+    TaskHasUserService taskHasUserService;
 
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
-    private UserRepository userRepository;
+    private TaskHasUserRepository taskHasUserRepository;
 
 
     @Test
-    void shouldGetOneUser() throws Exception {
+    void shouldGetOneTaskHasUser() throws Exception {
 
         Integer id = 1;
-        User User = TestUtils.getUser(id);
-        List<User> Users = List.of(User);
+        TaskHasUser taskHasUser = TestUtils.getTaskHasUser(id);
+        List<TaskHasUser> taskHasUsers = List.of(taskHasUser);
 
-        when(userService.findAll()).thenReturn(Users);
+        when(taskHasUserService.findAll()).thenReturn(taskHasUsers);
 
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/users/v1"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/task-has-users/v1"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$").isArray())
-                .andExpect(jsonPath("$.length()").value(1))
-                .andExpect(jsonPath("$[0].idUser").value(User.getIdUser()));
+                .andExpect(jsonPath("$.length()").value(1));
     }
 
     @Test
-    void shouldInsertAUser() throws Exception {
+    void shouldInsertATaskHasUser() throws Exception {
         Integer id = 1;
-        User User = TestUtils.getUser(id);
-        when(userService.insert(any())).thenReturn(User);
+        TaskHasUser taskHasUser = TestUtils.getTaskHasUser(id);
+        when(taskHasUserService.insert(any())).thenReturn(taskHasUser);
 
-        mockMvc.perform(post("/users/v1")
+        mockMvc.perform(post("/task-has-users/v1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(User.toDto())))
+                        .content(objectMapper.writeValueAsString(taskHasUser.toDto())))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(jsonPath("$.idUser").value(User.getIdUser()));
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE));
     }
 
     @Test
-    void shouldUpdateAUser() throws Exception {
+    void shouldUpdateATaskHasUser() throws Exception {
         Integer id = 1;
-        User User = TestUtils.getUser(id);
-        when(userService.update(any())).thenReturn(User);
+        TaskHasUser taskHasUser = TestUtils.getTaskHasUser(id);
+        when(taskHasUserService.update(any())).thenReturn(taskHasUser);
 
-        mockMvc.perform(put("/users/v1")
+        mockMvc.perform(put("/task-has-users/v1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(User.toDto())))
+                        .content(objectMapper.writeValueAsString(taskHasUser.toDto())))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(jsonPath("$.idUser").value(User.getIdUser()));
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE));
     }
 
 
     @Test
     void shouldDelete() throws Exception {
         Integer id = 1;
-        User user = TestUtils.getUser(id);
+        TaskHasUser taskHasUser = TestUtils.getTaskHasUser(id);
+        taskHasUser.setTaskHasUserKey(TaskHasUserKey.builder()
+                        .taskId(id)
+                        .userId(id)
+                .build());
 
-        when(userService.deleteById(id)).thenReturn(true);
+        when(taskHasUserService.deleteById(any())).thenReturn(true);
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .delete("/users/v1/{id}", id)
+                        .delete("/task-has-users/v1/{id}", taskHasUser.getTaskHasUserKey())
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
