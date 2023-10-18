@@ -9,5 +9,6 @@
     <include file="db/changelogs/2023-10-18-04-commento-create.xml"/>
     <include file="db/changelogs/2023-10-18-05-checklist-create.xml"/>
     <include file="db/changelogs/2023-10-18-06-checkmark-create.xml"/>
+    <include file="db/changelogs/2023-10-18-07-task_has_user-create.xml"/>
 
 </databaseChangeLog>
