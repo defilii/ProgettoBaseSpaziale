@@ -9,6 +9,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.*;
 
+import java.util.List;
+
 @Builder
 @Getter
 @Setter
@@ -23,13 +25,13 @@ public class UserDTO implements Dto {
 
     private Task task;
 
+
     @Override
     public User toModel() {
         return User.builder()
                 .idUser(idUser)
                 .username(username)
                 .email(email)
-                .task(task)
                 .build();
     }
 }

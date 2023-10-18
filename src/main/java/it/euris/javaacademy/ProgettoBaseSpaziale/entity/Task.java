@@ -51,10 +51,10 @@ public class Task implements Model {
     @Builder.Default
     private List<Commento> commenti = new ArrayList<>();
 
-    @OneToMany(mappedBy = "task", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "user")
     @JsonIgnore
     @Builder.Default
-    private List<User> usersAssigned = new ArrayList<>();
+    private List<TaskHasUser> usersAssigned = new ArrayList<>();
 
     @OneToMany(mappedBy = "task", fetch = FetchType.EAGER)
     @JsonIgnore
