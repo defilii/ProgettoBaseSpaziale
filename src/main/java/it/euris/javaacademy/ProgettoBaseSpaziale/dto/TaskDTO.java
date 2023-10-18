@@ -11,6 +11,8 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.stringToLocalDateTime;
+import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.stringToPriorita;
+
 @Builder
 @Getter
 @Setter
@@ -36,7 +38,7 @@ public class TaskDTO implements Dto {
                 .idTask(idTask)
                 .tabella(tabella)
                 .taskName(taskName)
-                .priorita(Priorita.valueOf(priorita))
+                .priorita(stringToPriorita(priorita))
                 .descrizione(descrizione)
                 .dataScadenza(stringToLocalDateTime(dataScadenza))
                 .build();

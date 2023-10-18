@@ -12,8 +12,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.localDateTimeToString;
-import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.stringToLocalDateTime;
+import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.*;
 
 @Builder
 @Getter
@@ -67,7 +66,7 @@ public class Task implements Model {
                 .idTask(idTask)
                 .tabella(tabella)
                 .taskName(taskName)
-                .priorita(String.valueOf(priorita))
+                .priorita(prioritaToString(priorita))
                 .descrizione(descrizione)
                 .dataScadenza(localDateTimeToString(dataScadenza))
                 .build();
