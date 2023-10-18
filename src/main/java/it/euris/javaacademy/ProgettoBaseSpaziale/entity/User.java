@@ -31,16 +31,15 @@ public class User implements Model {
     @Column(name = "email", nullable = false)
     private String email;
 
-    @OneToMany(mappedBy = "task")
+    @OneToMany(mappedBy = "user")
     @JsonIgnore
     @Builder.Default
-    private List<TaskHasUser> usersAssigned = new ArrayList<>();
+    private List<TaskHasUser> usersTask = new ArrayList<>();
 
-
-    @OneToMany(mappedBy = "commento", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     @JsonIgnore
     @Builder.Default
-    private List<Commento> checklist = new ArrayList<>();
+    private List<Commento> commenti = new ArrayList<>();
 
     @Override
     public UserDTO toDto() {

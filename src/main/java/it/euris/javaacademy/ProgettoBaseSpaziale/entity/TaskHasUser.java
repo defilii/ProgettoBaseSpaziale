@@ -18,12 +18,12 @@ public class TaskHasUser implements Model {
     @EmbeddedId
     TaskHasUserKey taskHasUserKey;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @MapsId("userId")
     @JoinColumn(name = "user_id")
     User user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @MapsId("taskId")
     @JoinColumn(name = "task_id")
     Task task;

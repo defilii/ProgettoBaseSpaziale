@@ -41,7 +41,7 @@ public class Task implements Model {
     @Column(name = "data_scadenza", nullable=true)
     private LocalDateTime dataScadenza;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="id_tabella", nullable=false)
     private Tabella tabella;
 
@@ -50,10 +50,10 @@ public class Task implements Model {
     @Builder.Default
     private List<Commento> commenti = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "task")
     @JsonIgnore
     @Builder.Default
-    private List<TaskHasUser> usersAssigned = new ArrayList<>();
+    private List<TaskHasUser> usersTask = new ArrayList<>();
 
     @OneToMany(mappedBy = "task", fetch = FetchType.EAGER)
     @JsonIgnore
