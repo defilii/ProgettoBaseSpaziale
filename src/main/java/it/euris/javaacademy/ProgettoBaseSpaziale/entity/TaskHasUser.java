@@ -31,9 +31,8 @@ public class TaskHasUser implements Model {
     @Override
     public TaskHasUserDTO toDto() {
         return TaskHasUserDTO.builder()
-                .task(task)
-                .user(user)
-                .taskHasUserKey(taskHasUserKey)
+                .task(task == null ? null : task.getIdTask().toString())
+                .user(user == null ? null : user.getIdUser().toString())
                 .build();
     }
 }

@@ -23,7 +23,7 @@ public class UserDTO implements Dto {
 
     private String email;
 
-    private Task task;
+   // private Task task;
 
 
     @Override
