@@ -2,13 +2,12 @@ package it.euris.javaacademy.ProgettoBaseSpaziale.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.TaskDTO;
-import it.euris.javaacademy.ProgettoBaseSpaziale.dto.TaskDTO;
-import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Task;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Task;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.IdMustBeNullException;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.IdMustNotBeNullException;
 import it.euris.javaacademy.ProgettoBaseSpaziale.service.TaskService;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -16,6 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 @AllArgsConstructor
 @RestController
+@Data
 @RequestMapping("/tasks")
 public class TaskController {
     TaskService taskService;

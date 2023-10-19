@@ -2,6 +2,8 @@ package it.euris.javaacademy.ProgettoBaseSpaziale.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Tabella;
+import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Task;
+import it.euris.javaacademy.ProgettoBaseSpaziale.entity.enums.Priorita;
 import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.TabellaRepository;
 import it.euris.javaacademy.ProgettoBaseSpaziale.service.TabellaService;
 import it.euris.javaacademy.ProgettoBaseSpaziale.utils.TestUtils;
@@ -105,4 +107,107 @@ public class TabellaControllerTest {
                 .andExpect(status().isOk());
 
     }
+
+    @Test
+    void shouldGetAllTaskByTabellaId() throws Exception {
+        Integer id = 1;
+        Tabella tabella = TestUtils.getTabella(id);
+        when(tabellaService.findById(id)).thenReturn(tabella);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/tabelle/v1/tasks/{id}", id))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$.length()").value(tabella.getTasks().size()))
+                .andExpect(jsonPath("$[0].idTask").value(tabella.getTasks().get(0).getIdTask().toString()));
+
+    }
+
+    @Test
+    void shouldGetAllHighPriorityTasksByTabellaId() throws Exception {
+        Integer id = 1;
+        Tabella tabella = TestUtils.getTabella(id);
+        Task task = TestUtils.getTask(id);
+        task.setPriorita(Priorita.ALTA);
+
+        tabella.setTasks(List.of(task));
+
+        when(tabellaService.findById(id)).thenReturn(tabella);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/tabelle/v1/high-priority-tasks/{id}", id))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$.length()").value(tabella.getTasks().size()))
+                .andExpect(jsonPath("$[0].priorita").value(tabella.getTasks().get(0).getPriorita().toString()));
+
+    }
+
+    @Test
+    void shouldGetAllMediumPriorityTasksByTabellaId() throws Exception {
+        Integer id = 1;
+        Tabella tabella = TestUtils.getTabellaTaskMediaPriorita(id);
+
+        when(tabellaService.findById(id)).thenReturn(tabella);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/tabelle/v1/medium-priority-tasks/{id}", id))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$.length()").value(tabella.getTasks().size()))
+                .andExpect(jsonPath("$[0].priorita").value(tabella.getTasks().get(0).getPriorita().toString()));
+    }
+
+    @Test
+    void shouldGetAllDesiredPriorityTasksByTabellaId() throws Exception {
+        Integer id = 1;
+        Tabella tabella = TestUtils.getTabellaTaskPrioritaDesiderata(id);
+
+        when(tabellaService.findById(id)).thenReturn(tabella);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/tabelle/v1/desired-priority-tasks/{id}", id))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$.length()").value(tabella.getTasks().size()))
+                .andExpect(jsonPath("$[0].priorita").value(tabella.getTasks().get(0).getPriorita().toString()));
+    }
+
+    @Test
+    void shouldGetAllLowPriorityTasksByTabellaId() throws Exception {
+        Integer id = 1;
+        Tabella tabella = TestUtils.getTabellaTaskBassaPriorita(id);
+
+        when(tabellaService.findById(id)).thenReturn(tabella);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/tabelle/v1/low-priority-tasks/{id}", id))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$.length()").value(tabella.getTasks().size()))
+                .andExpect(jsonPath("$[0].priorita").value(tabella.getTasks().get(0).getPriorita().toString()));
+    }
+
+  /*  @Test
+    void shouldGetAllTasksABoutToExpireIn() throws Exception {
+        Integer id = 1;
+        Integer days = 5;
+        Tabella tabella = TestUtils.getTabellaExpire(days);
+        List<Tabella> tabelle = List.of(tabella);
+        when(tabellaService.findAll()).thenReturn(tabelle);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/tabelle/v1/expire-in-{id}", days))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$[0].dataScadenza").value(tabella.getTasks().get(0).getDataScadenza()));
+    }*/
+
 }

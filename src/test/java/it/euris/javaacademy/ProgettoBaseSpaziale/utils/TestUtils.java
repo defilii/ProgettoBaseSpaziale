@@ -5,6 +5,9 @@ import it.euris.javaacademy.ProgettoBaseSpaziale.entity.enums.Priorita;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.key.TaskHasUserKey;
 
 import java.time.LocalDateTime;
+import java.util.List;
+
+import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.*;
 
 public class TestUtils {
 
@@ -40,7 +43,6 @@ public class TestUtils {
 
     public static TaskHasUser getTaskHasUserSingleId(User user) {
         Task task = getTask(1);
-
         return TaskHasUser.builder()
                 .task(task)
                 .user(user)
@@ -90,6 +92,40 @@ public class TestUtils {
     public static Tabella getTabella(Integer id) {
         return Tabella.builder()
                 .id(id)
+                .tasks(List.of(Task.builder().idTask(1).descrizione("test").build()))
+                .nome("Test nome")
+                .build();
+    }
+
+    public static Tabella getTabellaTaskMediaPriorita(Integer id) {
+        return Tabella.builder()
+                .id(id)
+                .tasks(List.of(Task.builder().idTask(1).priorita(Priorita.MEDIA).descrizione("test").build()))
+                .nome("Test nome")
+                .build();
+    }
+
+    public static Tabella getTabellaTaskPrioritaDesiderata(Integer id) {
+        return Tabella.builder()
+                .id(id)
+                .tasks(List.of(Task.builder().idTask(1).priorita(Priorita.DESIDERATA).descrizione("test").build()))
+                .nome("Test nome")
+                .build();
+    }
+
+    public static Tabella getTabellaTaskBassaPriorita(Integer id) {
+        return Tabella.builder()
+                .id(id)
+                .tasks(List.of(Task.builder().idTask(1).priorita(Priorita.BASSA).descrizione("test").build()))
+                .nome("Test nome")
+                .build();
+    }
+
+    public static Tabella getTabellaExpire( Integer days) {
+        return Tabella.builder()
+                .id(1)
+                .tasks(List.of(Task.builder().idTask(1).priorita(Priorita.BASSA)
+                        .dataScadenza(LocalDateTime.now().minusDays(days)).build()))
                 .nome("Test nome")
                 .build();
     }
@@ -129,5 +165,7 @@ public class TestUtils {
                 .user(getUser(id))
                 .build();
     }
+
+
 
 }
