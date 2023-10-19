@@ -2,6 +2,8 @@ package it.euris.javaacademy.ProgettoBaseSpaziale.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Task;
+import it.euris.javaacademy.ProgettoBaseSpaziale.entity.TaskHasUser;
+import it.euris.javaacademy.ProgettoBaseSpaziale.entity.User;
 import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.TaskRepository;
 import it.euris.javaacademy.ProgettoBaseSpaziale.service.TaskService;
 import it.euris.javaacademy.ProgettoBaseSpaziale.utils.TestUtils;
@@ -23,6 +25,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 @SpringBootTest
 @AutoConfigureMockMvc
 public class TaskControllerTest {
@@ -124,7 +127,7 @@ public class TaskControllerTest {
     }
 
     @Test
-    @DisplayName("GIVEN a task with no priority WHEN using the get priority url THEN I should get the priority")
+    @DisplayName("GIVEN a task with no priority WHEN using the get priority url THEN I should get a set message")
     void shouldntGetPriority() throws Exception {
         Integer id = 1;
         Task task = TestUtils.getTask(id);
@@ -137,12 +140,12 @@ public class TaskControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(jsonPath("$").value("no priority set" ));
+                .andExpect(jsonPath("$").value("no priority set"));
 
     }
 
     @Test
-    @DisplayName("GIVEN a task WHEN using the get priority url THEN I should get the priority")
+    @DisplayName("GIVEN a task WHEN using the get priority url THEN I should get the expire date")
     void shouldGetExpireDate() throws Exception {
         Integer id = 1;
         Task task = TestUtils.getTask(id);
@@ -159,7 +162,7 @@ public class TaskControllerTest {
     }
 
     @Test
-    @DisplayName("GIVEN a task with no priority WHEN using the get priority url THEN I should get the priority")
+    @DisplayName("GIVEN a task with no expire date WHEN using the get priority url THEN I should get a set message")
     void shouldntGetExpiredate() throws Exception {
         Integer id = 1;
         Task task = TestUtils.getTask(id);
@@ -172,7 +175,53 @@ public class TaskControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(jsonPath("$").value("no expire date set" ));
+                .andExpect(jsonPath("$").value("no expire date set"));
+
+    }
+
+
+    @Test
+    @DisplayName("GIVEN a task with members WHEN using the get members url THEN I should get the list of members")
+    void shouldGetMembers() throws Exception {
+        Integer id = 1;
+        Task task = TestUtils.getTask(id);
+
+        User user = TestUtils.getUser(1);
+        TaskHasUser taskHasUser = TestUtils.getTaskHasUserSingleId(user);
+        List<TaskHasUser> taskHasUsers = List.of(taskHasUser);
+        task.setUsersTask(taskHasUsers);
+
+        when(taskService.findById(id)).thenReturn(task);
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/tasks/v1/members/{id}", id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$[0].idUser").value(user.getIdUser()));
+
+        ;
+
+    }
+
+    @Test
+    @DisplayName("GIVEN a task with no members WHEN using the get members url THEN I should get nothing")
+    void shouldntGetMembers() throws Exception {
+        Integer id = 1;
+        Task task = TestUtils.getTask(id);
+
+        when(taskService.findById(id)).thenReturn(task);
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/tasks/v1/members/{id}", id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$").isEmpty());
 
     }
 }

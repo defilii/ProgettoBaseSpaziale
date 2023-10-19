@@ -3,8 +3,10 @@ package it.euris.javaacademy.ProgettoBaseSpaziale.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.TaskDTO;
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.TaskDTO;
+import it.euris.javaacademy.ProgettoBaseSpaziale.dto.UserDTO;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Task;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Task;
+import it.euris.javaacademy.ProgettoBaseSpaziale.entity.User;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.IdMustBeNullException;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.IdMustNotBeNullException;
 import it.euris.javaacademy.ProgettoBaseSpaziale.service.TaskService;
@@ -50,8 +52,20 @@ public class TaskController {
             This method is used to retrieve the expiration date of a task from the database<br>
             """)
     public String getExpiredatePriorityById(@PathVariable("id") Integer idTask) {
-        String priority = taskService.findById(idTask).toDto().getDataScadenza();
-        return priority == null ? "no expire date set" : priority;
+        String expireDate = taskService.findById(idTask).toDto().getDataScadenza();
+        return expireDate == null ? "no expire date set" : expireDate;
+    }
+
+    @GetMapping("/v1/members/{id}")
+    @Operation(description = """
+            This method is used to retrieve the members assigned to a task from the database<br>
+            """)
+    public List<UserDTO> getMembersById(@PathVariable("id") Integer idTask) {
+        return taskService.findById(idTask).getUsersTask()
+                .stream()
+                .map(taskHasUser -> taskHasUser.getUser())
+                .map(User::toDto)
+                .toList();
     }
 
     @PostMapping("/v1")
