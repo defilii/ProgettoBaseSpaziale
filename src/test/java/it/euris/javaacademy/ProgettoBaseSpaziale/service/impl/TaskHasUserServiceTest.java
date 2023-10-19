@@ -35,8 +35,8 @@ class TaskHasUserServiceTest {
 
 
     @Test
-    void shouldReturnATaskHasUser(){
-        TaskHasUser taskHasUser = TestUtils.getTaskHasUserId( 1,1);
+    void shouldReturnATaskHasUser() {
+        TaskHasUser taskHasUser = TestUtils.getTaskHasUserId(1, 1);
 
         List<TaskHasUser> taskHasUsers = List.of(taskHasUser);
 
@@ -52,22 +52,22 @@ class TaskHasUserServiceTest {
                 .isEqualTo(taskHasUser);
     }
 
-  /*  @Test
-    void shouldInsertATaskHasUser(){
+    @Test
+    void shouldInsertATaskHasUser() {
 
-        TaskHasUser taskHasUser = TestUtils.getTaskHasUserId(null,null);
+        TaskHasUser taskHasUser = TestUtils.getTaskHasUserId(null, null);
 
         when(taskHasUserRepository.save(any())).thenReturn(taskHasUser);
 
         TaskHasUser returnedTaskHasUser = taskHasUserService.insert(taskHasUser);
         assertThat(returnedTaskHasUser.getTask())
-                .isEqualTo(taskHasUser.getTaskHasUserKey());
-    }*/
+                .isEqualTo(taskHasUser.getTask());
+    }
 
     @Test
-    void shouldNotInsertAnyTaskHasUser(){
+    void shouldNotInsertAnyTaskHasUser() {
 
-        TaskHasUser taskHasUser = TestUtils.getTaskHasUserId(1,1);
+        TaskHasUser taskHasUser = TestUtils.getTaskHasUserId(1, 1);
         lenient().when(taskHasUserRepository.save(any())).thenReturn(taskHasUser);
 
         assertThrows(IdMustBeNullException.class, () -> taskHasUserService.insert(taskHasUser));
@@ -75,9 +75,9 @@ class TaskHasUserServiceTest {
     }
 
     @Test
-    void shouldUpdateATaskHasUser(){
+    void shouldUpdateATaskHasUser() {
 
-        TaskHasUser taskHasUser = TestUtils.getTaskHasUserId(1,1);
+        TaskHasUser taskHasUser = TestUtils.getTaskHasUserId(1, 1);
 
         when(taskHasUserRepository.save(any())).thenReturn(taskHasUser);
 
@@ -86,25 +86,27 @@ class TaskHasUserServiceTest {
                 .isEqualTo(taskHasUser.getTask());
     }
 
-  /*  @Test
-    void shouldNotUpdateAnyTaskHasUser(){
+    @Test
+    void shouldNotUpdateAnyTaskHasUser() {
 
-        TaskHasUser taskHasUser = TestUtils.getTaskHasUserId(null,null);
+        TaskHasUser taskHasUser = TestUtils.getTaskHasUserId(null, null);
         lenient().when(taskHasUserRepository.save(any())).thenReturn(taskHasUser);
 
         assertThatThrownBy(() -> taskHasUserService.update(taskHasUser))
                 .isInstanceOf(IdMustNotBeNullException.class);
-    }*/
+    }
 
-    @Test
-    void shouldDeleteATaskHasUser() {
+ @Test
+    void shouldDeleteATaskHasUser() {//TODO
         //arrange
-        TaskHasUserKey id = new TaskHasUserKey();
+        Integer idTask = 1;
+        Integer idUser = 1;
+    //   TaskHasUser taskHasUser = TestUtils.getTaskHasUserId(idTask,idUser);
+       TaskHasUserKey idKey= new TaskHasUserKey(idUser,idTask);
 
-        id.setTaskId(1);
-
-        when(taskHasUserRepository.findById(id)).thenReturn(Optional.empty());
-        assertTrue(taskHasUserService.deleteById(id));
-        Mockito.verify(taskHasUserRepository, times(1)).deleteById(id);
+        doNothing().when(taskHasUserRepository).deleteById(any());
+        when(taskHasUserRepository.findById(idKey)).thenReturn(Optional.empty());
+        assertTrue(taskHasUserService.deleteById(idTask, idUser));
+        Mockito.verify(taskHasUserRepository, times(1)).deleteById(idKey);
     }
 }

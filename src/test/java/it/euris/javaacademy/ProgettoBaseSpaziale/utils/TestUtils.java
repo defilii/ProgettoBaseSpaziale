@@ -68,8 +68,8 @@ public class TestUtils {
 
         return TaskHasUser.builder()
                 .taskHasUserKey(new TaskHasUserKey(idUser,idTask))
-                .task(Task.builder().build())
-                .user(User.builder().build())
+                .task(Task.builder().idTask(idTask).build())
+                .user(User.builder().idUser(idUser).build())
                 .build();
     }
 

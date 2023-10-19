@@ -19,8 +19,7 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -43,8 +42,10 @@ public class TaskHasUserControllerTest {
     @Test
     void shouldGetOneTaskHasUser() throws Exception {
 
-        Integer id = 1;
-        TaskHasUser taskHasUser = TestUtils.getTaskHasUserSingleId(id);
+        Integer idTask=1;
+        Integer idUser=1;
+
+        TaskHasUser taskHasUser = TestUtils.getTaskHasUserId(idTask, idUser);
         List<TaskHasUser> taskHasUsers = List.of(taskHasUser);
 
         when(taskHasUserService.findAll()).thenReturn(taskHasUsers);
@@ -60,8 +61,10 @@ public class TaskHasUserControllerTest {
 
     @Test
     void shouldInsertATaskHasUser() throws Exception {
-        Integer id = 1;
-        TaskHasUser taskHasUser = TestUtils.getTaskHasUserSingleId(id);
+        Integer idTask=1;
+        Integer idUser=1;
+
+        TaskHasUser taskHasUser = TestUtils.getTaskHasUserId(idTask, idUser);
         when(taskHasUserService.insert(any())).thenReturn(taskHasUser);
 
         mockMvc.perform(post("/task-has-users/v1")
@@ -75,8 +78,10 @@ public class TaskHasUserControllerTest {
 
     @Test
     void shouldUpdateATaskHasUser() throws Exception {
-        Integer id = 1;
-        TaskHasUser taskHasUser = TestUtils.getTaskHasUserSingleId(id);
+        Integer idTask=1;
+        Integer idUser=1;
+
+        TaskHasUser taskHasUser = TestUtils.getTaskHasUserId(idTask, idUser);
         when(taskHasUserService.update(any())).thenReturn(taskHasUser);
 
         mockMvc.perform(put("/task-has-users/v1")
@@ -91,20 +96,19 @@ public class TaskHasUserControllerTest {
 
     @Test
     void shouldDelete() throws Exception {
-        Integer id = 1;
-        TaskHasUser taskHasUser = TestUtils.getTaskHasUserSingleId(id);
-        taskHasUser.setTaskHasUserKey(TaskHasUserKey.builder()
-                        .taskId(id)
-                        .userId(id)
-                .build());
+        Integer idTask=1;
+        Integer idUser=1;
 
-        when(taskHasUserService.deleteById(any())).thenReturn(true);
+        TaskHasUser taskHasUser = TestUtils.getTaskHasUserId(idTask, idUser);
+
+
+        when(taskHasUserService.deleteById(any(), any())).thenReturn(true);
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .delete("/task-has-users/v1/{id}", taskHasUser.getTaskHasUserKey())
+                        .delete("/task-has-users/v1/{id-task}-{id-user}",
+                                idTask, idUser)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
-
     }
 }

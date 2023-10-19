@@ -22,7 +22,10 @@ public class TaskHasUserServiceImpl implements TaskHasUserService {
 
     @Override
     public TaskHasUser insert(TaskHasUser taskHasUser) {
-        if(taskHasUser.getTaskHasUserKey() != null) {
+        if(taskHasUser.getTaskHasUserKey().getUserId() != null) {
+            throw new IdMustBeNullException();
+        }
+        if(taskHasUser.getTaskHasUserKey().getTaskId() != null) {
             throw new IdMustBeNullException();
         }
         return taskHasUserRepository.save(taskHasUser);
@@ -30,20 +33,26 @@ public class TaskHasUserServiceImpl implements TaskHasUserService {
 
     @Override
     public TaskHasUser update(TaskHasUser taskHasUser) {
-        if(taskHasUser.getTaskHasUserKey() == null )  {
+        if(taskHasUser.getTaskHasUserKey().getTaskId() == null )  {
+            throw new IdMustNotBeNullException();
+        }
+        if(taskHasUser.getTaskHasUserKey().getUserId() == null )  {
             throw new IdMustNotBeNullException();
         }
         return taskHasUserRepository.save(taskHasUser);
     }
 
     @Override
-    public Boolean deleteById(TaskHasUserKey idTask) {
-        taskHasUserRepository.deleteById(idTask);
-        return taskHasUserRepository.findById(idTask).isEmpty();
+    public Boolean deleteById(Integer idTask, Integer idUser) {
+
+        TaskHasUserKey taskHasUserKey = new TaskHasUserKey(idUser,idUser);
+        taskHasUserRepository.deleteById(taskHasUserKey);
+        return taskHasUserRepository.findById(taskHasUserKey).isEmpty();
     }
 
     @Override
-    public TaskHasUser findById(TaskHasUserKey idTask) {
-        return taskHasUserRepository.findById(idTask).orElse(TaskHasUser.builder().build());
+    public TaskHasUser findById(Integer idTask, Integer idUser) {
+        TaskHasUserKey taskHasUserKey= new TaskHasUserKey(idUser, idTask);
+        return taskHasUserRepository.findById(taskHasUserKey).orElse(TaskHasUser.builder().build());
     }
 }

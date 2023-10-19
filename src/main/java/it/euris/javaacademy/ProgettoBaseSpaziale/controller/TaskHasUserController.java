@@ -30,12 +30,12 @@ public class TaskHasUserController {
         return taskHasUserService.findAll().stream().map(TaskHasUser::toDto).toList();
     }
 
-    @GetMapping("/v1/{id}")
+    @GetMapping("/v1/{id-task}-{id-user}")
     @Operation(description = """
             This method is used to retrieve one TaskHasUser from the database<br>
             """)
-    public TaskHasUserDTO getTaskHasUserById(@PathVariable("id") TaskHasUserKey idTaskHasUser) {
-        return taskHasUserService.findById(idTaskHasUser).toDto();
+    public TaskHasUserDTO getTaskHasUserById(@PathVariable("id-task") Integer idTask, @PathVariable("id-user") Integer idUser) {
+        return taskHasUserService.findById(idTask,idUser).toDto();
     }
 
     @PostMapping("/v1")
@@ -66,12 +66,12 @@ public class TaskHasUserController {
         }
     }
 
-//    @DeleteMapping("/v1/{id}")
-//    @Operation(description = """
-//            This method is used to delete one TaskHasUser from the database<br>
-//            """)
-//    public Boolean deleteTaskHasUser(@PathVariable("id") TaskHasUserKey idTaskHasUser) {
-//        return taskHasUserService.deleteById(idTaskHasUser);
-//    }
+   @DeleteMapping("/v1/{id-task}-{id-user}")
+   @Operation(description = """
+           This method is used to delete one TaskHasUser from the database<br>
+           """)
+   public Boolean deleteTaskHasUser(@PathVariable("id-task") Integer idTask, @PathVariable("id-user") Integer idUser) {
+        return taskHasUserService.deleteById(idTask,idUser);
+    }
 }
 

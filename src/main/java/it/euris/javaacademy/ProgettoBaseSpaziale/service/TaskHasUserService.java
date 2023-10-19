@@ -14,7 +14,7 @@ public interface TaskHasUserService {
 
     TaskHasUser update(TaskHasUser taskHasUser);
 
-    Boolean deleteById(TaskHasUserKey idTaskHasUser);
+    Boolean deleteById(Integer idTask, Integer idUser);
 
-    TaskHasUser findById(TaskHasUserKey idTaskHasUser);
+    TaskHasUser findById(Integer idTask, Integer idUser);
 }
