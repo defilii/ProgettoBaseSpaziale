@@ -117,6 +117,21 @@ public class TaskController {
         }
     }
 
+    @PutMapping("/v1/update-description/{id}-{description}")
+    @Operation(description = """
+            This method is used to retrieve the members assigned to a task from the database<br>
+            """)
+    public TaskDTO updateDescriptionById(@PathVariable("id") Integer idTask, @PathVariable("description") String newDescription) {
+        try {
+            Task task = taskService.findById(idTask);
+            task.setDescrizione(newDescription);
+            return taskService.update(task).toDto();
+        } catch (IdMustNotBeNullException e) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+    }
+
     @DeleteMapping("/v1/{id}")
     @Operation(description = """
             This method is used to delete one task from the database<br>

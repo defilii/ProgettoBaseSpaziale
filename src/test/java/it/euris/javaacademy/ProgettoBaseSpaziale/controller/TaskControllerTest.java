@@ -201,8 +201,6 @@ public class TaskControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$[0].idUser").value(user.getIdUser()));
 
-        ;
-
     }
 
     @Test
@@ -252,4 +250,26 @@ public class TaskControllerTest {
                 .andExpect(jsonPath("$").value("75%"));
 
     }
+
+    @Test
+    void shouldUpdateATaskDescription() throws Exception {
+        Integer id = 1;
+        Task task = TestUtils.getTask(id);
+        when(taskService.update(any())).thenReturn(task);
+        when(taskService.findById(id)).thenReturn(task);
+
+        String newDescription = "nuova descrizione";
+        mockMvc.perform(put("/tasks/v1/update-description/{id}-{description}", id, newDescription)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(task.toDto())))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$.idTask").value(task.getIdTask()))
+                .andExpect(jsonPath("$.descrizione").value(newDescription))
+
+        ;
+    }
+
 }
