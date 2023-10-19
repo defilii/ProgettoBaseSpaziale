@@ -45,6 +45,15 @@ public class TaskController {
         return priority == null ? "no priority set" : priority;
     }
 
+    @GetMapping("/v1/expiredate/{id}")
+    @Operation(description = """
+            This method is used to retrieve the expiration date of a task from the database<br>
+            """)
+    public String getExpiredatePriorityById(@PathVariable("id") Integer idTask) {
+        String priority = taskService.findById(idTask).toDto().getDataScadenza();
+        return priority == null ? "no expire date set" : priority;
+    }
+
     @PostMapping("/v1")
     @Operation(description = """
             This method is used to save one task in the database<br>

@@ -140,4 +140,39 @@ public class TaskControllerTest {
                 .andExpect(jsonPath("$").value("no priority set" ));
 
     }
+
+    @Test
+    @DisplayName("GIVEN a task WHEN using the get priority url THEN I should get the priority")
+    void shouldGetExpireDate() throws Exception {
+        Integer id = 1;
+        Task task = TestUtils.getTask(id);
+        when(taskService.findById(id)).thenReturn(task);
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/tasks/v1/expiredate/{id}", id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$").value(task.getDataScadenza().toString()));
+
+    }
+
+    @Test
+    @DisplayName("GIVEN a task with no priority WHEN using the get priority url THEN I should get the priority")
+    void shouldntGetExpiredate() throws Exception {
+        Integer id = 1;
+        Task task = TestUtils.getTask(id);
+        task.setDataScadenza(null);
+        when(taskService.findById(id)).thenReturn(task);
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/tasks/v1/expiredate/{id}", id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$").value("no expire date set" ));
+
+    }
 }
