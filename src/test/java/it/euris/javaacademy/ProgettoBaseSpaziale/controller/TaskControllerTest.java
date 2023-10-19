@@ -5,6 +5,7 @@ import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Task;
 import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.TaskRepository;
 import it.euris.javaacademy.ProgettoBaseSpaziale.service.TaskService;
 import it.euris.javaacademy.ProgettoBaseSpaziale.utils.TestUtils;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -102,6 +103,41 @@ public class TaskControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+
+    }
+
+    @Test
+    @DisplayName("GIVEN a task WHEN using the get priority url THEN I should get the priority")
+    void shouldGetPriority() throws Exception {
+        Integer id = 1;
+        Task task = TestUtils.getTask(id);
+        when(taskService.findById(id)).thenReturn(task);
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/tasks/v1/priorita/{id}", id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$").value(task.getPriorita().toString()));
+
+    }
+
+    @Test
+    @DisplayName("GIVEN a task with no priority WHEN using the get priority url THEN I should get the priority")
+    void shouldntGetPriority() throws Exception {
+        Integer id = 1;
+        Task task = TestUtils.getTask(id);
+        task.setPriorita(null);
+        when(taskService.findById(id)).thenReturn(task);
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/tasks/v1/priorita/{id}", id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$").value("no priority set" ));
 
     }
 }

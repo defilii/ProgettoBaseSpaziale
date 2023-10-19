@@ -36,6 +36,15 @@ public class TaskController {
         return taskService.findById(idTask).toDto();
     }
 
+    @GetMapping("/v1/priorita/{id}")
+    @Operation(description = """
+            This method is used to retrieve the priority of a task from the database<br>
+            """)
+    public String getTaskPriorityById(@PathVariable("id") Integer idTask) {
+        String priority = taskService.findById(idTask).toDto().getPriorita();
+        return priority == null ? "no priority set" : priority;
+    }
+
     @PostMapping("/v1")
     @Operation(description = """
             This method is used to save one task in the database<br>
