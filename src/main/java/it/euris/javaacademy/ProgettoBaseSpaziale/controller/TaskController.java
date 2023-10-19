@@ -87,7 +87,8 @@ public class TaskController {
 
         Float total = (float) checkmarksList.size();
         Float percent = (100 * trueCheckmark) / total;
-        return String.format("%.0f%%",percent);
+        return percent.isNaN() ? "No checklist to calculate percentage" :
+                String.format("%.0f%%",percent);
     }
 
 
