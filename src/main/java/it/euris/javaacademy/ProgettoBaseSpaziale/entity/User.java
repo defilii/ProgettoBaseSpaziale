@@ -36,7 +36,7 @@ public class User implements Model {
     @Builder.Default
     private List<TaskHasUser> usersTask = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @JsonIgnore
     @Builder.Default
     private List<Commento> commenti = new ArrayList<>();

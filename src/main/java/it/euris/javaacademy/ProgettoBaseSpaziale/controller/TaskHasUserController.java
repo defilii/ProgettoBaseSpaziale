@@ -17,6 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 @RestController
 @RequestMapping("/task-has-users")
+
 public class TaskHasUserController {
 
     TaskHasUserService taskHasUserService;
