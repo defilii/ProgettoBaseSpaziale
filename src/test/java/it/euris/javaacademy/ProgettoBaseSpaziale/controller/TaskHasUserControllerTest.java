@@ -4,8 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.TaskHasUser;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.key.TaskHasUserKey;
 import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.TaskHasUserRepository;
-import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.TaskHasUserRepository;
-import it.euris.javaacademy.ProgettoBaseSpaziale.service.TaskHasUserService;
 import it.euris.javaacademy.ProgettoBaseSpaziale.service.TaskHasUserService;
 import it.euris.javaacademy.ProgettoBaseSpaziale.utils.TestUtils;
 import org.junit.jupiter.api.Test;
@@ -46,7 +44,7 @@ public class TaskHasUserControllerTest {
     void shouldGetOneTaskHasUser() throws Exception {
 
         Integer id = 1;
-        TaskHasUser taskHasUser = TestUtils.getTaskHasUser(id);
+        TaskHasUser taskHasUser = TestUtils.getTaskHasUserSingleId(id);
         List<TaskHasUser> taskHasUsers = List.of(taskHasUser);
 
         when(taskHasUserService.findAll()).thenReturn(taskHasUsers);
@@ -63,7 +61,7 @@ public class TaskHasUserControllerTest {
     @Test
     void shouldInsertATaskHasUser() throws Exception {
         Integer id = 1;
-        TaskHasUser taskHasUser = TestUtils.getTaskHasUser(id);
+        TaskHasUser taskHasUser = TestUtils.getTaskHasUserSingleId(id);
         when(taskHasUserService.insert(any())).thenReturn(taskHasUser);
 
         mockMvc.perform(post("/task-has-users/v1")
@@ -78,7 +76,7 @@ public class TaskHasUserControllerTest {
     @Test
     void shouldUpdateATaskHasUser() throws Exception {
         Integer id = 1;
-        TaskHasUser taskHasUser = TestUtils.getTaskHasUser(id);
+        TaskHasUser taskHasUser = TestUtils.getTaskHasUserSingleId(id);
         when(taskHasUserService.update(any())).thenReturn(taskHasUser);
 
         mockMvc.perform(put("/task-has-users/v1")
@@ -94,7 +92,7 @@ public class TaskHasUserControllerTest {
     @Test
     void shouldDelete() throws Exception {
         Integer id = 1;
-        TaskHasUser taskHasUser = TestUtils.getTaskHasUser(id);
+        TaskHasUser taskHasUser = TestUtils.getTaskHasUserSingleId(id);
         taskHasUser.setTaskHasUserKey(TaskHasUserKey.builder()
                         .taskId(id)
                         .userId(id)

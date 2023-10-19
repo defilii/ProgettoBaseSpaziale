@@ -38,7 +38,7 @@ public class TestUtils {
                 .build();
     }
 
-    public static TaskHasUser getTaskHasUser(User user) {
+    public static TaskHasUser getTaskHasUserSingleId(User user) {
         Task task = getTask(1);
 
         return TaskHasUser.builder()
@@ -51,22 +51,8 @@ public class TestUtils {
                 .build();
     }
 
-    public static TaskHasUser getTaskHasUser(Task task) {
+    public static TaskHasUser getTaskHasUserSingleId(Task task) {
         User user = getUser(1);
-
-        return TaskHasUser.builder()
-                .task(task)
-                .user(user)
-                .taskHasUserKey(TaskHasUserKey.builder()
-                        .taskId(task.getIdTask())
-                        .userId(user.getIdUser())
-                        .build())
-                .build();
-    }
-
-    public static TaskHasUser getTaskHasUser(Integer id) {
-        User user = getUser(id);
-        Task task = getTask(id);
 
         return TaskHasUser.builder()
                 .task(task)
@@ -87,7 +73,7 @@ public class TestUtils {
                 .build();
     }
 
-    public static TaskHasUser getTaskHasUser(Integer id) {
+    public static TaskHasUser getTaskHasUserSingleId(Integer id) {
         User user = getUser(id);
         Task task = getTask(id);
 
