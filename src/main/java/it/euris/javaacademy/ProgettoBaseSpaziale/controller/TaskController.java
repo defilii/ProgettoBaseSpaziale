@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 public class TaskController {
     TaskService taskService;
 
-    @GetMapping("/v1")
+    @GetMapping("/getAll")
     @Operation(description = """
       This method is used to retrieve all the tasks from the database<br>
       """)
@@ -33,7 +33,7 @@ public class TaskController {
         return taskService.findAll().stream().map(Task::toDto).toList();
     }
 
-    @GetMapping("/v1/{id}")
+    @GetMapping("/getById/{id}")
     @Operation(description = """
             This method is used to retrieve one task from the database<br>
             """)
@@ -91,7 +91,7 @@ public class TaskController {
     }
 
 
-    @PostMapping("/v1")
+    @PostMapping("/insert")
     @Operation(description = """
             This method is used to save one task in the database<br>
             """)
@@ -105,7 +105,7 @@ public class TaskController {
         }
     }
 
-    @PutMapping("/v1")
+    @PutMapping("/update")
     @Operation(description = """
             This method is used to update one task in the database<br>
             """)
@@ -154,7 +154,7 @@ public class TaskController {
         }
     }
 
-    @DeleteMapping("/v1/{id}")
+    @DeleteMapping("/delete/{id}")
     @Operation(description = """
             This method is used to delete one task from the database<br>
             """)

@@ -52,7 +52,7 @@ public class TaskControllerTest {
         when(taskService.findAll()).thenReturn(tasks);
 
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/tasks/v1"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/tasks/getAll"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -67,7 +67,7 @@ public class TaskControllerTest {
         Task Task = TestUtils.getTask(id);
         when(taskService.insert(any())).thenReturn(Task);
 
-        mockMvc.perform(post("/tasks/v1")
+        mockMvc.perform(post("/tasks/insert")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(Task.toDto())))
@@ -83,7 +83,7 @@ public class TaskControllerTest {
         Task task = TestUtils.getTask(id);
         when(taskService.update(any())).thenReturn(task);
 
-        mockMvc.perform(put("/tasks/v1")
+        mockMvc.perform(put("/tasks/update")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(task.toDto())))
@@ -102,7 +102,7 @@ public class TaskControllerTest {
         when(taskService.deleteById(id)).thenReturn(true);
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .delete("/tasks/v1/{id}", id)
+                        .delete("/tasks/delete/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
