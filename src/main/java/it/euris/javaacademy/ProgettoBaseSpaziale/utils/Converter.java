@@ -25,4 +25,13 @@ public class Converter {
     public static String prioritaToString(Priorita value){
         return  value== null? null : value.name();
     }
+
+    public static String numberToString(Number value){
+        return value == null ? null : value.toString();
+    }
+    public static Integer stringToInteger(String value){
+        return value == null ? null : Integer.parseInt(value);
+    }
+
+
 }

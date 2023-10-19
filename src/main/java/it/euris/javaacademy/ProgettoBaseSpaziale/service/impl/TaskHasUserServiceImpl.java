@@ -22,7 +22,7 @@ public class TaskHasUserServiceImpl implements TaskHasUserService {
 
     @Override
     public TaskHasUser insert(TaskHasUser taskHasUser) {
-        if(taskHasUser.getTaskHasUserKey() != null ) {
+        if(taskHasUser.getTaskHasUserKey() != null) {
             throw new IdMustBeNullException();
         }
         return taskHasUserRepository.save(taskHasUser);

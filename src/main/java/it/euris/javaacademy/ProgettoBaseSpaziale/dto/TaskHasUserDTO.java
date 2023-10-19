@@ -11,23 +11,25 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
 import lombok.*;
 
+import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.stringToInteger;
+
 @Builder
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class TaskHasUserDTO implements Dto {
-    TaskHasUserKey taskHasUserKey;
-    User user;
 
-    Task task;
+
+    private String user;
+    private String task;
 
     @Override
     public TaskHasUser toModel() {
         return TaskHasUser.builder()
-                .taskHasUserKey(taskHasUserKey)
-                .user(user)
-                .task(task)
+                .taskHasUserKey(new TaskHasUserKey(stringToInteger(user),stringToInteger(task)))
+                .user(User.builder().idUser(stringToInteger(user)).build())
+                .task(Task.builder().idTask(stringToInteger(task)).build())
                 .build();
     }
 }
