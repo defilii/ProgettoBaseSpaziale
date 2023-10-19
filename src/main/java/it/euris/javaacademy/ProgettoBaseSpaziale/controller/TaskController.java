@@ -4,9 +4,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.TaskDTO;
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.TaskDTO;
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.UserDTO;
+import it.euris.javaacademy.ProgettoBaseSpaziale.entity.*;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Task;
-import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Task;
-import it.euris.javaacademy.ProgettoBaseSpaziale.entity.User;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.IdMustBeNullException;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.IdMustNotBeNullException;
 import it.euris.javaacademy.ProgettoBaseSpaziale.service.TaskService;
@@ -16,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
 @AllArgsConstructor
 @RestController
 @RequestMapping("/tasks")
@@ -67,6 +68,26 @@ public class TaskController {
                 .map(User::toDto)
                 .toList();
     }
+
+    @GetMapping("/v1/percentage/{id}")
+    @Operation(description = """
+            This method is used to retrieve the members assigned to a task from the database<br>
+            """)
+    public String  getPercentageOfCompletedCheckmarks(@PathVariable("id") Integer idTask) {
+        List<Checkmark> checkmarksList = taskService.findById(idTask).
+                getChecklist()
+                .stream()
+                .flatMap(checklist -> checklist.getChecklist().stream()).collect(Collectors.toList());
+
+        Float trueCheckmark = (float) checkmarksList.stream()
+                .filter(checkmark -> checkmark.getIsItDone().equals(true))
+                .count();
+
+        Float total = (float) checkmarksList.size();
+        Float percent = (100 * trueCheckmark) / total;
+        return String.format("%.0f%%",percent);
+    }
+
 
     @PostMapping("/v1")
     @Operation(description = """

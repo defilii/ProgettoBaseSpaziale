@@ -1,9 +1,7 @@
 package it.euris.javaacademy.ProgettoBaseSpaziale.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Task;
-import it.euris.javaacademy.ProgettoBaseSpaziale.entity.TaskHasUser;
-import it.euris.javaacademy.ProgettoBaseSpaziale.entity.User;
+import it.euris.javaacademy.ProgettoBaseSpaziale.entity.*;
 import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.TaskRepository;
 import it.euris.javaacademy.ProgettoBaseSpaziale.service.TaskService;
 import it.euris.javaacademy.ProgettoBaseSpaziale.utils.TestUtils;
@@ -17,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -222,6 +221,35 @@ public class TaskControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$").isEmpty());
+
+    }
+
+    @Test
+    @DisplayName("GIVEN a task with a checklist, with 3 true checkmarks and a false one WHEN using the get percentage url THEN I should get 75")
+    void shouldGetPercentage() throws Exception {
+        Integer id = 1;
+        Task task = TestUtils.getTask(id);
+        Checklist checklist = TestUtils.getCheckList(1);
+
+        List<Checkmark> fakeCheckMarkList = new ArrayList<>();
+        fakeCheckMarkList.add(Checkmark.builder().idCheckmark(1).isItDone(true).build());
+        fakeCheckMarkList.add(Checkmark.builder().idCheckmark(2).isItDone(true).build());
+        fakeCheckMarkList.add(Checkmark.builder().idCheckmark(3).isItDone(true).build());
+        fakeCheckMarkList.add(Checkmark.builder().idCheckmark(4).isItDone(false).build());
+        checklist.setChecklist(fakeCheckMarkList);
+        task.setChecklist(List.of(checklist));
+
+
+        when(taskService.findById(id)).thenReturn(task);
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/tasks/v1/percentage/{id}", id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$").value("75%"));
 
     }
 }
