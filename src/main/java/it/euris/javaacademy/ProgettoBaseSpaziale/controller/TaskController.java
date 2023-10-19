@@ -14,6 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -119,12 +121,32 @@ public class TaskController {
 
     @PutMapping("/v1/update-description/{id}-{description}")
     @Operation(description = """
-            This method is used to retrieve the members assigned to a task from the database<br>
+            This method is used to update the description of a task from the id<br>
             """)
     public TaskDTO updateDescriptionById(@PathVariable("id") Integer idTask, @PathVariable("description") String newDescription) {
         try {
             Task task = taskService.findById(idTask);
             task.setDescrizione(newDescription);
+            return taskService.update(task).toDto();
+        } catch (IdMustNotBeNullException e) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+    }
+
+    @PutMapping("/v1/update-date/{id}-{dayOfMonth}-{month}-{year}")
+    @Operation(description = """
+             This method is used to update the expire date of a task from the id<br>
+            """)
+    public TaskDTO updateExpireDateById(@PathVariable("id") Integer idTask
+            , @PathVariable("dayOfMonth") Integer dayOfMonth
+            , @PathVariable("month") Integer month
+            , @PathVariable("year") Integer year
+    ) {
+        try {
+            LocalDateTime date = LocalDateTime.of(year, month, dayOfMonth, 0, 0);
+            Task task = taskService.findById(idTask);
+            task.setDataScadenza(date);
             return taskService.update(task).toDto();
         } catch (IdMustNotBeNullException e) {
             throw new ResponseStatusException(

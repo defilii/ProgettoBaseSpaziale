@@ -15,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -252,6 +253,7 @@ public class TaskControllerTest {
     }
 
     @Test
+    @DisplayName("GIVEN a task WHEN using the post id description rest url THEN I should update the task's description")
     void shouldUpdateATaskDescription() throws Exception {
         Integer id = 1;
         Task task = TestUtils.getTask(id);
@@ -268,6 +270,31 @@ public class TaskControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.idTask").value(task.getIdTask()))
                 .andExpect(jsonPath("$.descrizione").value(newDescription))
+
+        ;
+    }
+
+    @Test
+    @DisplayName("GIVEN a task WHEN using the put id expiredate rest url THEN I should update the task's expire date")
+    void shouldUpdateATaskExpireDate() throws Exception {
+        Integer id = 1;
+        Task task = TestUtils.getTask(id);
+        when(taskService.update(any())).thenReturn(task);
+        when(taskService.findById(id)).thenReturn(task);
+
+    Integer day = 1;
+    Integer month = 1;
+    Integer year = 1;
+    LocalDateTime date = LocalDateTime.of(year, month, day, 0 ,0);
+        mockMvc.perform(put("/tasks/v1/update-date/{id}-{dayOfMonth}-{month}-{year}", id, day, month, year)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(task.toDto())))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$.idTask").value(task.getIdTask()))
+                .andExpect(jsonPath("$.dataScadenza").value(date.toString()))
 
         ;
     }
