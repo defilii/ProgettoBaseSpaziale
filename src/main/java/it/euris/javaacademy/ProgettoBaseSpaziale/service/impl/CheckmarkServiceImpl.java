@@ -28,7 +28,7 @@ public class CheckmarkServiceImpl implements CheckmarkService {
         if (checkmark.getIdCheckmark() != null && checkmark.getIdCheckmark() > 0) {
             throw new IdMustBeNullException();
         }
-        if (checklistRepository.findById(checkmark.getChecklist().getIdChecklist()).isEmpty()) {
+        if (checkmark.getChecklist() == null || checklistRepository.findById(checkmark.getChecklist().getIdChecklist()).isEmpty()) {
             throw new ForeignKeyIdMustNotBeNullException();
         }
         return checkmarkRepository.save(checkmark);
@@ -39,7 +39,7 @@ public class CheckmarkServiceImpl implements CheckmarkService {
         if (checkmark.getIdCheckmark() == null || checkmark.getIdCheckmark() == 0) {
             throw new IdMustNotBeNullException();
         }
-        if (checklistRepository.findById(checkmark.getChecklist().getIdChecklist()).isEmpty()) {
+        if (checkmark.getChecklist() == null || checklistRepository.findById(checkmark.getChecklist().getIdChecklist()).isEmpty()) {
             throw new ForeignKeyIdMustNotBeNullException();
         }
         return checkmarkRepository.save(checkmark);

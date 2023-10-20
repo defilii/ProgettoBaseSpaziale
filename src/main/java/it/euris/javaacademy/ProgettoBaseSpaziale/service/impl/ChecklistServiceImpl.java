@@ -25,7 +25,7 @@ public class ChecklistServiceImpl implements ChecklistService {
     public Checklist insert(Checklist checklist) {
         if(checklist.getIdChecklist() != null && checklist.getIdChecklist() > 0) {
             throw new IdMustBeNullException();
-        }     if (taskRepository.findById(checklist.getTask().getIdTask()).isEmpty()) {
+        }     if (checklist.getTask() == null ||taskRepository.findById(checklist.getTask().getIdTask()).isEmpty()) {
             throw new ForeignKeyIdMustNotBeNullException();
         }
         return checklistRepository.save(checklist);
@@ -35,7 +35,7 @@ public class ChecklistServiceImpl implements ChecklistService {
     public Checklist update(Checklist checklist) {
         if(checklist.getIdChecklist() == null || checklist.getIdChecklist() == 0) {
             throw new IdMustNotBeNullException();
-        }     if (taskRepository.findById(checklist.getTask().getIdTask()).isEmpty()) {
+        }     if (checklist.getTask() == null ||taskRepository.findById(checklist.getTask().getIdTask()).isEmpty()) {
             throw new ForeignKeyIdMustNotBeNullException();
         }
         return checklistRepository.save(checklist);

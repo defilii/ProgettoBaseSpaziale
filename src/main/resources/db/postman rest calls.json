@@ -114,7 +114,7 @@
 					"response": []
 				},
 				{
-					"name": "getLowPriorityTask",
+					"name": "getLowPriorityTaskById",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -137,7 +137,29 @@
 					"response": []
 				},
 				{
-					"name": "getMediumPriorityTask",
+					"name": "getAllLowPriorityTask",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/api/tabelle/v1/low-priority-tasks",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"tabelle",
+								"v1",
+								"low-priority-tasks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getMediumPriorityTaskById",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -160,7 +182,29 @@
 					"response": []
 				},
 				{
-					"name": "getHighPriorityTask",
+					"name": "getAllMediumPriorityTask",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/api/tabelle/v1/medium-priority-tasks",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"tabelle",
+								"v1",
+								"medium-priority-tasks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getHighPriorityTaskById",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -183,12 +227,12 @@
 					"response": []
 				},
 				{
-					"name": "getDesiredPriorityTask",
+					"name": "getAllHighPriorityTask",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8081/api/tabelle/v1/high-priority-tasks/1",
+							"raw": "http://localhost:8081/api/tabelle/v1/high-priority-tasks",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -198,8 +242,52 @@
 								"api",
 								"tabelle",
 								"v1",
-								"high-priority-tasks",
+								"high-priority-tasks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getDesiredPriorityTaskById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/api/tabelle/v1/desired-priority-tasks/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"tabelle",
+								"v1",
+								"desired-priority-tasks",
 								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getAllDesiredPriorityTask",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/api/tabelle/v1/high-priority-tasks",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"tabelle",
+								"v1",
+								"high-priority-tasks"
 							]
 						}
 					},
@@ -762,6 +850,121 @@
 							],
 							"path": [
 								"checklists",
+								"delete",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "commento",
+			"item": [
+				{
+					"name": "getAll",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/commenti/getAll",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"commenti",
+								"getAll"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/commenti/getById/1",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"commenti",
+								"getById",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "insert",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"idCommento\": 0,\r\n  \"commento\": \"string\",\r\n  \"dataCommento\": \"2023-10-20T14:43\",\r\n  \"task\": {\r\n    \"idTask\": 0,\r\n    \"taskName\": \"string\",\r\n    \"priorita\": \"ALTA\",\r\n    \"descrizione\": \"string\",\r\n    \"dataScadenza\": \"2023-10-20T14:43\",\r\n    \"tabella\": {\r\n      \"id\": 0,\r\n      \"nome\": \"string\"\r\n    }\r\n  },\r\n  \"user\": {\r\n    \"idUser\": 0,\r\n    \"username\": \"string\",\r\n    \"email\": \"string\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/commenti/insert",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"commenti",
+								"insert"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"idCommento\": 0,\r\n  \"commento\": \"string\",\r\n  \"dataCommento\": \"string\",\r\n  \"task\": {\r\n    \"idTask\": 0,\r\n    \"taskName\": \"string\",\r\n    \"priorita\": \"ALTA\",\r\n    \"descrizione\": \"string\",\r\n    \"dataScadenza\": \"2023-10-20T14:44:55.305Z\",\r\n    \"tabella\": {\r\n      \"id\": 0,\r\n      \"nome\": \"string\"\r\n    }\r\n  },\r\n  \"user\": {\r\n    \"idUser\": 0,\r\n    \"username\": \"string\",\r\n    \"email\": \"string\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/commenti/update",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"commenti",
+								"update"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/commenti/delete/1",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"commenti",
 								"delete",
 								"1"
 							]

@@ -30,7 +30,7 @@ public class TaskServiceImpl implements TaskService {
         if (task.getIdTask() != null && task.getIdTask() > 0) {
             throw new IdMustBeNullException();
         }
-        if (tabellaRepository.findById(task.getTabella().getId()).isEmpty()) {
+        if (task.getTabella() == null ||tabellaRepository.findById(task.getTabella().getId()).isEmpty()) {
             throw new ForeignKeyIdMustNotBeNullException();
         }
         return taskRepository.save(task);
@@ -41,7 +41,7 @@ public class TaskServiceImpl implements TaskService {
         if (task.getIdTask() == null || task.getIdTask() == 0) {
             throw new IdMustNotBeNullException();
         }
-        if (tabellaRepository.findById(task.getTabella().getId()).isEmpty()){
+        if (task.getTabella() == null || tabellaRepository.findById(task.getTabella().getId()).isEmpty() ){
             throw new ForeignKeyIdMustNotBeNullException();
         }
         return taskRepository.save(task);

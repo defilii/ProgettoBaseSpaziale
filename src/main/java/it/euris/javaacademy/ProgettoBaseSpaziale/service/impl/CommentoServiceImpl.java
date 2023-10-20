@@ -30,10 +30,10 @@ public class CommentoServiceImpl implements CommentoService {
         if (commento.getIdCommento() != null && commento.getIdCommento() > 0) {
             throw new IdMustBeNullException();
         }
-        if (taskRepository.findById(commento.getTask().getIdTask()).isEmpty()) {
+        if (commento.getTask() == null ||taskRepository.findById(commento.getTask().getIdTask()).isEmpty()) {
             throw new ForeignKeyIdMustNotBeNullException();
         }
-        if (userRepository.findById(commento.getUser().getIdUser()).isEmpty()) {
+        if (commento.getUser() == null ||userRepository.findById(commento.getUser().getIdUser()).isEmpty()) {
             throw new ForeignKeyIdMustNotBeNullException();
         }
         return commentoRepository.save(commento);
@@ -45,10 +45,10 @@ public class CommentoServiceImpl implements CommentoService {
             throw new IdMustNotBeNullException();
         }
 
-        if (taskRepository.findById(commento.getTask().getIdTask()).isEmpty()) {
+        if (commento.getTask() == null ||taskRepository.findById(commento.getTask().getIdTask()).isEmpty()) {
             throw new ForeignKeyIdMustNotBeNullException();
         }
-        if (userRepository.findById(commento.getUser().getIdUser()).isEmpty()) {
+        if (commento.getUser() == null ||userRepository.findById(commento.getUser().getIdUser()).isEmpty()) {
             throw new ForeignKeyIdMustNotBeNullException();
         }
         return commentoRepository.save(commento);
