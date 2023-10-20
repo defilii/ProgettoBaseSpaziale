@@ -1,7 +1,6 @@
 package it.euris.javaacademy.ProgettoBaseSpaziale.entity;
 
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.TaskHasUserDTO;
-import it.euris.javaacademy.ProgettoBaseSpaziale.dto.archetype.Dto;
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.archetype.Model;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.key.TaskHasUserKey;
 import jakarta.persistence.*;

@@ -2,7 +2,6 @@ package it.euris.javaacademy.ProgettoBaseSpaziale.dto;
 
 
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.archetype.Dto;
-import it.euris.javaacademy.ProgettoBaseSpaziale.dto.archetype.Model;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Tabella;
 import lombok.*;
 

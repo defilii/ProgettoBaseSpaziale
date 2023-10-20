@@ -1,6 +1,5 @@
 package it.euris.javaacademy.ProgettoBaseSpaziale.service.impl;
 
-import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Tabella;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Task;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.ForeignKeyIdMustNotBeNullException;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.IdMustBeNullException;
@@ -12,7 +11,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor

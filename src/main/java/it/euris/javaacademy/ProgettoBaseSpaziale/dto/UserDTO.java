@@ -1,15 +1,8 @@
 package it.euris.javaacademy.ProgettoBaseSpaziale.dto;
 
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.archetype.Dto;
-import it.euris.javaacademy.ProgettoBaseSpaziale.dto.archetype.Model;
-import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Task;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.User;
-import jakarta.persistence.Column;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import lombok.*;
-
-import java.util.List;
 
 @Builder
 @Getter

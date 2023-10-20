@@ -1,14 +1,9 @@
 package it.euris.javaacademy.ProgettoBaseSpaziale.dto;
 
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.archetype.Dto;
-import it.euris.javaacademy.ProgettoBaseSpaziale.dto.archetype.Model;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Tabella;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Task;
-import it.euris.javaacademy.ProgettoBaseSpaziale.entity.enums.Priorita;
-import jakarta.persistence.*;
 import lombok.*;
-
-import java.time.LocalDateTime;
 
 import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.stringToLocalDateTime;
 import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.stringToPriorita;

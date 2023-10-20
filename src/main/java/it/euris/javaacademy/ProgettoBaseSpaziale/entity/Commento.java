@@ -1,9 +1,7 @@
 package it.euris.javaacademy.ProgettoBaseSpaziale.entity;
 
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.CommentoDTO;
-import it.euris.javaacademy.ProgettoBaseSpaziale.dto.archetype.Dto;
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.archetype.Model;
-import it.euris.javaacademy.ProgettoBaseSpaziale.entity.enums.Priorita;
 import jakarta.persistence.*;
 import lombok.*;
 

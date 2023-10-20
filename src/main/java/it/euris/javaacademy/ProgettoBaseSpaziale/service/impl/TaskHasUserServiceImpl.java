@@ -1,6 +1,5 @@
 package it.euris.javaacademy.ProgettoBaseSpaziale.service.impl;
 
-import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Task;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.TaskHasUser;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.key.TaskHasUserKey;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.IdMustBeNullException;

@@ -2,12 +2,10 @@ package it.euris.javaacademy.ProgettoBaseSpaziale.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.ChecklistDTO;
-import it.euris.javaacademy.ProgettoBaseSpaziale.dto.archetype.Dto;
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.archetype.Model;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 

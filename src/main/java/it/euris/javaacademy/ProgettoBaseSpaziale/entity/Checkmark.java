@@ -1,7 +1,6 @@
 package it.euris.javaacademy.ProgettoBaseSpaziale.entity;
 
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.CheckmarkDTO;
-import it.euris.javaacademy.ProgettoBaseSpaziale.dto.archetype.Dto;
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.archetype.Model;
 import jakarta.persistence.*;
 import lombok.*;

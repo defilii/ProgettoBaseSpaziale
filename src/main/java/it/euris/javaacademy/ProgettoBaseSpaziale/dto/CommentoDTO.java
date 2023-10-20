@@ -1,12 +1,10 @@
 package it.euris.javaacademy.ProgettoBaseSpaziale.dto;
 
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.archetype.Dto;
-import it.euris.javaacademy.ProgettoBaseSpaziale.dto.archetype.Model;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Commento;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Task;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.User;
 import lombok.*;
-
 
 import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.stringToLocalDateTime;
 @Builder
