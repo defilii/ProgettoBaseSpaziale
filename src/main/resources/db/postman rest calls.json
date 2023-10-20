@@ -1,0 +1,890 @@
+{
+	"info": {
+		"_postman_id": "72d97fdd-865e-44ad-ae9c-e5824bbfa09c",
+		"name": "Progetto base",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "29730351"
+	},
+	"item": [
+		{
+			"name": "tabelle",
+			"item": [
+				{
+					"name": "getAll",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/tabelle/get-all",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"tabelle",
+								"get-all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "insert",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": 0,\r\n  \"nome\": \"test nome tabella 3\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/tabelle/insert",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"tabelle",
+								"insert"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": 4,\r\n  \"nome\": \"nome tabella 4\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/tabelle/update",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"tabelle",
+								"update"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getById",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/tabelle/v1/tasks/1",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"tabelle",
+								"v1",
+								"tasks",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getLowPriorityTask",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/api/tabelle/v1/low-priority-tasks/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"tabelle",
+								"v1",
+								"low-priority-tasks",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getMediumPriorityTask",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/api/tabelle/v1/medium-priority-tasks/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"tabelle",
+								"v1",
+								"medium-priority-tasks",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getHighPriorityTask",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/api/tabelle/v1/high-priority-tasks/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"tabelle",
+								"v1",
+								"high-priority-tasks",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getDesiredPriorityTask",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/api/tabelle/v1/high-priority-tasks/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"tabelle",
+								"v1",
+								"high-priority-tasks",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "expire in",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "file",
+							"file": {}
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/tabelle/v1/expire-in-100000",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"tabelle",
+								"v1",
+								"expire-in-100000"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "expire in days, idtabella",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "task",
+			"item": [
+				{
+					"name": "getAll",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "getById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/tasks/getById/2",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"tasks",
+								"getById",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "insert",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"idTask\": 0,\r\n  \"taskName\": \"string\",\r\n  \"priorita\": \"ALTA\",\r\n  \"descrizione\": \"descrizione\",\r\n  \"tabella\": {\r\n    \"id\": 1,\r\n    \"nome\": \"string\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/tasks/insert",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"tasks",
+								"insert"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"idTask\": 2,\r\n  \"taskName\": \"string\",\r\n  \"priorita\": \"ALTA\",\r\n  \"descrizione\": \"descrizione\",\r\n  \"tabella\": {\r\n    \"id\": 1,\r\n    \"nome\": \"string\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/tasks/update",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"tasks",
+								"update"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/tasks/delete/35",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"tasks",
+								"delete",
+								"35"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update description",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"idTask\": 2,\r\n  \"taskName\": \"string\",\r\n  \"priorita\": \"ALTA\",\r\n  \"descrizione\": \"descrizione\",\r\n  \"tabella\": {\r\n    \"id\": 1,\r\n    \"nome\": \"string\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/tasks/update",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"tasks",
+								"update"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update date",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"idTask\": 2,\r\n  \"taskName\": \"string\",\r\n  \"priorita\": \"ALTA\",\r\n  \"descrizione\": \"descrizione\",\r\n  \"tabella\": {\r\n    \"id\": 1,\r\n    \"nome\": \"string\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/tasks/update",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"tasks",
+								"update"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getPriorita",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"idTask\": 2,\r\n  \"taskName\": \"string\",\r\n  \"priorita\": \"ALTA\",\r\n  \"descrizione\": \"descrizione\",\r\n  \"tabella\": {\r\n    \"id\": 1,\r\n    \"nome\": \"string\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/tasks/v1/priorita/2",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"tasks",
+								"v1",
+								"priorita",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getPercentage",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"idTask\": 2,\r\n  \"taskName\": \"string\",\r\n  \"priorita\": \"ALTA\",\r\n  \"descrizione\": \"descrizione\",\r\n  \"tabella\": {\r\n    \"id\": 1,\r\n    \"nome\": \"string\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/tasks/update",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"tasks",
+								"update"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getExpireDate",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"idTask\": 2,\r\n  \"taskName\": \"string\",\r\n  \"priorita\": \"ALTA\",\r\n  \"descrizione\": \"descrizione\",\r\n  \"tabella\": {\r\n    \"id\": 1,\r\n    \"nome\": \"string\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/tasks/v1/expiredate/2",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"tasks",
+								"v1",
+								"expiredate",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getMembers",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"idTask\": 2,\r\n  \"taskName\": \"string\",\r\n  \"priorita\": \"ALTA\",\r\n  \"descrizione\": \"descrizione\",\r\n  \"tabella\": {\r\n    \"id\": 1,\r\n    \"nome\": \"string\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/tasks/v1/members/2",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"tasks",
+								"v1",
+								"members",
+								"2"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "checkmark",
+			"item": [
+				{
+					"name": "getAll",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/checkmarks/getAll",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"checkmarks",
+								"getAll"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/checkmarks/getById/1",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"checkmarks",
+								"getById",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "insert",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"idCheckmark\": 0,\r\n  \"descrizione\": \"string\",\r\n  \"isItDone\": true,\r\n  \"checklist\": {\r\n    \"idChecklist\": 0,\r\n    \"nome\": \"string\",\r\n    \"task\": {\r\n      \"idTask\": 0,\r\n      \"taskName\": \"string\",\r\n      \"priorita\": \"ALTA\",\r\n      \"descrizione\": \"string\",\r\n      \"dataScadenza\": \"2023-10-20T13:09:13.752Z\",\r\n      \"tabella\": {\r\n        \"id\": 0,\r\n        \"nome\": \"string\"\r\n      }\r\n    }\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/checkmarks/insert",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"checkmarks",
+								"insert"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"idCheckmark\": 1,\r\n  \"descrizione\": \"string\",\r\n  \"isItDone\": true,\r\n  \"checklist\": {\r\n    \"idChecklist\": 1,\r\n    \"nome\": \"string\",\r\n    \"task\": {\r\n      \"idTask\": 2,\r\n      \"taskName\": \"string\",\r\n      \"priorita\": \"ALTA\",\r\n      \"descrizione\": \"string\",\r\n      \"dataScadenza\": \"2023-10-20T13:07:57.467Z\",\r\n      \"tabella\": {\r\n        \"id\": 1,\r\n        \"nome\": \"string\"\r\n      }\r\n    }\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/checkmarks/update",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"checkmarks",
+								"update"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/checkmarks/delete/1",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"checkmarks",
+								"delete",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "checklist",
+			"item": [
+				{
+					"name": "getAll",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/checklists/getAll",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"checklists",
+								"getAll"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/checklists/getById/1",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"checklists",
+								"getById",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "insert",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"idChecklist\": 0,\r\n  \"nome\": \"string\",\r\n  \"task\": {\r\n    \"idTask\": 0,\r\n    \"taskName\": \"string\",\r\n    \"priorita\": \"ALTA\",\r\n    \"descrizione\": \"string\",\r\n    \"dataScadenza\": \"2023-10-20T13:11:00.474Z\",\r\n    \"tabella\": {\r\n      \"id\": 0,\r\n      \"nome\": \"string\"\r\n    }\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/checklists/insert",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"checklists",
+								"insert"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"idChecklist\": 0,\r\n  \"nome\": \"string\",\r\n  \"task\": {\r\n    \"idTask\": 0,\r\n    \"taskName\": \"string\",\r\n    \"priorita\": \"ALTA\",\r\n    \"descrizione\": \"string\",\r\n    \"dataScadenza\": \"2023-10-20T13:11:00.474Z\",\r\n    \"tabella\": {\r\n      \"id\": 0,\r\n      \"nome\": \"string\"\r\n    }\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/checklists/update",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"checklists",
+								"update"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/checklists/delete/1",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"checklists",
+								"delete",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "user",
+			"item": [
+				{
+					"name": "getAll",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/users/getAll",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users",
+								"getAll"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/users/getById/1",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users",
+								"getById",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "insert",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"idUser\": 0,\r\n  \"username\": \"string\",\r\n  \"email\": \"string\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/users/insert",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users",
+								"insert"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"idUser\": 0,\r\n  \"username\": \"string\",\r\n  \"email\": \"string\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/users/update",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users",
+								"update"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/users/delete/1",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users",
+								"delete",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
