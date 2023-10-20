@@ -17,6 +17,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @AllArgsConstructor
@@ -93,7 +94,7 @@ public class TabellaController {
     public List<TaskDTO> getAllHighPriorityTasksByTabellaId(@PathVariable("id") Integer idTabella) {
 
         return tabellaService.findById(idTabella).getTasks().stream()
-                .filter(task -> task.getPriorita().equals(Priorita.ALTA))
+                .filter(task -> Priorita.ALTA.equals(task.getPriorita()))
                 .map(Task::toDto).toList();
     }
 
@@ -104,18 +105,18 @@ public class TabellaController {
     public List<TaskDTO> getAllMediumPriorityTasksByTabellaId(@PathVariable("id") Integer idTabella) {
 
         return tabellaService.findById(idTabella).getTasks().stream()
-                .filter(task -> task.getPriorita().equals(Priorita.MEDIA))
+                .filter(task -> Priorita.MEDIA.equals(task.getPriorita()))
                 .map(Task::toDto).toList();
     }
 
     @GetMapping("/v1/desired-priority-tasks/{id}")
     @Operation(description = """
-            This method is used to retrieve all the medium priority tasks from a table id<br>
+            This method is used to retrieve all the desired priority tasks from a table id<br>
             """)
     public List<TaskDTO> getAllDesiredPriorityTasksByTabellaId(@PathVariable("id") Integer idTabella) {
 
         return tabellaService.findById(idTabella).getTasks().stream()
-                .filter(task -> task.getPriorita().equals(Priorita.DESIDERATA))
+                .filter(task -> Priorita.DESIDERATA.equals(task.getPriorita()))
                 .map(Task::toDto).toList();
     }
 
@@ -126,7 +127,7 @@ public class TabellaController {
     public List<TaskDTO> getAllLowPriorityTasksByTabellaId(@PathVariable("id") Integer idTabella) {
 
         return tabellaService.findById(idTabella).getTasks().stream()
-                .filter(task -> task.getPriorita().equals(Priorita.BASSA))
+                .filter(task -> Priorita.BASSA.equals(task.getPriorita()))
                 .map(Task::toDto).toList();
     }
 
@@ -138,7 +139,8 @@ public class TabellaController {
     public List<TaskDTO> getAllTasksABoutToExpireIn(@PathVariable("days") Integer days) {
         return tabellaService.findAll().stream()
                 .map(Tabella::getTasks)
-                .flatMap(tasks -> tasks.stream())
+                .flatMap(Collection::stream)
+                .filter(task -> null != task.getDataScadenza())
                 .filter(task -> task.getDataScadenza().isBefore(LocalDateTime.now().plusDays(days)))
                 .map(Task::toDto).toList();
     }
@@ -147,13 +149,9 @@ public class TabellaController {
          This method is used to retrieve all the tasks about to expire from all tables from the database<br>
          """)
     public List<TaskDTO> getAllTasksABoutToExpireByIdTabella(@PathVariable("days") Integer days, @PathVariable("id") Integer idTabella) {
-        List<TaskDTO> list = new ArrayList<>();
-        for (Task task : tabellaService.findById(idTabella).getTasks()) {
-            if (task.getDataScadenza().isBefore(LocalDateTime.now().plusDays(days))) {
-                TaskDTO dto = task.toDto();
-                list.add(dto);
-            }
-        }
-        return list;
+        return tabellaService.findById(idTabella).getTasks().stream()
+                .filter(task -> null != task.getDataScadenza())
+                .filter(task -> task.getDataScadenza().isBefore(LocalDateTime.now().plusDays(days)))
+                .map(Task::toDto).toList();
     }
 }
