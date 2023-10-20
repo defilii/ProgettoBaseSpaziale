@@ -4,6 +4,7 @@ import it.euris.javaacademy.ProgettoBaseSpaziale.entity.TaskHasUser;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.key.TaskHasUserKey;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.IdMustBeNullException;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.IdMustNotBeNullException;
+import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.TabellaRepository;
 import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.TaskHasUserRepository;
 import it.euris.javaacademy.ProgettoBaseSpaziale.utils.TestUtils;
 import org.assertj.core.api.recursive.comparison.ComparingSnakeOrCamelCaseFields;
@@ -29,7 +30,8 @@ import static org.mockito.Mockito.*;
 class TaskHasUserServiceTest {
     @Mock
     TaskHasUserRepository taskHasUserRepository;
-
+    @Mock
+    TabellaRepository tabellaRepository;
     @InjectMocks
     TaskHasUserServiceImpl taskHasUserService;
 

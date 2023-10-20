@@ -2,9 +2,11 @@ package it.euris.javaacademy.ProgettoBaseSpaziale.service.impl;
 
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Checklist;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Checkmark;
+import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Task;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.IdMustBeNullException;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.IdMustNotBeNullException;
 import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.ChecklistRepository;
+import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.TaskRepository;
 import it.euris.javaacademy.ProgettoBaseSpaziale.utils.TestUtils;
 import org.assertj.core.api.recursive.comparison.ComparingSnakeOrCamelCaseFields;
 import org.junit.jupiter.api.Test;
@@ -27,6 +29,9 @@ import static org.mockito.Mockito.*;
 class ChecklistServiceTest {
     @Mock
     ChecklistRepository checklistRepository;
+
+    @Mock
+    TaskRepository taskRepository;
 
     @InjectMocks
     ChecklistServiceImpl checklistService;
@@ -51,6 +56,8 @@ class ChecklistServiceTest {
     void shoulInsertAChecklist(){
         Checklist checklist = TestUtils.getCheckList(null);
         when(checklistRepository.save(any())).thenReturn(checklist);
+        Optional<Task> optionalTask = Optional.ofNullable(TestUtils.getTask(1));
+        when(taskRepository.findById(any())).thenReturn(optionalTask);
 
         Checklist returnChecklist= checklistService.insert(checklist);
 
@@ -75,7 +82,8 @@ class ChecklistServiceTest {
     void shouldUpdateChecklist(){
         Checklist checklist = TestUtils.getCheckList(1);
         when(checklistRepository.save(any())).thenReturn(checklist);
-
+        Optional<Task> optionalTask = Optional.ofNullable(TestUtils.getTask(1));
+        when(taskRepository.findById(any())).thenReturn(optionalTask);
         Checklist returnedChecklist=checklistService.update(checklist);
         assertThat(returnedChecklist.getNome())
                 .isEqualTo(checklist.getNome());

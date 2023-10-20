@@ -1,8 +1,10 @@
 package it.euris.javaacademy.ProgettoBaseSpaziale.service.impl;
 
+import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Tabella;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Task;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.IdMustBeNullException;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.IdMustNotBeNullException;
+import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.TabellaRepository;
 import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.TaskRepository;
 import it.euris.javaacademy.ProgettoBaseSpaziale.utils.TestUtils;
 import org.assertj.core.api.recursive.comparison.ComparingSnakeOrCamelCaseFields;
@@ -29,6 +31,9 @@ class TaskServiceTest {
 
     @Mock
     TaskRepository taskRepository;
+
+    @Mock
+    TabellaRepository tabellaRepository;
 
     @InjectMocks
     TaskServiceImpl taskService;
@@ -58,7 +63,8 @@ class TaskServiceTest {
         Task task = TestUtils.getTask(null);
 
         when(taskRepository.save(any())).thenReturn(task);
-
+        Optional<Tabella> optionalTabella = Optional.ofNullable(TestUtils.getTabella(1));
+        when(tabellaRepository.findById(any())).thenReturn(optionalTabella);
         Task returnedTask = taskService.insert(task);
         assertThat(returnedTask.getTaskName())
                 .isEqualTo(task.getTaskName());
@@ -79,7 +85,8 @@ class TaskServiceTest {
         Task task = TestUtils.getTask(1);
 
         when(taskRepository.save(any())).thenReturn(task);
-
+        Optional<Tabella> optionalTabella = Optional.ofNullable(TestUtils.getTabella(1));
+        when(tabellaRepository.findById(any())).thenReturn(optionalTabella);
         Task returnedTask = taskService.update(task);
         assertThat(returnedTask.getTaskName())
                 .isEqualTo(task.getTaskName());

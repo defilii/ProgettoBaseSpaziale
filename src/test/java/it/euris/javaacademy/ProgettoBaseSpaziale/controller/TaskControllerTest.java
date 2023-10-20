@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -282,11 +283,10 @@ public class TaskControllerTest {
         when(taskService.update(any())).thenReturn(task);
         when(taskService.findById(id)).thenReturn(task);
 
-    Integer day = 1;
-    Integer month = 1;
-    Integer year = 1;
-    LocalDateTime date = LocalDateTime.of(year, month, day, 0 ,0);
-        mockMvc.perform(put("/tasks/v1/update-date/{id}-{dayOfMonth}-{month}-{year}", id, day, month, year)
+        String date = "2023:12:12:00:00";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy:MM:dd:HH:mm");
+        LocalDateTime dateTime = LocalDateTime.parse(date, formatter);
+        mockMvc.perform(put("/tasks/v1/update-date/{id}-{expireDate}", id, date)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(task.toDto())))
@@ -294,7 +294,7 @@ public class TaskControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.idTask").value(task.getIdTask()))
-                .andExpect(jsonPath("$.dataScadenza").value(date.toString()))
+                .andExpect(jsonPath("$.dataScadenza").value(dateTime.toString()))
 
         ;
     }

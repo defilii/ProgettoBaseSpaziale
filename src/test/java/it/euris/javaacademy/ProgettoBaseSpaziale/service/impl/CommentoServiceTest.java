@@ -1,9 +1,14 @@
 package it.euris.javaacademy.ProgettoBaseSpaziale.service.impl;
 
+import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Checklist;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Commento;
+import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Task;
+import it.euris.javaacademy.ProgettoBaseSpaziale.entity.User;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.IdMustBeNullException;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.IdMustNotBeNullException;
 import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.CommentoRepository;
+import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.TaskRepository;
+import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.UserRepository;
 import it.euris.javaacademy.ProgettoBaseSpaziale.utils.TestUtils;
 import org.assertj.core.api.recursive.comparison.ComparingSnakeOrCamelCaseFields;
 import org.junit.jupiter.api.Test;
@@ -28,6 +33,12 @@ import static org.mockito.Mockito.*;
 class CommentoServiceTest {
     @Mock
     CommentoRepository commentoRepository;
+
+    @Mock
+    TaskRepository taskRepository;
+
+    @Mock
+    UserRepository userRepository;
     @InjectMocks
     CommentoServiceImpl commentoService;
 
@@ -56,7 +67,10 @@ class CommentoServiceTest {
         Commento commento = TestUtils.getCommento(null);
 
         when(commentoRepository.save(any())).thenReturn(commento);
-
+        Optional<User> optionalUser = Optional.ofNullable(TestUtils.getUser(1));
+        when(userRepository.findById(any())).thenReturn(optionalUser);
+        Optional<Task> optionalTask = Optional.ofNullable(TestUtils.getTask(1));
+        when(taskRepository.findById(any())).thenReturn(optionalTask);
         Commento returnedCommetni = commentoService.insert(commento);
         assertThat(returnedCommetni.getIdCommento())
                 .isEqualTo(commento.getIdCommento());
@@ -78,7 +92,10 @@ class CommentoServiceTest {
         Commento commento = TestUtils.getCommento(1);
 
         when(commentoRepository.save(any())).thenReturn(commento);
-
+        Optional<User> optionalUser = Optional.ofNullable(TestUtils.getUser(1));
+        when(userRepository.findById(any())).thenReturn(optionalUser);
+        Optional<Task> optionalTask = Optional.ofNullable(TestUtils.getTask(1));
+        when(taskRepository.findById(any())).thenReturn(optionalTask);
         Commento returnedCommetno = commentoService.update(commento);
         assertThat(returnedCommetno.getCommento())
                 .isEqualTo(commento.getCommento());

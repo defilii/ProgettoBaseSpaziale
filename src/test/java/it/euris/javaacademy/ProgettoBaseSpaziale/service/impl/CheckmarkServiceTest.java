@@ -1,8 +1,11 @@
 package it.euris.javaacademy.ProgettoBaseSpaziale.service.impl;
 
+import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Checklist;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Checkmark;
+import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Tabella;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.IdMustBeNullException;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.IdMustNotBeNullException;
+import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.ChecklistRepository;
 import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.CheckmarkRepository;
 import it.euris.javaacademy.ProgettoBaseSpaziale.utils.TestUtils;
 import org.assertj.core.api.recursive.comparison.ComparingSnakeOrCamelCaseFields;
@@ -28,7 +31,8 @@ import static org.mockito.Mockito.*;
 class CheckmarkServiceTest {
     @Mock
     CheckmarkRepository checkmarkRepository;
-
+    @Mock
+    ChecklistRepository checklistRepository;
     @InjectMocks
     CheckmarkServiceImpl checkmarkService;
 
@@ -56,7 +60,8 @@ class CheckmarkServiceTest {
 
         Checkmark checkmark = TestUtils.getCheckmark(null);
 
-
+        Optional<Checklist> optionalChecklist = Optional.ofNullable(TestUtils.getCheckList(1));
+        when(checklistRepository.findById(any())).thenReturn(optionalChecklist);
         when(checkmarkRepository.save(any())).thenReturn(checkmark);
 
         Checkmark returnedCheckmark = checkmarkService.insert(checkmark);
@@ -83,7 +88,8 @@ class CheckmarkServiceTest {
         Checkmark checkmark = TestUtils.getCheckmark(1);
 
         when(checkmarkRepository.save(any())).thenReturn(checkmark);
-
+        Optional<Checklist> optionalChecklist = Optional.ofNullable(TestUtils.getCheckList(1));
+        when(checklistRepository.findById(any())).thenReturn(optionalChecklist);
         Checkmark returnedCheckmark = checkmarkService.update(checkmark);
         assertThat(returnedCheckmark.getDescrizione())
                 .isEqualTo(checkmark.getDescrizione());
