@@ -21,7 +21,7 @@ public class TaskHasUserController {
 
     TaskHasUserService taskHasUserService;
 
-    @GetMapping("/v1")
+    @GetMapping("/getAll")
     @Operation(description = """
       This method is used to retrieve all the task has TaskHasUsers from the database<br>
       """)
@@ -29,7 +29,7 @@ public class TaskHasUserController {
         return taskHasUserService.findAll().stream().map(TaskHasUser::toDto).toList();
     }
 
-    @GetMapping("/v1/{id-task}-{id-user}")
+    @GetMapping("/getById/{id-task}-{id-user}")
     @Operation(description = """
             This method is used to retrieve one TaskHasUser from the database<br>
             """)
@@ -37,7 +37,7 @@ public class TaskHasUserController {
         return taskHasUserService.findById(idTask,idUser).toDto();
     }
 
-    @PostMapping("/v1")
+    @PostMapping("/insert")
     @Operation(description = """
             This method is used to save one TaskHasUser in the database<br>
             """)
@@ -51,7 +51,7 @@ public class TaskHasUserController {
         }
     }
 
-    @PutMapping("/v1")
+    @PutMapping("/update")
     @Operation(description = """
             This method is used to update one TaskHasUser in the database<br>
             """)
@@ -65,7 +65,7 @@ public class TaskHasUserController {
         }
     }
 
-   @DeleteMapping("/v1/{id-task}-{id-user}")
+   @DeleteMapping("/delete/{id-task}-{id-user}")
    @Operation(description = """
            This method is used to delete one TaskHasUser from the database<br>
            """)

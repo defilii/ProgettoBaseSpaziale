@@ -20,7 +20,7 @@ public class UserController {
 
     UserService userService;
 
-    @GetMapping("/v1")
+    @GetMapping("/getALl")
     @Operation(description = """
             This method is used to retrieve all the users from the database<br>
             """)
@@ -28,7 +28,7 @@ public class UserController {
         return userService.findAll().stream().map(User::toDto).toList();
     }
 
-    @GetMapping("/v1/{id}")
+    @GetMapping("/getById/{id}")
     @Operation(description = """
             This method is used to retrieve one user from the database<br>
             """)
@@ -36,7 +36,7 @@ public class UserController {
         return userService.findById(idUser).toDto();
     }
 
-    @PostMapping("/v1")
+    @PostMapping("/insert")
     @Operation(description = """
             This method is used to save one user in the database<br>
             """)
@@ -50,7 +50,7 @@ public class UserController {
         }
     }
 
-    @PutMapping("/v1")
+    @PutMapping("/update")
     @Operation(description = """
             This method is used to update one user in the database<br>
             """)
@@ -64,7 +64,7 @@ public class UserController {
         }
     }
 
-    @DeleteMapping("/v1/{id}")
+    @DeleteMapping("/delete/{id}")
     @Operation(description = """
             This method is used to delete one user from the database<br>
             """)

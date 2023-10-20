@@ -21,7 +21,7 @@ import java.util.List;
 public class CommentoController {
     CommentoService commentoService;
 
-    @GetMapping("/v1")
+    @GetMapping("/getAll")
     @Operation(description = """
             This method is used to retrieve all the comments from the database<br>
             """)
@@ -29,7 +29,7 @@ public class CommentoController {
         return commentoService.findAll().stream().map(Commento::toDto).toList();
     }
 
-    @PostMapping("/v1")
+    @PostMapping("/insert")
     public CommentoDTO saveCommento(@RequestBody CommentoDTO commentoDTO) {
         try {
             Commento commento = commentoDTO.toModel();
@@ -40,7 +40,7 @@ public class CommentoController {
         }
     }
 
-    @PutMapping("/v1")
+    @PutMapping("/update")
     public CommentoDTO updateCommento(@RequestBody CommentoDTO commentoDTO) {
         try {
             Commento commento = commentoDTO.toModel();
@@ -51,12 +51,12 @@ public class CommentoController {
         }
     }
 
-    @DeleteMapping("/v1/{id}")
+    @DeleteMapping("/delete/{id}")
     public Boolean deleteCommento(@PathVariable("id") Integer idCommento) {
         return commentoService.deleteById(idCommento);
     }
 
-    @GetMapping("/v1/{id}")
+    @GetMapping("/getById/{id}")
     public CommentoDTO getCommentoById(@PathVariable("id") Integer idCommento) {
         return commentoService.findById(idCommento).toDto();
     }

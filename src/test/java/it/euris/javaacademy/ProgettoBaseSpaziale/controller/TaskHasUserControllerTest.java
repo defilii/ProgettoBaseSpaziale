@@ -2,7 +2,6 @@ package it.euris.javaacademy.ProgettoBaseSpaziale.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.TaskHasUser;
-import it.euris.javaacademy.ProgettoBaseSpaziale.entity.key.TaskHasUserKey;
 import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.TaskHasUserRepository;
 import it.euris.javaacademy.ProgettoBaseSpaziale.service.TaskHasUserService;
 import it.euris.javaacademy.ProgettoBaseSpaziale.utils.TestUtils;
@@ -19,7 +18,8 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 

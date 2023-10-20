@@ -2,8 +2,6 @@ package it.euris.javaacademy.ProgettoBaseSpaziale.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Checklist;
-import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Checklist;
-import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.ChecklistRepository;
 import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.ChecklistRepository;
 import it.euris.javaacademy.ProgettoBaseSpaziale.service.ChecklistService;
 import it.euris.javaacademy.ProgettoBaseSpaziale.utils.TestUtils;

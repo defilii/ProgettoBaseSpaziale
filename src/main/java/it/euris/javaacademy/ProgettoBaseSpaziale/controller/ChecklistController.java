@@ -19,7 +19,7 @@ import java.util.List;
 public class ChecklistController {
     ChecklistService checklistService;
 
-    @GetMapping("/v1")
+    @GetMapping("/getAll")
     @Operation(description = """
             This method is used to retrieve all the checklists from the database<br>
             """)
@@ -27,7 +27,7 @@ public class ChecklistController {
         return checklistService.findAll().stream().map(Checklist::toDto).toList();
     }
 
-    @PostMapping("/v1")
+    @PostMapping("/insert")
     public ChecklistDTO saveChecklist(@RequestBody ChecklistDTO checklistDTO) {
         try {
             Checklist checklist = checklistDTO.toModel();
@@ -38,7 +38,7 @@ public class ChecklistController {
         }
     }
 
-    @PutMapping("/v1")
+    @PutMapping("/update")
     public ChecklistDTO updateChecklist(@RequestBody ChecklistDTO checklistDTO) {
         try {
             Checklist checklist = checklistDTO.toModel();
@@ -49,12 +49,12 @@ public class ChecklistController {
         }
     }
 
-    @DeleteMapping("/v1/{id}")
+    @DeleteMapping("/delete/{id}")
     public Boolean deleteChecklist(@PathVariable("id") Integer idChecklist) {
         return checklistService.deleteById(idChecklist);
     }
 
-    @GetMapping("/v1/{id}")
+    @GetMapping("/getById/{id}")
     public ChecklistDTO getChecklistById(@PathVariable("id") Integer idChecklist) {
         return checklistService.findById(idChecklist).toDto();
     }
