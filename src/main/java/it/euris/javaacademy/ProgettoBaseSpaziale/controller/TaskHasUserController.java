@@ -3,7 +3,6 @@ package it.euris.javaacademy.ProgettoBaseSpaziale.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.TaskHasUserDTO;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.TaskHasUser;
-import it.euris.javaacademy.ProgettoBaseSpaziale.entity.key.TaskHasUserKey;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.IdMustBeNullException;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.IdMustNotBeNullException;
 import it.euris.javaacademy.ProgettoBaseSpaziale.service.TaskHasUserService;
