@@ -2,20 +2,17 @@ package it.euris.javaacademy.ProgettoBaseSpaziale.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.CommentoDTO;
-import it.euris.javaacademy.ProgettoBaseSpaziale.dto.CommentoDTO;
-import it.euris.javaacademy.ProgettoBaseSpaziale.dto.TabellaDTO;
-import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Checkmark;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Commento;
-import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Tabella;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.IdMustBeNullException;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.IdMustNotBeNullException;
 import it.euris.javaacademy.ProgettoBaseSpaziale.service.CommentoService;
-import it.euris.javaacademy.ProgettoBaseSpaziale.service.TabellaService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.ZoneOffset;
+import java.util.Comparator;
 import java.util.List;
 
 @AllArgsConstructor
@@ -62,5 +59,23 @@ public class CommentoController {
     @GetMapping("/v1/{id}")
     public CommentoDTO getCommentoById(@PathVariable("id") Integer idCommento) {
         return commentoService.findById(idCommento).toDto();
+    }
+
+    @GetMapping("/v1/all-comments-by-idTabella/{id}")
+    public List<CommentoDTO> getAllCommentiByTabellaId(@PathVariable("id") Integer idTabella) {
+        return commentoService.findAll().stream()
+                .filter(commento -> commento.getTask().getTabella().getId().equals(idTabella))
+                .map(Commento::toDto)
+                .toList();
+    }
+
+    @GetMapping("/v1/last-comment-by-idTabella/{id}")
+    public List<CommentoDTO> getLastCommentoByTabellaId(@PathVariable("id") Integer idTabella) {
+        return commentoService.findAll().stream()
+                .filter(commento -> commento.getTask().getTabella().getId().equals(idTabella))
+                .max(Comparator.comparing(commento -> commento.getDataCommento().toEpochSecond(ZoneOffset.ofHours(0))))
+                .stream()
+                .map(Commento::toDto)
+                .toList();
     }
 }

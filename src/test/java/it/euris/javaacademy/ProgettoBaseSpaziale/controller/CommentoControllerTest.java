@@ -2,8 +2,8 @@ package it.euris.javaacademy.ProgettoBaseSpaziale.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Commento;
+import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Tabella;
 import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.CommentoRepository;
-import it.euris.javaacademy.ProgettoBaseSpaziale.service.CommentoService;
 import it.euris.javaacademy.ProgettoBaseSpaziale.service.CommentoService;
 import it.euris.javaacademy.ProgettoBaseSpaziale.utils.TestUtils;
 import org.junit.jupiter.api.Test;
@@ -105,5 +105,41 @@ public class CommentoControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
+    }
+
+    @Test
+    void shouldGetAllCommentiByIdTabella() throws Exception {
+        Integer id = 1;
+        Commento commento = TestUtils.getCommento(1);
+        Tabella tabella = TestUtils.getTabella(id);
+
+        List<Commento> commenti = List.of(commento);
+        when(commentoService.findAll()).thenReturn(commenti);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/commenti/v1/all-comments-by-idTabella/{id}", id))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$[0].dataCommento").value(commento.getDataCommento().toString()));
+    }
+
+    @Test
+    void shouldGetLastCommentByIdTabella() throws Exception {
+        Integer id = 1;
+        Commento commento = TestUtils.getCommento(1);
+        Tabella tabella = TestUtils.getTabella(id);
+
+        List<Commento> commenti = List.of(commento);
+        when(commentoService.findAll()).thenReturn(commenti);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/commenti/v1/last-comment-by-idTabella/{id}", id))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$[0].dataCommento").value(commento.getDataCommento().toString()));
     }
 }

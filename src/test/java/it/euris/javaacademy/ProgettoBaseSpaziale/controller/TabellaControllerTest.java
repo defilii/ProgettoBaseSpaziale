@@ -16,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -51,7 +52,7 @@ public class TabellaControllerTest {
         when(tabellaService.findAll()).thenReturn(tabelle);
 
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/tabelle/v1"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/tabelle/get-all"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -66,7 +67,7 @@ public class TabellaControllerTest {
         Tabella tabella = TestUtils.getTabella(id);
         when(tabellaService.insert(any())).thenReturn(tabella);
 
-        mockMvc.perform(post("/tabelle/v1")
+        mockMvc.perform(post("/tabelle/insert")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(tabella.toDto())))
@@ -82,7 +83,7 @@ public class TabellaControllerTest {
         Tabella tabella = TestUtils.getTabella(id);
         when(tabellaService.update(any())).thenReturn(tabella);
 
-        mockMvc.perform(put("/tabelle/v1")
+        mockMvc.perform(put("/tabelle/update")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(tabella.toDto())))
@@ -101,7 +102,7 @@ public class TabellaControllerTest {
         when(tabellaService.deleteById(id)).thenReturn(true);
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .delete("/tabelle/v1/{id}", id)
+                        .delete("/tabelle/delete/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
@@ -193,21 +194,44 @@ public class TabellaControllerTest {
                 .andExpect(jsonPath("$[0].priorita").value(tabella.getTasks().get(0).getPriorita().toString()));
     }
 
-  /*  @Test
+    @Test
     void shouldGetAllTasksABoutToExpireIn() throws Exception {
         Integer id = 1;
         Integer days = 5;
-        Tabella tabella = TestUtils.getTabellaExpire(days);
+        Tabella tabella = TestUtils.getTabella(id);
+        Task task = TestUtils.getTask(id);
+        task.setDataScadenza(LocalDateTime.now().plusDays(1));
+        tabella.setTasks(List.of(task));
         List<Tabella> tabelle = List.of(tabella);
         when(tabellaService.findAll()).thenReturn(tabelle);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/tabelle/v1/expire-in-{id}", days))
+        mockMvc.perform(MockMvcRequestBuilders.get("/tabelle/v1/expire-in-{days}", days))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$").isArray())
-                .andExpect(jsonPath("$.length()").value(1))
-                .andExpect(jsonPath("$[0].dataScadenza").value(tabella.getTasks().get(0).getDataScadenza()));
-    }*/
+                .andExpect(jsonPath("$.length()").value(tabella.getTasks().size()))
+                .andExpect(jsonPath("$[0].dataScadenza").value(tabella.getTasks().get(0).getDataScadenza().toString()));
+    }
+
+    @Test
+    void shouldGetAllTasksABoutToExpireByIdTabella() throws Exception {
+        Integer id = 1;
+        Integer days = 5;
+        Tabella tabella = TestUtils.getTabella(id);
+        Task task = TestUtils.getTask(id);
+        task.setDataScadenza(LocalDateTime.now().plusDays(1));
+        tabella.setTasks(List.of(task));
+
+        when(tabellaService.findById(id)).thenReturn(tabella);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/tabelle/v1/expire-in-{days}/{id}", days, id))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$.length()").value(tabella.getTasks().size()))
+                .andExpect(jsonPath("$[0].dataScadenza").value(tabella.getTasks().get(0).getDataScadenza().toString()));
+    }
 
 }

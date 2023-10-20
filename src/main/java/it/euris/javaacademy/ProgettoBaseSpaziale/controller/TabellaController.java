@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
@@ -25,7 +26,7 @@ import java.util.List;
 public class TabellaController {
     TabellaService tabellaService;
 
-    @GetMapping("/v1")
+    @GetMapping("/get-all")
     @Operation(description = """
             This method is used to retrieve all the tables from the database<br>
             """)
@@ -33,7 +34,7 @@ public class TabellaController {
         return tabellaService.findAll().stream().map(Tabella::toDto).toList();
     }
 
-    @PostMapping("/v1")
+    @PostMapping("/insert")
     @Operation(description = """
             This method is used to insert a table to the database<br>
             """)
@@ -47,7 +48,7 @@ public class TabellaController {
         }
     }
 
-    @PutMapping("/v1")
+    @PutMapping("/update")
     @Operation(description = """
             This method is used to update a table from the database<br>
             """)
@@ -61,7 +62,7 @@ public class TabellaController {
         }
     }
 
-    @DeleteMapping("/v1/{id}")
+    @DeleteMapping("/delete/{id}")
     @Operation(description = """
             This method is used to delete a table by id from the database<br>
             """)
@@ -69,7 +70,7 @@ public class TabellaController {
         return tabellaService.deleteById(idTabella);
     }
 
-    @GetMapping("/v1/{id}")
+    @GetMapping("/get-by-id/{id}")
     @Operation(description = """
             This method is used to get a table by id from the database<br>
             """)
@@ -130,16 +131,29 @@ public class TabellaController {
     }
 
 
-/*    @GetMapping("/v1/expire-in-{id}")
+    @GetMapping("/v1/expire-in-{days}")
     @Operation(description = """
          This method is used to retrieve all the tasks about to expire from all tables from the database<br>
          """)
-    public List<TaskDTO> getAllTasksABoutToExpireIn(@PathVariable("id") Integer days) {
+    public List<TaskDTO> getAllTasksABoutToExpireIn(@PathVariable("days") Integer days) {
         return tabellaService.findAll().stream()
                 .map(Tabella::getTasks)
                 .flatMap(tasks -> tasks.stream())
-                .filter(task -> task.getDataScadenza().isAfter(LocalDateTime.now().minusDays(days)))
+                .filter(task -> task.getDataScadenza().isBefore(LocalDateTime.now().plusDays(days)))
                 .map(Task::toDto).toList();
-    }*/
-
+    }
+    @GetMapping("/v1/expire-in-{days}/{id}")
+    @Operation(description = """
+         This method is used to retrieve all the tasks about to expire from all tables from the database<br>
+         """)
+    public List<TaskDTO> getAllTasksABoutToExpireByIdTabella(@PathVariable("days") Integer days, @PathVariable("id") Integer idTabella) {
+        List<TaskDTO> list = new ArrayList<>();
+        for (Task task : tabellaService.findById(idTabella).getTasks()) {
+            if (task.getDataScadenza().isBefore(LocalDateTime.now().plusDays(days))) {
+                TaskDTO dto = task.toDto();
+                list.add(dto);
+            }
+        }
+        return list;
+    }
 }

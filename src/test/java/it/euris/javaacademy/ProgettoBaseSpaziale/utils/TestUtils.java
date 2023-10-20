@@ -7,8 +7,6 @@ import it.euris.javaacademy.ProgettoBaseSpaziale.entity.key.TaskHasUserKey;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.*;
-
 public class TestUtils {
 
     public static Task getTask(Integer id) {
@@ -17,7 +15,7 @@ public class TestUtils {
                 .taskName("Test name")
                 .priorita(Priorita.ALTA)
                 .descrizione("Test descrizione")
-                .dataScadenza(LocalDateTime.now().minusDays(3))
+                .dataScadenza(LocalDateTime.now().plusDays(3))
                 .tabella(getTabella(id))
                 .build();
     }
@@ -125,7 +123,7 @@ public class TestUtils {
         return Tabella.builder()
                 .id(1)
                 .tasks(List.of(Task.builder().idTask(1).priorita(Priorita.BASSA)
-                        .dataScadenza(LocalDateTime.now().minusDays(days)).build()))
+                        .dataScadenza(LocalDateTime.now().plusDays(1)).build()))
                 .nome("Test nome")
                 .build();
     }
