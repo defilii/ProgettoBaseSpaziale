@@ -131,6 +131,61 @@ public class TabellaController {
                 .map(Task::toDto).toList();
     }
 
+    @GetMapping("/v1/high-priority-tasks")
+    @Operation(description = """
+            This method is used to retrieve all the high priority tasks from the database <br>
+            """)
+    public List<TaskDTO> getAllHighPriorityTasks() {
+
+        return tabellaService.findAll().
+                stream()
+                .map(tabella -> tabella.getTasks())
+                .flatMap(Collection::stream)
+                .filter(task -> Priorita.ALTA.equals(task.getPriorita()))
+                .map(Task::toDto).toList();
+    }
+
+    @GetMapping("/v1/medium-priority-tasks")
+    @Operation(description = """
+            This method is used to retrieve all the medium priority tasks from the database <br>
+            """)
+    public List<TaskDTO> getAllMediumPriorityTasks() {
+
+        return tabellaService.findAll().
+                stream()
+                .map(tabella -> tabella.getTasks())
+                .flatMap(Collection::stream)
+                .filter(task -> Priorita.MEDIA.equals(task.getPriorita()))
+                .map(Task::toDto).toList();
+    }
+
+    @GetMapping("/v1/desired-priority-tasks")
+    @Operation(description = """
+            This method is used to retrieve all the desired priority tasks from the database <br>
+            """)
+    public List<TaskDTO> getAllDesiredPriorityTasks() {
+
+        return tabellaService.findAll().
+                stream()
+                .map(tabella -> tabella.getTasks())
+                .flatMap(Collection::stream)
+                .filter(task -> Priorita.DESIDERATA.equals(task.getPriorita()))
+                .map(Task::toDto).toList();
+    }
+
+    @GetMapping("/v1/low-priority-tasks")
+    @Operation(description = """
+            This method is used to retrieve all the low  priority tasks from the database <br>
+            """)
+    public List<TaskDTO> getAllLowPriorityTasks() {
+
+        return tabellaService.findAll().
+                stream()
+                .map(tabella -> tabella.getTasks())
+                .flatMap(Collection::stream)
+                .filter(task -> Priorita.BASSA.equals(task.getPriorita()))
+                .map(Task::toDto).toList();
+    }
 
     @GetMapping("/v1/expire-in-{days}")
     @Operation(description = """
