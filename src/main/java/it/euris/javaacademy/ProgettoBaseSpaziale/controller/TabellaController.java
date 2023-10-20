@@ -16,8 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 @AllArgsConstructor
@@ -87,7 +85,7 @@ public class TabellaController {
         return tabellaService.findById(idTabella).getTasks().stream().map(Task::toDto).toList();
     }
 
-   @GetMapping("/v1/high-priority-tasks/{id}")
+    @GetMapping("/v1/high-priority-tasks/{id}")
     @Operation(description = """
             This method is used to retrieve all the high priority tasks from a table id<br>
             """)
@@ -134,20 +132,21 @@ public class TabellaController {
 
     @GetMapping("/v1/expire-in-{days}")
     @Operation(description = """
-         This method is used to retrieve all the tasks about to expire from all tables from the database<br>
-         """)
+            This method is used to retrieve all the tasks about to expire from all tables from the database<br>
+            """)
     public List<TaskDTO> getAllTasksABoutToExpireIn(@PathVariable("days") Integer days) {
         return tabellaService.findAll().stream()
                 .map(Tabella::getTasks)
-                .flatMap(Collection::stream)
+                .flatMap(java.util.Collection::stream)
                 .filter(task -> null != task.getDataScadenza())
                 .filter(task -> task.getDataScadenza().isBefore(LocalDateTime.now().plusDays(days)))
                 .map(Task::toDto).toList();
     }
+
     @GetMapping("/v1/expire-in-{days}/{id}")
     @Operation(description = """
-         This method is used to retrieve all the tasks about to expire from all tables from the database<br>
-         """)
+            This method is used to retrieve all the tasks about to expire from all tables from the database<br>
+            """)
     public List<TaskDTO> getAllTasksABoutToExpireByIdTabella(@PathVariable("days") Integer days, @PathVariable("id") Integer idTabella) {
         return tabellaService.findById(idTabella).getTasks().stream()
                 .filter(task -> null != task.getDataScadenza())
