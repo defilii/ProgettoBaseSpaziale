@@ -3,10 +3,12 @@ package it.euris.javaacademy.ProgettoBaseSpaziale.service.impl;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Checklist;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Checklist;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Checkmark;
+import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.ForeignKeyIdMustNotBeNullException;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.IdMustBeNullException;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.IdMustNotBeNullException;
 import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.ChecklistRepository;
 import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.ChecklistRepository;
+import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.TaskRepository;
 import it.euris.javaacademy.ProgettoBaseSpaziale.service.ChecklistService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,24 +19,29 @@ import java.util.List;
 public class ChecklistServiceImpl implements ChecklistService {
 
     ChecklistRepository checklistRepository;
+    TaskRepository taskRepository;
     @Override
     public List<Checklist> findAll() {
         return checklistRepository.findAll();
     }
     @Override
-    public Checklist insert(Checklist Checklist) {
-        if(Checklist.getIdChecklist() != null && Checklist.getIdChecklist() > 0) {
+    public Checklist insert(Checklist checklist) {
+        if(checklist.getIdChecklist() != null && checklist.getIdChecklist() > 0) {
             throw new IdMustBeNullException();
+        }     if (taskRepository.findById(checklist.getTask().getIdTask()).isEmpty()) {
+            throw new ForeignKeyIdMustNotBeNullException();
         }
-        return checklistRepository.save(Checklist);
+        return checklistRepository.save(checklist);
     }
 
     @Override
-    public Checklist update(Checklist Checklist) {
-        if(Checklist.getIdChecklist() == null || Checklist.getIdChecklist() == 0) {
+    public Checklist update(Checklist checklist) {
+        if(checklist.getIdChecklist() == null || checklist.getIdChecklist() == 0) {
             throw new IdMustNotBeNullException();
+        }     if (taskRepository.findById(checklist.getTask().getIdTask()).isEmpty()) {
+            throw new ForeignKeyIdMustNotBeNullException();
         }
-        return checklistRepository.save(Checklist);
+        return checklistRepository.save(checklist);
     }
 
     @Override

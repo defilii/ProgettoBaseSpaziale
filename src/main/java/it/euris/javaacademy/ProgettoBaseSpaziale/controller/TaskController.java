@@ -2,10 +2,10 @@ package it.euris.javaacademy.ProgettoBaseSpaziale.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.TaskDTO;
-import it.euris.javaacademy.ProgettoBaseSpaziale.dto.TaskDTO;
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.UserDTO;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.*;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Task;
+import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.ForeignKeyIdMustNotBeNullException;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.IdMustBeNullException;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.IdMustNotBeNullException;
 import it.euris.javaacademy.ProgettoBaseSpaziale.service.TaskService;
@@ -27,8 +27,8 @@ public class TaskController {
 
     @GetMapping("/getAll")
     @Operation(description = """
-      This method is used to retrieve all the tasks from the database<br>
-      """)
+            This method is used to retrieve all the tasks from the database<br>
+            """)
     public List<TaskDTO> getAllTasks() {
         return taskService.findAll().stream().map(Task::toDto).toList();
     }
@@ -75,7 +75,7 @@ public class TaskController {
     @Operation(description = """
             This method is used to retrieve the members assigned to a task from the database<br>
             """)
-    public String  getPercentageOfCompletedCheckmarks(@PathVariable("id") Integer idTask) {
+    public String getPercentageOfCompletedCheckmarks(@PathVariable("id") Integer idTask) {
         List<Checkmark> checkmarksList = taskService.findById(idTask).
                 getChecklist()
                 .stream()
@@ -88,7 +88,7 @@ public class TaskController {
         Float total = (float) checkmarksList.size();
         Float percent = (100 * trueCheckmark) / total;
         return percent.isNaN() ? "No checklist to calculate percentage" :
-                String.format("%.0f%%",percent);
+                String.format("%.0f%%", percent);
     }
 
 
@@ -103,6 +103,9 @@ public class TaskController {
         } catch (IdMustBeNullException e) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, e.getMessage());
+        } catch (ForeignKeyIdMustNotBeNullException e) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 
@@ -115,6 +118,9 @@ public class TaskController {
             Task task = taskDTO.toModel();
             return taskService.update(task).toDto();
         } catch (IdMustNotBeNullException e) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, e.getMessage());
+        } catch (ForeignKeyIdMustNotBeNullException e) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, e.getMessage());
         }
@@ -135,19 +141,38 @@ public class TaskController {
         }
     }
 
-    @PutMapping("/v1/update-date/{id}-{dayOfMonth}-{month}-{year}")
+//    @PutMapping("/v1/update-date/{id}-{dayOfMonth}-{month}-{year}")
+//    @Operation(description = """
+//             This method is used to update the expire date of a task from the id<br>
+//            """)
+//    public TaskDTO updateExpireDateById(@PathVariable("id") Integer idTask
+//            , @PathVariable("dayOfMonth") Integer dayOfMonth
+//            , @PathVariable("month") Integer month
+//            , @PathVariable("year") Integer year
+//    ) {
+//        try {
+//            LocalDateTime date = LocalDateTime.of(year, month, dayOfMonth, 0, 0);
+//            Task task = taskService.findById(idTask);
+//            task.setDataScadenza(date);
+//            return taskService.update(task).toDto();
+//        } catch (IdMustNotBeNullException e) {
+//            throw new ResponseStatusException(
+//                    HttpStatus.BAD_REQUEST, e.getMessage());
+//        }
+//    }
+
+    @PutMapping("/v1/update-date/{id}-{expireDate}")
     @Operation(description = """
              This method is used to update the expire date of a task from the id<br>
             """)
-    public TaskDTO updateExpireDateById(@PathVariable("id") Integer idTask
-            , @PathVariable("dayOfMonth") Integer dayOfMonth
-            , @PathVariable("month") Integer month
-            , @PathVariable("year") Integer year
+    public TaskDTO updateExpireDateByIdandSingleLocalDateTime(@PathVariable("id") Integer idTask
+            , @PathVariable("expireDate") String expireDate
     ) {
         try {
-            LocalDateTime date = LocalDateTime.of(year, month, dayOfMonth, 0, 0);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy:MM:dd:HH:mm");
+            LocalDateTime dateTime = LocalDateTime.parse(expireDate, formatter);
             Task task = taskService.findById(idTask);
-            task.setDataScadenza(date);
+            task.setDataScadenza(dateTime);
             return taskService.update(task).toDto();
         } catch (IdMustNotBeNullException e) {
             throw new ResponseStatusException(
