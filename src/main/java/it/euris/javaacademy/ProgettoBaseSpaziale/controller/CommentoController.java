@@ -93,7 +93,7 @@ public class CommentoController {
     @Operation(description = """
             This method is used to add a new comment to the database<br>
             """)
-    public CommentoDTO addNewCommenti( @PathVariable("id-Task") Integer idTask, @PathVariable("id-user") Integer idUser, @RequestBody CommentoDTO commentoDTO) {
+    public CommentoDTO addNewCommenti(@PathVariable("id-task") Integer idTask, @PathVariable("id-user") Integer idUser, @RequestBody CommentoDTO commentoDTO) {
 
         Commento commento = commentoDTO.toModel();
         commento.setTask(taskService.findById(idTask));

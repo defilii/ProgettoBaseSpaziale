@@ -8,9 +8,11 @@ import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Tabella;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Task;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.User;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.ForeignKeyIdMustNotBeNullException;
+import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.IdAndForeignKeyMustNotBeNullException;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.IdMustBeNullException;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.IdMustNotBeNullException;
 import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.TabellaRepository;
+import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.TaskRepository;
 import it.euris.javaacademy.ProgettoBaseSpaziale.service.TabellaService;
 import it.euris.javaacademy.ProgettoBaseSpaziale.service.TaskService;
 import lombok.AllArgsConstructor;
@@ -30,6 +32,7 @@ public class TaskController {
     TaskService taskService;
     TabellaService tabellaService;
     private final TabellaRepository tabellaRepository;
+    private final TaskRepository taskRepository;
 
     @GetMapping("/getAll")
     @Operation(description = """
@@ -176,15 +179,37 @@ public class TaskController {
     }
 
 
-  /*  @PutMapping("v1/move-task/{id-task}-{id-tabella-destinazione}")
+    @PutMapping("v1/move-task/{id-task}-{id-tabella-destinazione}")
     @Operation(description = """
              This method is used to moeve a task from a tabella to other tabella
             """)
     public TaskDTO moveTaskFromTabellaToOtherTabella(@PathVariable("id-task") Integer idTask, @PathVariable("id-tabella-destinazione") Integer idTabellaDestinazione) {
+        try {
+            Integer idTabellaOrigine = taskService.findById(idTask).getTabella().getId();
+            Tabella tabellaOrigine = tabellaService.findById(idTabellaOrigine);
+            Tabella tabellaDestinazione = tabellaService.findById(idTabellaDestinazione);
 
-        Task task = taskService.findById(idTask);
-        task.getTabella().getId();
-        return  taskService.update(task.getTabella().setId(idTabellaDestinazione)).toDto();
+            Task task = taskService.findById(idTask);
+                Task newTask = Task.builder()
+                        .idTask(idTask)
+                        .tabella(tabellaDestinazione)
+                        .taskName(task.getTaskName())
+                        .priorita(task.getPriorita())
+                        .descrizione(task.getDescrizione())
+                        .dataScadenza(task.getDataScadenza())
+                        .build();
 
-    }*/
+                tabellaOrigine.getTasks().remove(task);
+
+                tabellaService.update(tabellaOrigine);
+                tabellaService.update(tabellaDestinazione);
+                return taskService.update(newTask).toDto();
+
+
+        } catch (IdAndForeignKeyMustNotBeNullException e) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+    }
+
 }

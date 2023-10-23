@@ -6,6 +6,8 @@ import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Task;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.User;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.stringToLocalDateTime;
 @Builder
 @Getter
@@ -25,7 +27,9 @@ public class CommentoDTO implements Dto {
         return Commento.builder()
                 .idCommento(idCommento)
                 .commento(commento)
-                .dataCommento(stringToLocalDateTime(dataCommento))
+                .dataCommento(dataCommento== null ? stringToLocalDateTime(dataCommento= LocalDateTime.now()
+                        .toString()):stringToLocalDateTime(dataCommento))
+
                 .task(task)
                 .user(user)
                 .build();
