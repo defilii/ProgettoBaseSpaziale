@@ -5,6 +5,10 @@ import it.euris.javaacademy.ProgettoBaseSpaziale.dto.archetype.Model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
+import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.localDateTimeToString;
+
 
 @Builder
 @Getter
@@ -31,6 +35,12 @@ public class Checkmark implements Model {
     @JoinColumn(name = "id_checklist", nullable = false)
     private Checklist checklist;
 
+    @Column(name = "last_update", nullable=false)
+    @Builder.Default
+    private LocalDateTime lastUpdate = LocalDateTime.now();
+
+    @Column(name = "trello_id")
+    private String trelloId;
     @Override
     public CheckmarkDTO toDto() {
         return CheckmarkDTO.builder()
@@ -38,6 +48,7 @@ public class Checkmark implements Model {
                 .descrizione(descrizione)
                 .isItDone(isItDone)
                 .checklist(checklist)
+                .lastUpdate(localDateTimeToString(lastUpdate))
                 .build();
     }
 }

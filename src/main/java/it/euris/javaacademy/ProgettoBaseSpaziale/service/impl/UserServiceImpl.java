@@ -20,11 +20,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User insert(User User) {
-        if(User.getIdUser() != null && User.getIdUser() > 0) {
+    public User insert(User user) {
+        if(user.getIdUser() != null && user.getIdUser() > 0) {
             throw new IdMustBeNullException();
         }
-        return userRepository.save(User);
+        return userRepository.save(user);
     }
 
     @Override

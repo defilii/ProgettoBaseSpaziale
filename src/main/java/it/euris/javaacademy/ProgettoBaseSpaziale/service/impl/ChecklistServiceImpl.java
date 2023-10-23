@@ -10,6 +10,7 @@ import it.euris.javaacademy.ProgettoBaseSpaziale.service.ChecklistService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 @Service
 @AllArgsConstructor
@@ -28,6 +29,7 @@ public class ChecklistServiceImpl implements ChecklistService {
         }     if (checklist.getTask() == null ||taskRepository.findById(checklist.getTask().getIdTask()).isEmpty()) {
             throw new ForeignKeyIdMustNotBeNullException();
         }
+        checklist.setLastUpdate(LocalDateTime.now());
         return checklistRepository.save(checklist);
     }
 
@@ -38,6 +40,7 @@ public class ChecklistServiceImpl implements ChecklistService {
         }     if (checklist.getTask() == null ||taskRepository.findById(checklist.getTask().getIdTask()).isEmpty()) {
             throw new ForeignKeyIdMustNotBeNullException();
         }
+        checklist.setLastUpdate(LocalDateTime.now());
         return checklistRepository.save(checklist);
     }
 

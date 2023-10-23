@@ -8,6 +8,7 @@ import it.euris.javaacademy.ProgettoBaseSpaziale.service.TabellaService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 @Service
 @AllArgsConstructor
@@ -23,6 +24,7 @@ public class TabellaServiceImpl implements TabellaService {
         if(tabella.getId() != null && tabella.getId() > 0) {
             throw new IdMustBeNullException();
         }
+        tabella.setLastUpdate(LocalDateTime.now());
         return tabellaRepository.save(tabella);
     }
 
@@ -31,6 +33,7 @@ public class TabellaServiceImpl implements TabellaService {
         if(tabella.getId() == null || tabella.getId() == 0) {
             throw new IdMustNotBeNullException();
         }
+        tabella.setLastUpdate(LocalDateTime.now());
         return tabellaRepository.save(tabella);
     }
 

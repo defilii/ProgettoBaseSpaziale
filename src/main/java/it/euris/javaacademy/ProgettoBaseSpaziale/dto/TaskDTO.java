@@ -5,6 +5,8 @@ import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Tabella;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Task;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.stringToLocalDateTime;
 import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.stringToPriorita;
 
@@ -26,7 +28,7 @@ public class TaskDTO implements Dto {
     private String dataScadenza;
 
     private Tabella tabella;
-
+    private String lastUpdate;
     @Override
     public Task toModel() {
         return Task.builder()
@@ -36,6 +38,7 @@ public class TaskDTO implements Dto {
                 .priorita(stringToPriorita(priorita))
                 .descrizione(descrizione)
                 .dataScadenza(stringToLocalDateTime(dataScadenza))
+                .lastUpdate(stringToLocalDateTime(lastUpdate))
                 .build();
     }
 }

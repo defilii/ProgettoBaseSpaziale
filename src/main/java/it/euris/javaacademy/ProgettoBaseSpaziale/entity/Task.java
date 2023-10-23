@@ -60,6 +60,12 @@ public class Task implements Model {
     @Builder.Default
     private List<Checklist> checklist = new ArrayList<>();
 
+    @Column(name = "last_update", nullable=false)
+    @Builder.Default
+    private LocalDateTime lastUpdate = LocalDateTime.now();
+
+    @Column(name = "trello_id")
+    private String trelloId;
     @Override
     public TaskDTO toDto() {
         return TaskDTO.builder()
@@ -69,6 +75,7 @@ public class Task implements Model {
                 .priorita(prioritaToString(priorita))
                 .descrizione(descrizione)
                 .dataScadenza(localDateTimeToString(dataScadenza))
+                .lastUpdate(localDateTimeToString(lastUpdate))
                 .build();
     }
 }

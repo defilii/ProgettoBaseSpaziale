@@ -5,6 +5,10 @@ import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Checklist;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Checkmark;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
+import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.stringToLocalDateTime;
+
 @Builder
 @Getter
 @Setter
@@ -19,7 +23,7 @@ public class CheckmarkDTO implements Dto {
     private Boolean isItDone;
 
     private Checklist checklist;
-
+    private String lastUpdate;
     @Override
     public Checkmark toModel() {
         return Checkmark.builder()
@@ -27,6 +31,7 @@ public class CheckmarkDTO implements Dto {
                 .descrizione(descrizione)
                 .isItDone(isItDone)
                 .checklist(checklist)
+                .lastUpdate(stringToLocalDateTime(lastUpdate))
                 .build();
     }
 }

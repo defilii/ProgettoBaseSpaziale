@@ -26,6 +26,9 @@ public class User implements Model {
     @Column(name = "username", nullable = false)
     private String username;
 
+    @Column(name = "trello_id")
+    private String trelloId;
+
     @Column(name = "email", nullable = false)
     private String email;
 

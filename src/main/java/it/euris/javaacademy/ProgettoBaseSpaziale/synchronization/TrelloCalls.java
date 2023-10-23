@@ -1,7 +1,9 @@
 package it.euris.javaacademy.ProgettoBaseSpaziale.synchronization;
 
+import ch.qos.logback.core.testUtil.FileTestUtil;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import io.swagger.v3.core.util.Json;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Tabella;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Task;
 import it.euris.javaacademy.ProgettoBaseSpaziale.service.ApiKeyService;
@@ -12,6 +14,13 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Reader;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -29,14 +38,15 @@ public class TrelloCalls {
     public void trelloGetCardsOnABoard() {
         String boardId = "652d5727a3301d21fa288a27";
 
-        HttpResponse<String> response = Unirest.get("https://api.trello.com/1/boards/" +
+        HttpResponse<JsonNode> response = Unirest.get("https://api.trello.com/1/boards/" +
                         boardId +
                         "/cards")
                 .queryString("key", key)
                 .queryString("token", token)
-                .asString();
+                .asJson();
 
-        System.out.println(response.getBody());
+
+        System.out.println(response.getBody().toPrettyString());
     }
 
     public void postNewCard() {
@@ -49,6 +59,8 @@ public class TrelloCalls {
                 .field("name", "card inserita tramite unirest")
                 .field("desc", "test descrizione")
                 .asJson();
+
+
 
         System.out.println(response.getBody());
     }
