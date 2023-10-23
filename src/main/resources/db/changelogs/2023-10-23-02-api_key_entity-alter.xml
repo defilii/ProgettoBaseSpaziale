@@ -7,6 +7,12 @@
         objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
 
     <changeSet id="2023-10-23-01-api_key_entity-alter" author="De Filippi Ale">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="api_key" columnName="apikey" />
+            </not>
+        </preConditions>
+
         <comment>api_key altered, key is a mysql keyword and cannot be used</comment>
 
         <renameColumn  columnDataType="VARCHAR(255)"
