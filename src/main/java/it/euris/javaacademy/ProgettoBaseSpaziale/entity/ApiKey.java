@@ -19,7 +19,7 @@ public class ApiKey {
     @Column(name = "id")
     private Integer idApikey;
 
-    @Column(name = "key", nullable = false)
+    @Column(name = "apikey", nullable = false)
     private String key;
 
     @Column(name = "token", nullable=false)
