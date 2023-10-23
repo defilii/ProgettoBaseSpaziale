@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 
 @AllArgsConstructor
@@ -192,7 +193,7 @@ public class TabellaController {
     public List<TaskDTO> getAllTasksABoutToExpireIn(@PathVariable("days") Integer days) {
         return tabellaService.findAll().stream()
                 .map(Tabella::getTasks)
-                .flatMap(java.util.Collection::stream)
+                .flatMap(Collection::stream)
                 .filter(task -> null != task.getDataScadenza())
                 .filter(task -> task.getDataScadenza().isBefore(LocalDateTime.now().plusDays(days)))
                 .map(Task::toDto).toList();
