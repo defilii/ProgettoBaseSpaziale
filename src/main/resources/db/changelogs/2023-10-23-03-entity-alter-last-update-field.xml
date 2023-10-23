@@ -7,13 +7,34 @@
         objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
 
     <changeSet id="2023-10-23-01-api_key_entity-alter" author="De Filippi Ale">
-        <comment>api_key altered, key is a mysql keyword and cannot be used</comment>
+        <comment>altering database tables so that they have a last update field, to retrive the last change and synchronize with trello later</comment>
 
-        <renameColumn  columnDataType="VARCHAR(255)"
-                       newColumnName="apikey"
-                       oldColumnName="key"
-                       remarks="cant use key as column name"
-                       tableName="api_key"/>
+        <addColumn tableName="task">
+            <column name="last_update" type="datetime" defaultValueDate="NOW(1)">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+
+        <addColumn tableName="tabella">
+            <column name="last_update" type="datetime" defaultValueDate="NOW(1)">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+
+        <addColumn tableName="checklist">
+            <column name="last_update" type="datetime" defaultValueDate="NOW(1)">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+
+        <addColumn tableName="checkmark">
+            <column name="last_update" type="datetime" defaultValueDate="NOW(1)">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+
+<!--        TODO add last_update field to task, tabella, checklist and checkmark-->
+
     </changeSet>
 
 </databaseChangeLog>
