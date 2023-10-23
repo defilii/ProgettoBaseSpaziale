@@ -4,11 +4,14 @@ import io.swagger.v3.oas.annotations.Operation;
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.TaskDTO;
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.UserDTO;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Checkmark;
+import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Tabella;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Task;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.User;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.ForeignKeyIdMustNotBeNullException;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.IdMustBeNullException;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.IdMustNotBeNullException;
+import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.TabellaRepository;
+import it.euris.javaacademy.ProgettoBaseSpaziale.service.TabellaService;
 import it.euris.javaacademy.ProgettoBaseSpaziale.service.TaskService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -25,6 +28,8 @@ import java.util.stream.Collectors;
 @RequestMapping("/tasks")
 public class TaskController {
     TaskService taskService;
+    TabellaService tabellaService;
+    private final TabellaRepository tabellaRepository;
 
     @GetMapping("/getAll")
     @Operation(description = """
@@ -169,4 +174,17 @@ public class TaskController {
     public Boolean deleteTask(@PathVariable("id") Integer idTask) {
         return taskService.deleteById(idTask);
     }
+
+
+  /*  @PutMapping("v1/move-task/{id-task}-{id-tabella-destinazione}")
+    @Operation(description = """
+             This method is used to moeve a task from a tabella to other tabella
+            """)
+    public TaskDTO moveTaskFromTabellaToOtherTabella(@PathVariable("id-task") Integer idTask, @PathVariable("id-tabella-destinazione") Integer idTabellaDestinazione) {
+
+        Task task = taskService.findById(idTask);
+        task.getTabella().getId();
+        return  taskService.update(task.getTabella().setId(idTabellaDestinazione)).toDto();
+
+    }*/
 }

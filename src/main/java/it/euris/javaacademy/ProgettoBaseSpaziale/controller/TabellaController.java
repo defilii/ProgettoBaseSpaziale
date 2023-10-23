@@ -8,6 +8,7 @@ import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Task;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.enums.Priorita;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.IdMustBeNullException;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.IdMustNotBeNullException;
+import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.TaskRepository;
 import it.euris.javaacademy.ProgettoBaseSpaziale.service.TabellaService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,6 +26,7 @@ import java.util.List;
 @RequestMapping("/tabelle")
 public class TabellaController {
     TabellaService tabellaService;
+    private final TaskRepository taskRepository;
 
     @GetMapping("/get-all")
     @Operation(description = """
@@ -209,4 +211,5 @@ public class TabellaController {
                 .filter(task -> task.getDataScadenza().isBefore(LocalDateTime.now().plusDays(days)))
                 .map(Task::toDto).toList();
     }
+
 }
