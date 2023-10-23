@@ -1,12 +1,10 @@
 package it.euris.javaacademy.ProgettoBaseSpaziale.synchronization;
 
-import ch.qos.logback.core.testUtil.FileTestUtil;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import io.swagger.v3.core.util.Json;
-import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Tabella;
-import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Task;
 import it.euris.javaacademy.ProgettoBaseSpaziale.service.ApiKeyService;
+import it.euris.javaacademy.ProgettoBaseSpaziale.trello.Card;
+import it.euris.javaacademy.ProgettoBaseSpaziale.trello.ListTrello;
 import kong.unirest.core.HttpResponse;
 import kong.unirest.core.JsonNode;
 import kong.unirest.core.Unirest;
@@ -15,12 +13,11 @@ import lombok.NoArgsConstructor;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Reader;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.util.List;
+
+import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.GsonUtils.getList;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -33,8 +30,28 @@ public class TrelloCalls {
     Gson gson = new Gson();
     String key = "656d5bde047c3ac9c66eae4c33aa9230";
     String token = "ATTA27702686ff9d2e286aadb299d53c874f655dc93f653cb20c42ea2f2be5eb111399494FE0";
-//    String key = apiKeyService.findMostRecent().getKey();
-//    String token = apiKeyService.findMostRecent().getToken();
+    String idList = "652d5727a3301d21fa288a28";
+
+//    ExclusionStrategy strategy = new ExclusionStrategy() {
+//        @Override
+//        public boolean shouldSkipField(FieldAttributes field) {
+//            if (field.getDeclaringClass() == ListTrello.class && field.getName().equals("other")) {
+//                return true;
+//            }
+//            if (field.getDeclaringClass() == ListTrello.class && field.getName().equals("otherVerboseInfo")) {
+//                return true;
+//            }
+//            return false;
+//        }
+//
+//        @Override
+//        public boolean shouldSkipClass(Class<?> clazz) {
+//            return false;
+//        }
+//    };
+
+//        String key = apiKeyService.findMostRecent().getKey();
+//        String token = apiKeyService.findMostRecent().getToken();
     public void trelloGetCardsOnABoard() {
         String boardId = "652d5727a3301d21fa288a27";
 
@@ -61,13 +78,70 @@ public class TrelloCalls {
                 .asJson();
 
 
+        System.out.println(response.getBody());
+    }
+
+
+
+    public void trelloListFromJson() {
+
+        Gson gson = new GsonBuilder()
+                .setPrettyPrinting()
+                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+                .create();
+
+        HttpResponse<JsonNode> response = Unirest.get("https://api.trello.com/1/lists/" + idList
+                )
+                .queryString("key", key)
+                .queryString("token", token)
+                .asJson();
+
+       ListTrello list = gson.fromJson(response.getBody().toPrettyString(), ListTrello.class);
+        System.out.println(list.toString());
+    }
+
+    public void trelloListFromJsonList() {
+
+        String idBoard = "652d5727a3301d21fa288a27";
+        HttpResponse<String> response = Unirest.get("https://api.trello.com/1/boards/" +
+                        idBoard +
+                        "/lists")
+                .header("Accept", "application/json")
+                .queryString("key", key)
+                .queryString("token", token)
+                .asString();
 
         System.out.println(response.getBody());
+
+        List<ListTrello> listTrellos = getList(response.getBody(), ListTrello.class);
+        System.out.println(listTrellos.toString());
+    }
+
+    public void cardsFromJsonList() {
+        Gson gson = new GsonBuilder()
+                .setPrettyPrinting()
+                .registerTypeAdapter(ZonedDateTime.class, new ZonedTimeAdapter())
+                .create();
+
+        String boardId = "652d5727a3301d21fa288a27";
+        HttpResponse<String> response = Unirest.get("https://api.trello.com/1/boards/" +
+                        boardId +
+                        "/cards")
+                .queryString("key", key)
+                .queryString("token", token)
+                .asString();
+
+        System.out.println(response.getBody());
+
+        List<Card> cards = getList(response.getBody(), Card.class);
+        System.out.println(cards.toString());
     }
 
     public static void main(String args[]) throws Exception {
         TrelloCalls client = new TrelloCalls();
-        client.trelloGetCardsOnABoard();
+//        client.trelloListFromJson();
+//        client.trelloListFromJsonList();
+        client.cardsFromJsonList();
     }
 }
 

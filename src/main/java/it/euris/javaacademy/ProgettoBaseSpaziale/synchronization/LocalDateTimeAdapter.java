@@ -8,7 +8,9 @@ import java.time.format.DateTimeFormatter;
 
 public class LocalDateTimeAdapter implements JsonSerializer<LocalDateTime>, JsonDeserializer<LocalDateTime> {
 
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d::MMM::uuuu HH::mm::ss");
+    private static String pattern = "yyyy-MM-dd HH:mm:ss";
+//    private static String pattern1 = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
 
     @Override
     public JsonElement serialize(LocalDateTime localDateTime, Type srcType,
