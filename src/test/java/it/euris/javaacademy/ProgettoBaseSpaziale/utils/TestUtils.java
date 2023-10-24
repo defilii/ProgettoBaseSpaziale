@@ -36,7 +36,7 @@ public class TestUtils {
         return User.builder()
                 .idUser(id)
                 .username("Test username")
-                .email("Test email")
+                .fullName("Test email")
                 .build();
     }
 

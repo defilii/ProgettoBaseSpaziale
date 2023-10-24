@@ -1,8 +1,11 @@
 package it.euris.javaacademy.ProgettoBaseSpaziale.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import it.euris.javaacademy.ProgettoBaseSpaziale.converter.LocalEntity;
+import it.euris.javaacademy.ProgettoBaseSpaziale.converter.TrelloEntity;
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.ChecklistDTO;
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.archetype.Model;
+import it.euris.javaacademy.ProgettoBaseSpaziale.trello.TrelloChecklist;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,8 +21,9 @@ import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.localDat
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@ToString
 @Table(name = "checklist")
-public class Checklist implements Model {
+public class Checklist implements Model, LocalEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -51,6 +55,15 @@ public class Checklist implements Model {
                 .nome(nome)
                 .task(task)
                 .lastUpdate(localDateTimeToString(lastUpdate))
+                .build();
+    }
+
+    @Override
+    public TrelloChecklist toTrelloEntity() {
+        return TrelloChecklist.builder()
+                .localId(String.valueOf(idChecklist))
+                .name(nome)
+                .checkItems(checklist.stream().map(Checkmark::toTrelloEntity).toList())
                 .build();
     }
 }

@@ -1,8 +1,11 @@
 package it.euris.javaacademy.ProgettoBaseSpaziale.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import it.euris.javaacademy.ProgettoBaseSpaziale.converter.LocalEntity;
+import it.euris.javaacademy.ProgettoBaseSpaziale.converter.TrelloEntity;
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.UserDTO;
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.archetype.Model;
+import it.euris.javaacademy.ProgettoBaseSpaziale.trello.Members;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -16,7 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "user")
-public class User implements Model {
+public class User implements Model, LocalEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,7 +33,7 @@ public class User implements Model {
     private String trelloId;
 
     @Column(name = "email", nullable = false)
-    private String email;
+    private String fullName;
 
     @OneToMany(mappedBy = "user")
     @JsonIgnore
@@ -47,7 +50,16 @@ public class User implements Model {
         return UserDTO.builder()
                 .idUser(idUser)
                 .username(username)
-                .email(email)
+                .fullName(fullName)
+                .build();
+    }
+
+    @Override
+    public Members toTrelloEntity() {
+        return Members.builder()
+                .fullName(fullName)
+                .username(username)
+                .localId(String.valueOf(idUser))
                 .build();
     }
 }

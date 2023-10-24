@@ -1,9 +1,8 @@
 package it.euris.javaacademy.ProgettoBaseSpaziale.trello;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import it.euris.javaacademy.ProgettoBaseSpaziale.converter.TrelloEntity;
+import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Checkmark;
+import it.euris.javaacademy.ProgettoBaseSpaziale.utils.Exclude;
 import lombok.*;
 
 @Builder
@@ -12,10 +11,23 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class CheckItem {
+public class CheckItem implements TrelloEntity {
 
     private String idCheckItem;
 
     private String state;
+    private String name;
 
+    private String idChecklist;
+    @Exclude
+    private String localId;
+    @Override
+    public Checkmark toLocalEntity() {
+        return Checkmark.builder()
+                .descrizione(name)
+                .trelloId(idCheckItem)
+                .isItDone(state.equals("complete") ? true : false)
+                .build();
+
+    }
 }

@@ -23,6 +23,7 @@ import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.priorita
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@ToString
 @Table(name = "task")
 public class Task implements Model, LocalEntity {
 

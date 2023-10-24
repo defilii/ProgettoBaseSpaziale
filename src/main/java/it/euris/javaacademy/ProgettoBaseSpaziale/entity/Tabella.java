@@ -2,7 +2,6 @@ package it.euris.javaacademy.ProgettoBaseSpaziale.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import it.euris.javaacademy.ProgettoBaseSpaziale.converter.LocalEntity;
-import it.euris.javaacademy.ProgettoBaseSpaziale.converter.TrelloEntity;
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.TabellaDTO;
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.archetype.Model;
 import it.euris.javaacademy.ProgettoBaseSpaziale.trello.ListTrello;
@@ -14,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.localDateTimeToString;
-import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.stringToLocalDateTime;
 
 @Builder
 @Getter
@@ -59,6 +57,7 @@ public class Tabella implements Model, LocalEntity {
         return ListTrello.builder()
                 .id(trelloId)
                 .name(nome)
+                .localId(String.valueOf(id))
                 .build();
     }
 }

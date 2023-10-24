@@ -1,7 +1,10 @@
 package it.euris.javaacademy.ProgettoBaseSpaziale.entity;
 
+import it.euris.javaacademy.ProgettoBaseSpaziale.converter.LocalEntity;
+import it.euris.javaacademy.ProgettoBaseSpaziale.converter.TrelloEntity;
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.CheckmarkDTO;
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.archetype.Model;
+import it.euris.javaacademy.ProgettoBaseSpaziale.trello.CheckItem;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -16,8 +19,9 @@ import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.localDat
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@ToString
 @Table(name = "checkmark")
-public class Checkmark implements Model {
+public class Checkmark implements Model, LocalEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,6 +53,15 @@ public class Checkmark implements Model {
                 .isItDone(isItDone)
                 .checklist(checklist)
                 .lastUpdate(localDateTimeToString(lastUpdate))
+                .build();
+    }
+
+    @Override
+    public CheckItem toTrelloEntity() {
+        return CheckItem.builder()
+                .state(isItDone ? "complete" : "incomplete")
+                .name(descrizione)
+                .localId(String.valueOf(idCheckmark))
                 .build();
     }
 }

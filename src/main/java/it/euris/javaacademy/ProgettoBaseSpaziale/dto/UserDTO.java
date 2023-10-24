@@ -14,7 +14,7 @@ public class UserDTO implements Dto {
 
     private String username;
 
-    private String email;
+    private String fullName;
 
    // private Task task;
 
@@ -24,7 +24,7 @@ public class UserDTO implements Dto {
         return User.builder()
                 .idUser(idUser)
                 .username(username)
-                .email(email)
+                .fullName(fullName)
                 .build();
     }
 }

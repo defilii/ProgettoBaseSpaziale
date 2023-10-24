@@ -1,9 +1,8 @@
 package it.euris.javaacademy.ProgettoBaseSpaziale.trello;
 
-import it.euris.javaacademy.ProgettoBaseSpaziale.converter.LocalEntity;
 import it.euris.javaacademy.ProgettoBaseSpaziale.converter.TrelloEntity;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Tabella;
-import jakarta.persistence.*;
+import it.euris.javaacademy.ProgettoBaseSpaziale.utils.Exclude;
 import lombok.*;
 
 @Builder
@@ -20,6 +19,8 @@ public class ListTrello implements TrelloEntity {
     private String name;
 
     private String idBoard;
+    @Exclude
+    private String localId;
 
     private Boolean closed;
 
