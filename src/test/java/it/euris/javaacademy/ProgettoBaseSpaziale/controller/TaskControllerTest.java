@@ -26,6 +26,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -294,9 +295,26 @@ public class TaskControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.idTask").value(task.getIdTask()))
-                .andExpect(jsonPath("$.dataScadenza").value(dateTime.toString()))
-
-        ;
+                .andExpect(jsonPath("$.dataScadenza").value(dateTime.toString()));
     }
 
+    @Test
+    void shouldMoveATask() throws Exception {
+        Integer id = 1;
+        Integer idTabella = 3;
+
+        Task task = TestUtils.getTask(id);
+
+        when(taskService.update(any())).thenReturn(task);
+        when(taskService.findById(id)).thenReturn(task);
+
+        mockMvc.perform(put("/tasks/v1/move-task/{id-task}-{id-tabella-destinazione}", id, idTabella)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(task.toDto())))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$.idTask").value(task.getIdTask()));
+    }
 }

@@ -20,6 +20,7 @@ public class TestUtils {
                 .build();
     }
 
+
     public static Task getTaskThatExpiresInMinusDays(Integer id, Integer days) {
         return Task.builder()
                 .idTask(id)
@@ -167,5 +168,14 @@ public class TestUtils {
     }
 
 
+    public static Commento getCommentoUserTask(Integer id, Integer idTask, Integer idUser) {
 
+        return Commento
+                .builder()
+                .idCommento(id)
+                .dataCommento(LocalDateTime.now())
+                .task(Task.builder().idTask(idTask).build())
+                .user(User.builder().idUser(idUser).build())
+                .build();
+    }
 }

@@ -9,10 +9,12 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
 @Service
 @AllArgsConstructor
 public class TabellaServiceImpl implements TabellaService {
     TabellaRepository tabellaRepository;
+
     @Override
     public List<Tabella> findAll() {
         return tabellaRepository.findAll();
@@ -20,7 +22,7 @@ public class TabellaServiceImpl implements TabellaService {
 
     @Override
     public Tabella insert(Tabella tabella) {
-        if(tabella.getId() != null && tabella.getId() > 0) {
+        if (tabella.getId() != null && tabella.getId() > 0) {
             throw new IdMustBeNullException();
         }
         return tabellaRepository.save(tabella);
@@ -28,7 +30,7 @@ public class TabellaServiceImpl implements TabellaService {
 
     @Override
     public Tabella update(Tabella tabella) {
-        if(tabella.getId() == null || tabella.getId() == 0) {
+        if (tabella.getId() == null || tabella.getId() == 0) {
             throw new IdMustNotBeNullException();
         }
         return tabellaRepository.save(tabella);

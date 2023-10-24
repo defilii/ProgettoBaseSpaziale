@@ -185,26 +185,27 @@ public class TaskController {
             """)
     public TaskDTO moveTaskFromTabellaToOtherTabella(@PathVariable("id-task") Integer idTask, @PathVariable("id-tabella-destinazione") Integer idTabellaDestinazione) {
         try {
+            if (null == taskService.findById(idTask).getTabella()) {
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST, "id must not be null");
+            }
             Integer idTabellaOrigine = taskService.findById(idTask).getTabella().getId();
             Tabella tabellaOrigine = tabellaService.findById(idTabellaOrigine);
             Tabella tabellaDestinazione = tabellaService.findById(idTabellaDestinazione);
 
+
             Task task = taskService.findById(idTask);
-                Task newTask = Task.builder()
-                        .idTask(idTask)
-                        .tabella(tabellaDestinazione)
-                        .taskName(task.getTaskName())
-                        .priorita(task.getPriorita())
-                        .descrizione(task.getDescrizione())
-                        .dataScadenza(task.getDataScadenza())
-                        .build();
+            task.setTabella(tabellaDestinazione);
 
-                tabellaOrigine.getTasks().remove(task);
+            tabellaOrigine.getTasks().remove(task);
+            tabellaService.update(tabellaOrigine);
+            if (tabellaOrigine.getTasks().contains(task)) {
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST, "task should not be present");
+            }
 
-                tabellaService.update(tabellaOrigine);
-                tabellaService.update(tabellaDestinazione);
-                return taskService.update(newTask).toDto();
-
+            tabellaService.update(tabellaDestinazione);
+            return taskService.update(task).toDto();
 
         } catch (IdAndForeignKeyMustNotBeNullException e) {
             throw new ResponseStatusException(
