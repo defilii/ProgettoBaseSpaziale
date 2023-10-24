@@ -1,9 +1,12 @@
 package it.euris.javaacademy.ProgettoBaseSpaziale.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import it.euris.javaacademy.ProgettoBaseSpaziale.converter.LocalEntity;
+import it.euris.javaacademy.ProgettoBaseSpaziale.converter.TrelloEntity;
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.TaskDTO;
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.archetype.Model;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.enums.Priorita;
+import it.euris.javaacademy.ProgettoBaseSpaziale.trello.Card;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,7 +24,7 @@ import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.priorita
 @AllArgsConstructor
 @Entity
 @Table(name = "task")
-public class Task implements Model {
+public class Task implements Model, LocalEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -77,5 +80,10 @@ public class Task implements Model {
                 .dataScadenza(localDateTimeToString(dataScadenza))
                 .lastUpdate(localDateTimeToString(lastUpdate))
                 .build();
+    }
+
+    @Override
+    public Card toTrelloEntity() {
+        return Card.builder().build();
     }
 }

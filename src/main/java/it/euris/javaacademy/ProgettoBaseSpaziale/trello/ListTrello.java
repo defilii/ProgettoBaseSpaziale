@@ -1,5 +1,8 @@
 package it.euris.javaacademy.ProgettoBaseSpaziale.trello;
 
+import it.euris.javaacademy.ProgettoBaseSpaziale.converter.LocalEntity;
+import it.euris.javaacademy.ProgettoBaseSpaziale.converter.TrelloEntity;
+import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Tabella;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -9,7 +12,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class ListTrello {
+public class ListTrello implements TrelloEntity {
 
 
     private String id;
@@ -19,4 +22,13 @@ public class ListTrello {
     private String idBoard;
 
     private Boolean closed;
+
+    @Override
+    public Tabella toLocalEntity() {
+        return Tabella
+                .builder()
+                .trelloId(id)
+                .nome(name)
+                .build();
+    }
 }

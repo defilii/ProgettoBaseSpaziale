@@ -11,8 +11,6 @@ public class ZonedTimeAdapter implements JsonSerializer<ZonedDateTime>, JsonDese
 
     private static String pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
-
-
     @Override
     public JsonElement serialize(ZonedDateTime zonedDateTime, Type srcType,
                                  JsonSerializationContext context) {

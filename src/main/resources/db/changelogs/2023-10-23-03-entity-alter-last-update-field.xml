@@ -33,8 +33,6 @@
             </column>
         </addColumn>
 
-<!--        TODO add last_update field to task, tabella, checklist and checkmark-->
-
     </changeSet>
 
 </databaseChangeLog>

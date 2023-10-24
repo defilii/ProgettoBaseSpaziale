@@ -14,7 +14,6 @@ import lombok.*;
 @ToString
 public class CheckItem {
 
-
     private String idCheckItem;
 
     private String state;
