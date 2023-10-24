@@ -10,10 +10,12 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
 @Service
 @AllArgsConstructor
 public class TabellaServiceImpl implements TabellaService {
     TabellaRepository tabellaRepository;
+
     @Override
     public List<Tabella> findAll() {
         return tabellaRepository.findAll();
@@ -21,7 +23,7 @@ public class TabellaServiceImpl implements TabellaService {
 
     @Override
     public Tabella insert(Tabella tabella) {
-        if(tabella.getId() != null && tabella.getId() > 0) {
+        if (tabella.getId() != null && tabella.getId() > 0) {
             throw new IdMustBeNullException();
         }
         tabella.setLastUpdate(LocalDateTime.now());
@@ -30,7 +32,7 @@ public class TabellaServiceImpl implements TabellaService {
 
     @Override
     public Tabella update(Tabella tabella) {
-        if(tabella.getId() == null || tabella.getId() == 0) {
+        if (tabella.getId() == null || tabella.getId() == 0) {
             throw new IdMustNotBeNullException();
         }
         tabella.setLastUpdate(LocalDateTime.now());

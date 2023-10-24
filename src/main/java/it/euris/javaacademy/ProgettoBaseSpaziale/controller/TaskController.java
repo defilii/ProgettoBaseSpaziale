@@ -4,11 +4,16 @@ import io.swagger.v3.oas.annotations.Operation;
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.TaskDTO;
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.UserDTO;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Checkmark;
+import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Tabella;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Task;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.User;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.ForeignKeyIdMustNotBeNullException;
+import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.IdAndForeignKeyMustNotBeNullException;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.IdMustBeNullException;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.IdMustNotBeNullException;
+import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.TabellaRepository;
+import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.TaskRepository;
+import it.euris.javaacademy.ProgettoBaseSpaziale.service.TabellaService;
 import it.euris.javaacademy.ProgettoBaseSpaziale.service.TaskService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -25,6 +30,9 @@ import java.util.stream.Collectors;
 @RequestMapping("/tasks")
 public class TaskController {
     TaskService taskService;
+    TabellaService tabellaService;
+    private final TabellaRepository tabellaRepository;
+    private final TaskRepository taskRepository;
 
     @GetMapping("/getAll")
     @Operation(description = """
@@ -169,4 +177,40 @@ public class TaskController {
     public Boolean deleteTask(@PathVariable("id") Integer idTask) {
         return taskService.deleteById(idTask);
     }
+
+
+    @PutMapping("v1/move-task/{id-task}-{id-tabella-destinazione}")
+    @Operation(description = """
+             This method is used to moeve a task from a tabella to other tabella
+            """)
+    public TaskDTO moveTaskFromTabellaToOtherTabella(@PathVariable("id-task") Integer idTask, @PathVariable("id-tabella-destinazione") Integer idTabellaDestinazione) {
+        try {
+            if (null == taskService.findById(idTask).getTabella()) {
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST, "id must not be null");
+            }
+            Integer idTabellaOrigine = taskService.findById(idTask).getTabella().getId();
+            Tabella tabellaOrigine = tabellaService.findById(idTabellaOrigine);
+            Tabella tabellaDestinazione = tabellaService.findById(idTabellaDestinazione);
+
+
+            Task task = taskService.findById(idTask);
+            task.setTabella(tabellaDestinazione);
+
+            tabellaOrigine.getTasks().remove(task);
+            tabellaService.update(tabellaOrigine);
+            if (tabellaOrigine.getTasks().contains(task)) {
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST, "task should not be present");
+            }
+
+            tabellaService.update(tabellaDestinazione);
+            return taskService.update(task).toDto();
+
+        } catch (IdAndForeignKeyMustNotBeNullException e) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+    }
+
 }

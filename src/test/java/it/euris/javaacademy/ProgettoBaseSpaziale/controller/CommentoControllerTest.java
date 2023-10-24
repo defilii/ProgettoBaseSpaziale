@@ -6,6 +6,7 @@ import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Tabella;
 import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.CommentoRepository;
 import it.euris.javaacademy.ProgettoBaseSpaziale.service.CommentoService;
 import it.euris.javaacademy.ProgettoBaseSpaziale.utils.TestUtils;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -141,5 +142,24 @@ public class CommentoControllerTest {
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$.length()").value(1))
                 .andExpect(jsonPath("$[0].dataCommento").value(commento.getDataCommento().toString()));
+    }
+
+    @Test
+    @DisplayName("GIVEN a commento, with id user and id task  WHEN insert commento THEN should add a new commento")
+    void shouldAddANewCommento() throws Exception {
+        Integer id = 1;
+        Integer idTask= 2;
+        Integer idUser=2;
+        Commento commento = TestUtils.getCommentoUserTask(id, idTask,idUser);
+        when(commentoService.insert(any())).thenReturn(commento);
+
+        mockMvc.perform(post("/commenti/v1/add-new-comment/{id-task}-{id-user}", idTask, idUser)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(commento.toDto())))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$.idCommento").value(commento.getIdCommento()));
     }
 }

@@ -9,9 +9,6 @@ import it.euris.javaacademy.ProgettoBaseSpaziale.entity.enums.Priorita;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.IdMustBeNullException;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.IdMustNotBeNullException;
 import it.euris.javaacademy.ProgettoBaseSpaziale.service.TabellaService;
-import it.euris.javaacademy.ProgettoBaseSpaziale.synchronization.TrelloEntityListMaker;
-import it.euris.javaacademy.ProgettoBaseSpaziale.trello.Card;
-import it.euris.javaacademy.ProgettoBaseSpaziale.trello.ListTrello;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
@@ -212,6 +209,4 @@ public class TabellaController {
                 .filter(task -> task.getDataScadenza().isBefore(LocalDateTime.now().plusDays(days)))
                 .map(Task::toDto).toList();
     }
-
-
 }

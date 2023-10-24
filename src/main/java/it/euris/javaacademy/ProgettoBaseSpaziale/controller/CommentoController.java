@@ -2,10 +2,17 @@ package it.euris.javaacademy.ProgettoBaseSpaziale.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.CommentoDTO;
+import it.euris.javaacademy.ProgettoBaseSpaziale.dto.TabellaDTO;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Commento;
+import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Tabella;
+import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Task;
+import it.euris.javaacademy.ProgettoBaseSpaziale.entity.User;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.IdMustBeNullException;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.IdMustNotBeNullException;
+import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.CommentoRepository;
 import it.euris.javaacademy.ProgettoBaseSpaziale.service.CommentoService;
+import it.euris.javaacademy.ProgettoBaseSpaziale.service.TaskService;
+import it.euris.javaacademy.ProgettoBaseSpaziale.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +27,9 @@ import java.util.List;
 @RequestMapping("/commenti")
 public class CommentoController {
     CommentoService commentoService;
+    private final CommentoRepository commentoRepository;
+    TaskService taskService;
+    UserService userService;
 
     @GetMapping("/getAll")
     @Operation(description = """
@@ -77,5 +87,22 @@ public class CommentoController {
                 .stream()
                 .map(Commento::toDto)
                 .toList();
+    }
+
+    @PostMapping("v1/add-new-comment/{id-task}-{id-user}")
+    @Operation(description = """
+            This method is used to add a new comment to the database<br>
+            """)
+    public CommentoDTO addNewCommenti(@PathVariable("id-task") Integer idTask, @PathVariable("id-user") Integer idUser, @RequestBody CommentoDTO commentoDTO) {
+
+        Commento commento = commentoDTO.toModel();
+        commento.setTask(taskService.findById(idTask));
+        commento.setUser(userService.findById(idUser));
+        try {
+            return commentoService.insert(commento).toDto();
+        } catch (IdMustBeNullException e) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, e.getMessage());
+        }
     }
 }

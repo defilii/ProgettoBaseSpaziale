@@ -42,7 +42,7 @@ public class Commento implements Model {
         return CommentoDTO.builder()
                 .idCommento(idCommento)
                 .commento(commento)
-                .dataCommento(localDateTimeToString(dataCommento))
+                .dataCommento(dataCommento== null ? localDateTimeToString(dataCommento=LocalDateTime.now()) : localDateTimeToString(dataCommento))
                 .task(task)
                 .user(user)
                 .build();
