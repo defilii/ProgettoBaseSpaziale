@@ -299,7 +299,7 @@ public class TaskControllerTest {
     }
 
     @Test
-    void shouldMoveATask() throws Exception {
+    void shouldMoveATaskToTable() throws Exception {
         Integer id = 1;
         Integer idTabella = 3;
 
