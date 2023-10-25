@@ -48,6 +48,7 @@ public class Card implements TrelloEntity {
                 .dataScadenza(due== null ? null : ZonedDateTime.parse(due).toLocalDateTime())
                 .lastUpdate(LocalDateTime.now())
                 .checklist(trelloChecklists.stream().map(TrelloChecklist::toLocalEntity).toList())
+                .trelloId(id)
                 .build();
 
     }
