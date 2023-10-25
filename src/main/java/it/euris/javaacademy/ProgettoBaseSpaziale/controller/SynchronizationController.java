@@ -80,6 +80,7 @@ public class SynchronizationController {
         List<ListTrello> allList = client.allTrelloListFromJsonListWithReturn();
 
         for (ListTrello listTrello : allList) {
+
             Tabella tabellaSalvata = tabellaService.insert(listTrello.toLocalEntity());
             listTrello.setLocalId(String.valueOf(tabellaSalvata.getId()));
             List<Card> allCard = client.cardsFromJsonListId(listTrello.getId());
