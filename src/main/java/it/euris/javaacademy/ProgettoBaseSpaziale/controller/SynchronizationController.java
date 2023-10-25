@@ -1,13 +1,13 @@
 package it.euris.javaacademy.ProgettoBaseSpaziale.controller;
 
-import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Tabella;
-import it.euris.javaacademy.ProgettoBaseSpaziale.entity.User;
-import it.euris.javaacademy.ProgettoBaseSpaziale.service.TabellaService;
-import it.euris.javaacademy.ProgettoBaseSpaziale.service.UserService;
+import it.euris.javaacademy.ProgettoBaseSpaziale.entity.*;
+import it.euris.javaacademy.ProgettoBaseSpaziale.service.*;
 import it.euris.javaacademy.ProgettoBaseSpaziale.synchronization.TrelloCalls;
 import it.euris.javaacademy.ProgettoBaseSpaziale.synchronization.TrelloEntityListMaker;
+import it.euris.javaacademy.ProgettoBaseSpaziale.trello.Card;
 import it.euris.javaacademy.ProgettoBaseSpaziale.trello.ListTrello;
 import it.euris.javaacademy.ProgettoBaseSpaziale.trello.Members;
+import it.euris.javaacademy.ProgettoBaseSpaziale.trello.TrelloChecklist;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -23,6 +23,9 @@ import java.util.List;
 public class SynchronizationController {
     TabellaService tabellaService;
     UserService userService;
+    TaskService taskService;
+    CheckmarkService checkmarkService;
+    ChecklistService checklistService;
 
     @PutMapping("/v1/synchronize")
     private List<Tabella> getInsertOld() {
@@ -69,5 +72,37 @@ public class SynchronizationController {
         }
 
         return userService.findAll();
+    }
+
+    @PutMapping("/synchronize")
+    private List<Task> inserts() {
+        TrelloCalls client = new TrelloCalls();
+        List<ListTrello> allList = client.allTrelloListFromJsonListWithReturn();
+
+        for (ListTrello listTrello : allList) {
+            Tabella tabellaSalvata = tabellaService.insert(listTrello.toLocalEntity());
+            listTrello.setLocalId(String.valueOf(tabellaSalvata.getId()));
+            List<Card> allCard = client.cardsFromJsonListId(listTrello.getId());
+            for (Card card : allCard) {
+                Task newTask = card.toLocalEntity();
+                newTask.setTabella(tabellaSalvata);
+                Task insertedTask = taskService.insert(newTask);
+
+                List<Checklist> newChecklists = card.toLocalEntity().getChecklist();
+                for (Checklist checklist :
+                        newChecklists) {
+                    checklist.setTask(insertedTask);
+                    Checklist insertedChecklist = checklistService.insert(checklist);
+                    List<Checkmark> newCheckmarks = checklist.getChecklist();
+                    for (Checkmark checkmark :
+                            newCheckmarks) {
+                        checkmark.setChecklist(insertedChecklist);
+                        checkmarkService.insert(checkmark);
+                    }
+                }
+            }
+        }
+        return null;
+
     }
 }

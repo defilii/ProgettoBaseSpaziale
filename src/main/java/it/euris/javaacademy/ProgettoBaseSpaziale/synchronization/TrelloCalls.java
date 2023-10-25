@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.lang.reflect.Modifier;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -33,24 +35,6 @@ public class TrelloCalls {
     String key = "656d5bde047c3ac9c66eae4c33aa9230";
     String token = "ATTA27702686ff9d2e286aadb299d53c874f655dc93f653cb20c42ea2f2be5eb111399494FE0";
     String idList = "652d5727a3301d21fa288a28";
-
-//    ExclusionStrategy strategy = new ExclusionStrategy() {
-//        @Override
-//        public boolean shouldSkipField(FieldAttributes field) {
-//            if (field.getDeclaringClass() == ListTrello.class && field.getName().equals("other")) {
-//                return true;
-//            }
-//            if (field.getDeclaringClass() == ListTrello.class && field.getName().equals("otherVerboseInfo")) {
-//                return true;
-//            }
-//            return false;
-//        }
-//
-//        @Override
-//        public boolean shouldSkipClass(Class<?> clazz) {
-//            return false;
-//        }
-//    };
 
     //        String key = apiKeyService.findMostRecent().getKey();
 //        String token = apiKeyService.findMostRecent().getToken();
@@ -119,34 +103,33 @@ public class TrelloCalls {
         System.out.println(response.getBody().toPrettyString());
 
         List<ListTrello> listTrellos = getList(response.getBody().toString(), ListTrello.class);
+
+        for (ListTrello listTrello: listTrellos) {
+            cardsFromJsonListId(listTrello.getId());
+        }
+
         return listTrellos;
     }
 
-    public List<Card> cardsFromJsonListId(String boardId) {
+    public List<Card> cardsFromJsonListId(String listId) {
         Gson gson = new GsonBuilder()
                 .setPrettyPrinting()
                 .registerTypeAdapter(ZonedDateTime.class, new ZonedTimeAdapter())
                 .create();
 
-//        String boardId = "652d5727a3301d21fa288a28";
         HttpResponse<String> response = Unirest.get("https://api.trello.com/1/lists/" +
-                        boardId +
+                        listId +
                         "/cards")
                 .header("Accept", "application/json")
                 .queryString("key", key)
                 .queryString("token", token)
                 .asString();
 
-//        System.out.println(response.getBody());
-
         List<Card> cards = getList(response.getBody(), Card.class);
 
         for (Card card: cards) {
             getChecklistsAndSetItToCard(card);
         }
-
-
-//        System.out.println(response.getBody());
 
         System.out.println(cards.toString());
         return cards;
@@ -222,14 +205,20 @@ public class TrelloCalls {
 //        client.trelloListFromJsonList();
 //        client.cardsFromJsonListId("652d5727a3301d21fa288a28");
 
-        System.out.println(client.cardsFromJsonListId("6531489c31b7bdbe440ca06d")
+        System.out.println(client.cardsFromJsonListId("652d5727a3301d21fa288a2a")
                 .stream().map(Card::toLocalEntity).toList()
                 );
+//
+//        System.out.println(
+//                allTrelloListFromJsonListWithReturn().stream().map(Card::toLocalEntity).toList()
+//                );
 ;
-
-
-
-
+//
+//String date = "2023-10-24T14:23:00.000Z";
+//
+//        LocalDateTime localDateTime = ZonedDateTime.parse(date).toLocalDateTime();
+//
+//        System.out.println(localDateTime);
     }
 }
 

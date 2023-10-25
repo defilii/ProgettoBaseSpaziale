@@ -24,6 +24,7 @@ public class ListTrello implements TrelloEntity {
 
     private Boolean closed;
 
+
     @Override
     public Tabella toLocalEntity() {
         return Tabella
