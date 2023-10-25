@@ -54,6 +54,7 @@ public class Checklist implements Model, LocalEntity {
                 .idChecklist(idChecklist)
                 .nome(nome)
                 .task(task)
+                .trelloId(trelloId)
                 .lastUpdate(localDateTimeToString(lastUpdate))
                 .build();
     }

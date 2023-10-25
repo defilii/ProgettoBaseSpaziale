@@ -16,6 +16,7 @@ import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.stringTo
 @AllArgsConstructor
 public class TabellaDTO implements Dto {
     private Integer id;
+    private String trelloId;
 
     private String nome;
     private String lastUpdate;
@@ -25,6 +26,8 @@ public class TabellaDTO implements Dto {
                 .id(id)
                 .nome(nome)
                 .lastUpdate(stringToLocalDateTime(lastUpdate))
+                .trelloId(trelloId)
+
                 .build();
     }
 }

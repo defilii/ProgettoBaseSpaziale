@@ -17,6 +17,7 @@ public class UserDTO implements Dto {
     private String fullName;
 
    // private Task task;
+   private String trelloId;
 
 
     @Override
@@ -25,6 +26,8 @@ public class UserDTO implements Dto {
                 .idUser(idUser)
                 .username(username)
                 .fullName(fullName)
+                .trelloId(trelloId)
+
                 .build();
     }
 }

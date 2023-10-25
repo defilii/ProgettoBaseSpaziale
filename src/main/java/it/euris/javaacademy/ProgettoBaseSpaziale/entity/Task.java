@@ -80,6 +80,7 @@ public class Task implements Model, LocalEntity {
                 .descrizione(descrizione)
                 .dataScadenza(localDateTimeToString(dataScadenza))
                 .lastUpdate(localDateTimeToString(lastUpdate))
+                .trelloId(trelloId)
                 .build();
     }
 

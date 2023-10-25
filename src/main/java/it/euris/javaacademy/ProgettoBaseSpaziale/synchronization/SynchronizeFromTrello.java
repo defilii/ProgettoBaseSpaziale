@@ -61,6 +61,8 @@ public class SynchronizeFromTrello {
                     }
                 });
 
+
+
         allCard.stream().
                 forEach(card ->
                 {if (allTasks.stream()
@@ -71,6 +73,29 @@ public class SynchronizeFromTrello {
                     } else {
                         insertCard(card);
                     }
+                });
+
+//        deleteFromDatabase(allTabella, allList, allTasks, allCard);
+    }
+
+    private void deleteFromDatabase(List<Tabella> allTabella, List<ListTrello> allList, List<Task> allTasks, List<Card> allCard) {
+        checklistService.findAll();
+        checkmarkService.findAll();
+
+        allTasks.stream()
+                .forEach(task ->
+                {if (!allCard.stream()
+                        .map(listTrello -> listTrello.getId())
+                        .collect(Collectors.toList()).contains(task.getTrelloId()))
+                {taskService.deleteById(task.getIdTask());}
+                });
+
+        allTabella.stream()
+                .forEach(tabella ->
+                {if (!allList.stream()
+                        .map(listTrello -> listTrello.getId())
+                        .collect(Collectors.toList()).contains(tabella.getTrelloId()))
+                {tabellaService.deleteById(tabella.getId());}
                 });
     }
 
@@ -88,7 +113,7 @@ public class SynchronizeFromTrello {
         Task newTask = card.toLocalEntity();
         newTask.setTabella(tabellaRepository.findByTrelloId(card.getIdList()));
         Task insertedTask = taskService.insert(newTask);
-        insertChecklist(card, insertedTask);
+//        insertChecklist(card, insertedTask);
         return insertedTask;
     }
 

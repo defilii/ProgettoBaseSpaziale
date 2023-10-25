@@ -51,6 +51,7 @@ public class User implements Model, LocalEntity {
                 .idUser(idUser)
                 .username(username)
                 .fullName(fullName)
+                .trelloId(trelloId)
                 .build();
     }
 

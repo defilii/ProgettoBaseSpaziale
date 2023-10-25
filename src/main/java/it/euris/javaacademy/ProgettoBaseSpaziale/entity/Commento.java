@@ -29,6 +29,9 @@ public class Commento implements Model {
     @Column(name = "data_commento", nullable=false)
     private LocalDateTime dataCommento;
 
+    @Column(name = "trelloId")
+    private String trelloId;
+
     @ManyToOne
     @JoinColumn(name="id_task", nullable=false)
     private Task task;
@@ -36,6 +39,7 @@ public class Commento implements Model {
     @ManyToOne
     @JoinColumn(name="id_user", nullable=false)
     private User user;
+
 
     @Override
     public CommentoDTO toDto() {
@@ -45,6 +49,7 @@ public class Commento implements Model {
                 .dataCommento(dataCommento== null ? localDateTimeToString(dataCommento=LocalDateTime.now()) : localDateTimeToString(dataCommento))
                 .task(task)
                 .user(user)
+                .trelloId(trelloId)
                 .build();
     }
 }

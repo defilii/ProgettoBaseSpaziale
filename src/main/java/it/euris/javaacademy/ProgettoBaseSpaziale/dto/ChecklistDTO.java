@@ -23,6 +23,7 @@ public class ChecklistDTO implements Dto {
     private Task task;
 
     private String lastUpdate;
+    private String trelloId;
 
     @Override
     public Checklist toModel() {
@@ -31,6 +32,7 @@ public class ChecklistDTO implements Dto {
                 .task(task)
                 .nome(nome)
                 .lastUpdate(stringToLocalDateTime(lastUpdate))
+                .trelloId(trelloId)
                 .build();
     }
 }

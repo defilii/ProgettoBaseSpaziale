@@ -26,6 +26,7 @@ public class TaskDTO implements Dto {
     private String descrizione;
 
     private String dataScadenza;
+    private String trelloId;
 
     private Tabella tabella;
     private String lastUpdate;
@@ -39,6 +40,8 @@ public class TaskDTO implements Dto {
                 .descrizione(descrizione)
                 .dataScadenza(stringToLocalDateTime(dataScadenza))
                 .lastUpdate(stringToLocalDateTime(lastUpdate))
+                .trelloId(trelloId)
+
                 .build();
     }
 }

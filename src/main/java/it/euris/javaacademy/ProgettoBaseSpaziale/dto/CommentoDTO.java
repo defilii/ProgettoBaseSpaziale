@@ -21,6 +21,7 @@ public class CommentoDTO implements Dto {
     private String dataCommento;
     private Task task;
     private User user;
+    private String trelloId;
 
     @Override
     public Commento toModel() {
@@ -32,6 +33,8 @@ public class CommentoDTO implements Dto {
 
                 .task(task)
                 .user(user)
+                .trelloId(trelloId)
+
                 .build();
     }
 }

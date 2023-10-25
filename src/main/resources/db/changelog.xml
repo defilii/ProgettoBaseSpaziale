@@ -14,5 +14,6 @@
     <include file="db/changelogs/2023-10-23-02-api_key_entity-alter.xml"/>
     <include file="db/changelogs/2023-10-23-03-entity-alter-last-update-field.xml"/>
     <include file="db/changelogs/2023-10-23-04-entity-alter-trello-reference-id-field.xml"/>
+    <include file="db/changelogs/2023-10-25-01-comment-alter-trello-reference-id-field.xml"/>
 
 </databaseChangeLog>

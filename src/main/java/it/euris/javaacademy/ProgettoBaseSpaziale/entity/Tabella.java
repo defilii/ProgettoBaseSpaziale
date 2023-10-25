@@ -49,6 +49,7 @@ public class Tabella implements Model, LocalEntity {
                 .id(id)
                 .nome(nome)
                 .lastUpdate(localDateTimeToString(lastUpdate))
+                .trelloId(trelloId)
                 .build();
     }
 
