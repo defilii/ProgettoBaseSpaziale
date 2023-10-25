@@ -63,7 +63,8 @@ public class SynchronizeFromTrello {
 
         allList.stream()
                 .forEach(trelloList ->
-                {if (allTabella.stream()
+                {
+                    if (allTabella.stream()
                             .map(tabella -> tabella.getTrelloId())
                             .collect(Collectors.toList())
                             .contains(trelloList.getId())) {
@@ -80,7 +81,8 @@ public class SynchronizeFromTrello {
 
         allCard.stream().
                 forEach(card ->
-                {if (allTasks.stream()
+                {
+                    if (allTasks.stream()
                             .map(task -> task.getTrelloId())
                             .collect(Collectors.toList())
                             .contains(card.getId())) {
@@ -90,7 +92,7 @@ public class SynchronizeFromTrello {
                     }
                 });
 
-//        deleteFromDatabase(allTabella, allList, allTasks, allCard);
+//        deleteFromDatabase();
     }
 
     private void updateList() {
@@ -114,15 +116,30 @@ public class SynchronizeFromTrello {
         allCheckmark = checkmarkService.findAll();
     }
 
-    private void deleteFromDatabase(List<Tabella> allTabella, List<ListTrello> allList, List<Task> allTasks, List<Card> allCard) {
-        checklistService.findAll();
-        checkmarkService.findAll();
-
+    private void deleteFromDatabase() {
+        allCheckmark.stream()
+                .forEach(checkmark ->
+                {
+                    if (!allCheckitems.stream()
+                            .map(checkitem -> checkitem.getIdCheckItem())
+                            .collect(Collectors.toList()).contains(checkmark.getTrelloId())) {
+                        checkmarkService.deleteById(checkmark.getIdCheckmark());
+                    }
+                });
+        allChecklist.stream()
+                .forEach(checklist ->
+                {
+                    if (!allTrelloChecklist.stream()
+                            .map(trelloChecklist -> trelloChecklist.getId())
+                            .collect(Collectors.toList()).contains(checklist.getTrelloId())) {
+                        checklistService.deleteById(checklist.getIdChecklist());
+                    }
+                });
         allTasks.stream()
                 .forEach(task ->
                 {
                     if (!allCard.stream()
-                            .map(listTrello -> listTrello.getId())
+                            .map(card -> card.getId())
                             .collect(Collectors.toList()).contains(task.getTrelloId())) {
                         taskService.deleteById(task.getIdTask());
                     }
@@ -159,7 +176,6 @@ public class SynchronizeFromTrello {
     }
 
 
-
     private void insertChecklist(Card card, Task updatedTask) {
         List<TrelloChecklist> newChecklists = card.getTrelloChecklists();
         for (TrelloChecklist trelloChecklist :
@@ -176,14 +192,13 @@ public class SynchronizeFromTrello {
                 Checklist updatedChecklist = checklistService.update(checklistToInsert);
 
 //                insertCheckmark(trelloChecklist,updatedChecklist);
-            }
-            else {
-                Checklist insertedChecklist =checklistService.insert(checklistToInsert);
+            } else {
+                Checklist insertedChecklist = checklistService.insert(checklistToInsert);
 
 //                insertCheckmark(trelloChecklist,insertedChecklist);
             }
-            }
         }
+    }
 
     private void insertCheckmark(TrelloChecklist trelloChecklist, Checklist insertedChecklist) {
         List<CheckItem> checkitems = trelloChecklist.getCheckItems();
@@ -200,8 +215,7 @@ public class SynchronizeFromTrello {
                         .findByTrelloId(checkitem.getIdCheckItem()).getIdCheckmark());
                 Checkmark updatedCheckmark = checkmarkService.update(checkmarkToInsert);
 
-            }
-            else {
+            } else {
                 Checkmark insertedCheckmark = checkmarkService.insert(checkmarkToInsert);
             }
         }
