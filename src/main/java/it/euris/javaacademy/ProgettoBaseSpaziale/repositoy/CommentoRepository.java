@@ -1,7 +1,15 @@
 package it.euris.javaacademy.ProgettoBaseSpaziale.repositoy;
 
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Commento;
+import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Task;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import java.util.Collection;
 
 public interface CommentoRepository extends JpaRepository<Commento, Integer> {
+
+    @Query("SELECT s FROM Commento s WHERE s.trelloId = :idToLook")
+    Collection findByTrelloId(@Param("idToLook") String idToLook);
 }

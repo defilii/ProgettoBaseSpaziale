@@ -4,6 +4,8 @@ import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Checklist;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Checkmark;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Tabella;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Task;
+import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.ChecklistRepository;
+import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.CheckmarkRepository;
 import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.TabellaRepository;
 import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.TaskRepository;
 import it.euris.javaacademy.ProgettoBaseSpaziale.service.ChecklistService;
@@ -11,38 +13,53 @@ import it.euris.javaacademy.ProgettoBaseSpaziale.service.CheckmarkService;
 import it.euris.javaacademy.ProgettoBaseSpaziale.service.TabellaService;
 import it.euris.javaacademy.ProgettoBaseSpaziale.service.TaskService;
 import it.euris.javaacademy.ProgettoBaseSpaziale.trello.Card;
+import it.euris.javaacademy.ProgettoBaseSpaziale.trello.CheckItem;
 import it.euris.javaacademy.ProgettoBaseSpaziale.trello.ListTrello;
+import it.euris.javaacademy.ProgettoBaseSpaziale.trello.TrelloChecklist;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@NoArgsConstructor
+@AllArgsConstructor
 public class SynchronizeFromTrello {
 
     TabellaService tabellaService;
     TaskService taskService;
+
     CheckmarkService checkmarkService;
     ChecklistService checklistService;
-    private final TaskRepository taskRepository;
-    private final TabellaRepository tabellaRepository;
+    ChecklistRepository checklistrepository;
+    CheckmarkRepository checkmarkRepository;
 
-    public SynchronizeFromTrello(TaskRepository taskRepository, TabellaRepository tabellaRepository, TaskService taskService, TabellaService tabellaService) {
+    TaskRepository taskRepository;
+    TabellaRepository tabellaRepository;
+
+    List<ListTrello> allList;
+    List<Card> allCard;
+    List<TrelloChecklist> allTrelloChecklist;
+    List<CheckItem> allCheckitems;
+    List<Tabella> allTabella;
+    List<Task> allTasks;
+    List<Checklist> allChecklist;
+    List<Checkmark> allCheckmark;
+
+    public SynchronizeFromTrello(TaskRepository taskRepository, TabellaRepository tabellaRepository, TaskService taskService, TabellaService tabellaService, CheckmarkService checkmarkService, CheckmarkRepository checkmarkRepository, ChecklistService checklistService, ChecklistRepository checklistRepository) {
         this.taskRepository = taskRepository;
         this.tabellaRepository = tabellaRepository;
         this.taskService = taskService;
         this.tabellaService = tabellaService;
+        this.checkmarkService = checkmarkService;
+        this.checklistrepository = checklistRepository;
+        this.checkmarkRepository = checkmarkRepository;
+        this.checklistService = checklistService;
     }
 
     public void updateAllTaskAndTabella() {
-
-        TrelloCalls client = new TrelloCalls();
-        List<ListTrello> allList = client.allTrelloListFromJsonListWithReturn();
-        List<Card> allCard = allList.stream()
-                .map(listTrello -> client.cardsFromJsonListId(listTrello.getId()))
-                .flatMap(Collection::stream)
-                .collect(Collectors.toList());
-        List<Tabella> allTabella = tabellaService.findAll();
-        List<Task> allTasks = taskService.findAll();
+        updateList();
 
         allList.stream()
                 .forEach(trelloList ->
@@ -61,8 +78,6 @@ public class SynchronizeFromTrello {
                     }
                 });
 
-
-
         allCard.stream().
                 forEach(card ->
                 {if (allTasks.stream()
@@ -78,24 +93,49 @@ public class SynchronizeFromTrello {
 //        deleteFromDatabase(allTabella, allList, allTasks, allCard);
     }
 
+    private void updateList() {
+        TrelloCalls client = new TrelloCalls();
+        allList = client.allTrelloListFromJsonListWithReturn();
+        allCard = allList.stream()
+                .map(listTrello -> client.cardsFromJsonListId(listTrello.getId()))
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
+        allTrelloChecklist = allCard.stream()
+                .map(card -> card.getTrelloChecklists())
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
+        allCheckitems = allTrelloChecklist.stream()
+                .map(card -> card.getCheckItems())
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
+        allTabella = tabellaService.findAll();
+        allTasks = taskService.findAll();
+        allChecklist = checklistService.findAll();
+        allCheckmark = checkmarkService.findAll();
+    }
+
     private void deleteFromDatabase(List<Tabella> allTabella, List<ListTrello> allList, List<Task> allTasks, List<Card> allCard) {
         checklistService.findAll();
         checkmarkService.findAll();
 
         allTasks.stream()
                 .forEach(task ->
-                {if (!allCard.stream()
-                        .map(listTrello -> listTrello.getId())
-                        .collect(Collectors.toList()).contains(task.getTrelloId()))
-                {taskService.deleteById(task.getIdTask());}
+                {
+                    if (!allCard.stream()
+                            .map(listTrello -> listTrello.getId())
+                            .collect(Collectors.toList()).contains(task.getTrelloId())) {
+                        taskService.deleteById(task.getIdTask());
+                    }
                 });
 
         allTabella.stream()
                 .forEach(tabella ->
-                {if (!allList.stream()
-                        .map(listTrello -> listTrello.getId())
-                        .collect(Collectors.toList()).contains(tabella.getTrelloId()))
-                {tabellaService.deleteById(tabella.getId());}
+                {
+                    if (!allList.stream()
+                            .map(listTrello -> listTrello.getId())
+                            .collect(Collectors.toList()).contains(tabella.getTrelloId())) {
+                        tabellaService.deleteById(tabella.getId());
+                    }
                 });
     }
 
@@ -105,6 +145,7 @@ public class SynchronizeFromTrello {
                 .findByTrelloId(card.getId()).getIdTask());
         newTask.setTabella(taskRepository.findByTrelloId(card.getId()).getTabella());
         Task updatedTask = taskService.update(newTask);
+        insertChecklist(card, updatedTask);
         return updatedTask;
     }
 
@@ -113,22 +154,58 @@ public class SynchronizeFromTrello {
         Task newTask = card.toLocalEntity();
         newTask.setTabella(tabellaRepository.findByTrelloId(card.getIdList()));
         Task insertedTask = taskService.insert(newTask);
-//        insertChecklist(card, insertedTask);
+        insertChecklist(card, insertedTask);
         return insertedTask;
     }
 
-    private void insertChecklist(Card card, Task insertedTask) {
-        List<Checklist> newChecklists = card.toLocalEntity().getChecklist();
-        for (Checklist checklist :
+
+
+    private void insertChecklist(Card card, Task updatedTask) {
+        List<TrelloChecklist> newChecklists = card.getTrelloChecklists();
+        for (TrelloChecklist trelloChecklist :
                 newChecklists) {
-            checklist.setTask(insertedTask);
-            Checklist insertedChecklist = checklistService.insert(checklist);
-            List<Checkmark> newCheckmarks = checklist.getChecklist();
-            for (Checkmark checkmark :
-                    newCheckmarks) {
-                checkmark.setChecklist(insertedChecklist);
-                checkmarkService.insert(checkmark);
+            Checklist checklistToInsert = trelloChecklist.toLocalEntity();
+            checklistToInsert.setTask(updatedTask);
+            if (allChecklist.stream()
+                    .map(checklist -> checklist.getTrelloId())
+                    .collect(Collectors.toList())
+                    .contains(trelloChecklist.getId())) {
+
+                checklistToInsert.setIdChecklist(checklistrepository
+                        .findByTrelloId(trelloChecklist.getId()).getIdChecklist());
+                Checklist updatedChecklist = checklistService.update(checklistToInsert);
+
+//                insertCheckmark(trelloChecklist,updatedChecklist);
+            }
+            else {
+                Checklist insertedChecklist =checklistService.insert(checklistToInsert);
+
+//                insertCheckmark(trelloChecklist,insertedChecklist);
+            }
             }
         }
+
+    private void insertCheckmark(TrelloChecklist trelloChecklist, Checklist insertedChecklist) {
+        List<CheckItem> checkitems = trelloChecklist.getCheckItems();
+        for (CheckItem checkitem :
+                checkitems) {
+            Checkmark checkmarkToInsert = checkitem.toLocalEntity();
+            checkmarkToInsert.setChecklist(insertedChecklist);
+            if (allCheckmark.stream()
+                    .map(checkmark -> checkmark.getTrelloId())
+                    .collect(Collectors.toList())
+                    .contains(checkitem.getIdCheckItem())) {
+
+                checkmarkToInsert.setIdCheckmark(checkmarkRepository
+                        .findByTrelloId(checkitem.getIdCheckItem()).getIdCheckmark());
+                Checkmark updatedCheckmark = checkmarkService.update(checkmarkToInsert);
+
+            }
+            else {
+                Checkmark insertedCheckmark = checkmarkService.insert(checkmarkToInsert);
+            }
+        }
+
     }
+
 }

@@ -1,6 +1,8 @@
 package it.euris.javaacademy.ProgettoBaseSpaziale.controller;
 
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.*;
+import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.ChecklistRepository;
+import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.CheckmarkRepository;
 import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.TabellaRepository;
 import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.TaskRepository;
 import it.euris.javaacademy.ProgettoBaseSpaziale.service.*;
@@ -28,8 +30,10 @@ public class SynchronizationController {
     TaskService taskService;
     CheckmarkService checkmarkService;
     ChecklistService checklistService;
-    private final TaskRepository taskRepository;
-    private final TabellaRepository tabellaRepository;
+    CheckmarkRepository checkmarkRepository;
+    ChecklistRepository checklistRepository;
+    TaskRepository taskRepository;
+    TabellaRepository tabellaRepository;
 
     @PutMapping("/v1/synchronize")
     private List<Tabella> getInsertOld() {
@@ -118,7 +122,9 @@ public class SynchronizationController {
 
     @PutMapping("/v2/synchronize")
     private void insertsSmooth() {
-        SynchronizeFromTrello synchronizeFromTrello = new SynchronizeFromTrello(taskRepository, tabellaRepository, taskService, tabellaService);
+        SynchronizeFromTrello synchronizeFromTrello = new SynchronizeFromTrello(
+                taskRepository, tabellaRepository, taskService, tabellaService,checkmarkService, checkmarkRepository, checklistService, checklistRepository
+        );
         synchronizeFromTrello.updateAllTaskAndTabella();
     }
 }
