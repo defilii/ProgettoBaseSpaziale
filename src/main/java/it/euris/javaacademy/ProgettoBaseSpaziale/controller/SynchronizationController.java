@@ -4,6 +4,7 @@ import it.euris.javaacademy.ProgettoBaseSpaziale.entity.*;
 import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.TabellaRepository;
 import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.TaskRepository;
 import it.euris.javaacademy.ProgettoBaseSpaziale.service.*;
+import it.euris.javaacademy.ProgettoBaseSpaziale.synchronization.SynchronizeFromTrello;
 import it.euris.javaacademy.ProgettoBaseSpaziale.synchronization.TrelloCalls;
 import it.euris.javaacademy.ProgettoBaseSpaziale.synchronization.TrelloEntityListMaker;
 import it.euris.javaacademy.ProgettoBaseSpaziale.trello.Card;
@@ -15,10 +16,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @AllArgsConstructor
 @RestController
@@ -120,59 +118,7 @@ public class SynchronizationController {
 
     @PutMapping("/v2/synchronize")
     private void insertsSmooth() {
-        TrelloCalls client = new TrelloCalls();
-        List<ListTrello> allList = client.allTrelloListFromJsonListWithReturn();
-        List<Card> allCard = allList.stream()
-                .map(listTrello -> client.cardsFromJsonListId(listTrello.getId()))
-                .flatMap(Collection::stream)
-                .collect(Collectors.toList());
-        List<Tabella> allTabella = tabellaService.findAll();
-
-        allList.stream()
-                .forEach(trelloList -> {
-                    if (allTabella.stream()
-                            .map(tabella -> tabella.getTrelloId())
-                            .collect(Collectors.toList())
-                            .contains(trelloList.getId())) {
-                        Tabella tabellaToUpdate =
-                                trelloList.toLocalEntity();
-                        tabellaToUpdate.setId(tabellaRepository
-                                        .findByTrelloId(trelloList.getId()).getId());
-
-                        tabellaService.update(tabellaToUpdate);
-                    } else {
-                        tabellaService.insert(trelloList.toLocalEntity());
-                    }
-                });
-        List<Task> allTasks = taskService.findAll();
-        allCard.stream()
-                .forEach(card -> {
-                    if (allTasks.stream()
-                            .map(task -> task.getTrelloId())
-                            .collect(Collectors.toList())
-                            .contains(card.getId())) {
-                        updateCard(card);
-                    } else {
-                        insertCard(card);
-                    }
-                });
-
-    }
-
-    private Task updateCard(Card card) {
-        Task newTask = card.toLocalEntity();
-        newTask.setIdTask(taskRepository
-                .findByTrelloId(card.getId()).getIdTask());
-        newTask.setTabella(taskRepository.findByTrelloId(card.getId()).getTabella());
-        Task updatedTask = taskService.update(newTask);
-        return updatedTask;
-    }
-
-
-    private Task insertCard(Card card) {
-        Task newTask = card.toLocalEntity();
-        newTask.setTabella(tabellaRepository.findByTrelloId(card.getIdList()));
-        Task insertedTask = taskService.insert(newTask);
-        return insertedTask;
+        SynchronizeFromTrello synchronizeFromTrello = new SynchronizeFromTrello(taskRepository, tabellaRepository, taskService, tabellaService);
+        synchronizeFromTrello.updateAllTaskAndTabella();
     }
 }
