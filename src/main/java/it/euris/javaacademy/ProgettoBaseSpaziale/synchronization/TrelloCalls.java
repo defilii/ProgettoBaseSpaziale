@@ -17,6 +17,7 @@ import java.lang.reflect.Modifier;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.GsonUtils.getList;
@@ -109,6 +110,31 @@ public class TrelloCalls {
         }
 
         return listTrellos;
+    }
+
+    public List<Card> allTrelloListFromJsonListWithCardReturn() {
+
+        String idBoard = "652d5727a3301d21fa288a27";
+        HttpResponse<JsonNode> response = Unirest.get("https://api.trello.com/1/boards/" +
+                        idBoard +
+                        "/lists")
+                .header("Accept", "application/json")
+                .queryString("key", key)
+                .queryString("token", token)
+                .asJson();
+
+        System.out.println(response.getBody().toPrettyString());
+
+        List<ListTrello> listTrellos = getList(response.getBody().toString(), ListTrello.class);
+List<Card> listCards = new ArrayList<>();
+        for (ListTrello listTrello: listTrellos) {
+            List<Card> cards = cardsFromJsonListId(listTrello.getId());
+            for (Card card: cards) {
+                listCards.add(card);
+            }
+        }
+
+        return listCards;
     }
 
     public List<Card> cardsFromJsonListId(String listId) {
@@ -205,16 +231,16 @@ public class TrelloCalls {
 //        client.trelloListFromJsonList();
 //        client.cardsFromJsonListId("652d5727a3301d21fa288a28");
 
-        System.out.println(client.cardsFromJsonListId("652d5727a3301d21fa288a2a")
-                .stream().map(Card::toLocalEntity).toList()
-                );
-//
-//        System.out.println(
-//                allTrelloListFromJsonListWithReturn().stream().map(Card::toLocalEntity).toList()
+//        System.out.println(client.cardsFromJsonListId("652d5727a3301d21fa288a2a")
+//                .stream().map(Card::toLocalEntity).toList()
 //                );
+//
+        System.out.println(
+                client.allTrelloListFromJsonListWithCardReturn().stream().map(Card::toLocalEntity).toList()
+                );
 ;
 //
-//String date = "2023-10-24T14:23:00.000Z";
+
 //
 //        LocalDateTime localDateTime = ZonedDateTime.parse(date).toLocalDateTime();
 //

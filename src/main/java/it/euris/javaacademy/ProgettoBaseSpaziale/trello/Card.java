@@ -7,6 +7,7 @@ import it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter;
 import it.euris.javaacademy.ProgettoBaseSpaziale.utils.Exclude;
 import lombok.*;
 
+import java.awt.*;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -31,6 +32,8 @@ public class Card implements TrelloEntity {
     private String idList;
 
     private String due;
+    private String dateLastActivity;
+    private List<TrelloLabel> labels;
 
     @Exclude
     private String localId;
@@ -46,9 +49,10 @@ public class Card implements TrelloEntity {
                 .taskName(name)
                 .descrizione(desc)
                 .dataScadenza(due== null ? null : ZonedDateTime.parse(due).toLocalDateTime())
-                .lastUpdate(LocalDateTime.now())
+                .lastUpdate(ZonedDateTime.parse(dateLastActivity).toLocalDateTime())
                 .checklist(trelloChecklists.stream().map(TrelloChecklist::toLocalEntity).toList())
                 .trelloId(id)
+                .priorita(labels.stream().map(labels -> labels.toPriority()).findAny().orElse(null))
                 .build();
 
     }
