@@ -92,7 +92,7 @@ public class SynchronizeFromTrello {
                     }
                 });
 
-//        deleteFromDatabase();
+        deleteFromDatabase();
     }
 
     private void updateList() {
@@ -160,7 +160,7 @@ public class SynchronizeFromTrello {
         Task newTask = card.toLocalEntity();
         newTask.setIdTask(taskRepository
                 .findByTrelloId(card.getId()).getIdTask());
-        newTask.setTabella(taskRepository.findByTrelloId(card.getId()).getTabella());
+        newTask.setTabella(tabellaRepository.findByTrelloId(card.getIdList()));
         Task updatedTask = taskService.update(newTask);
         insertChecklist(card, updatedTask);
         return updatedTask;
