@@ -41,14 +41,15 @@ public class Card implements TrelloEntity {
 
     private List<TrelloChecklist> trelloChecklists = new ArrayList<>();
 
-LocalDateTime lastUpdate;
+    LocalDateTime lastUpdate;
+
     @Override
     public Task toLocalEntity() {
         return Task.builder()
                 .taskName(name)
                 .descrizione(desc)
                 .dataScadenza(due == null ? null : ZonedDateTime.parse(due).toLocalDateTime())
-               .lastUpdate(LocalDateTime.now())
+                .lastUpdate(LocalDateTime.now())
                 .checklist(trelloChecklists.stream().map(TrelloChecklist::toLocalEntity).toList())
                 .build();
 
