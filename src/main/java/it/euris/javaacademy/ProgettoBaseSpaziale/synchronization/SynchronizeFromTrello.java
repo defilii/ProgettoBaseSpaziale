@@ -8,10 +8,7 @@ import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.ChecklistRepository;
 import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.CheckmarkRepository;
 import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.TabellaRepository;
 import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.TaskRepository;
-import it.euris.javaacademy.ProgettoBaseSpaziale.service.ChecklistService;
-import it.euris.javaacademy.ProgettoBaseSpaziale.service.CheckmarkService;
-import it.euris.javaacademy.ProgettoBaseSpaziale.service.TabellaService;
-import it.euris.javaacademy.ProgettoBaseSpaziale.service.TaskService;
+import it.euris.javaacademy.ProgettoBaseSpaziale.service.*;
 import it.euris.javaacademy.ProgettoBaseSpaziale.trello.Card;
 import it.euris.javaacademy.ProgettoBaseSpaziale.trello.CheckItem;
 import it.euris.javaacademy.ProgettoBaseSpaziale.trello.ListTrello;
@@ -37,6 +34,7 @@ public class SynchronizeFromTrello {
 
     TaskRepository taskRepository;
     TabellaRepository tabellaRepository;
+    ApiKeyService apiKeyService;
 
     List<ListTrello> allList;
     List<Card> allCard;
@@ -47,7 +45,8 @@ public class SynchronizeFromTrello {
     List<Checklist> allChecklist;
     List<Checkmark> allCheckmark;
 
-    public SynchronizeFromTrello(TaskRepository taskRepository, TabellaRepository tabellaRepository, TaskService taskService, TabellaService tabellaService, CheckmarkService checkmarkService, CheckmarkRepository checkmarkRepository, ChecklistService checklistService, ChecklistRepository checklistRepository) {
+    public SynchronizeFromTrello(ApiKeyService apiKeyService, TaskRepository taskRepository, TabellaRepository tabellaRepository, TaskService taskService, TabellaService tabellaService, CheckmarkService checkmarkService, CheckmarkRepository checkmarkRepository, ChecklistService checklistService, ChecklistRepository checklistRepository) {
+        this.apiKeyService = apiKeyService;
         this.taskRepository = taskRepository;
         this.tabellaRepository = tabellaRepository;
         this.taskService = taskService;
@@ -99,7 +98,7 @@ public class SynchronizeFromTrello {
     }
 
     private void updateList() {
-        TrelloCalls client = new TrelloCalls();
+        TrelloCalls client = new TrelloCalls(apiKeyService);
         allList = client.allTrelloListFromJsonListWithReturn();
         allCard = allList.stream()
                 .map(listTrello -> client.cardsFromJsonListId(listTrello.getId()))

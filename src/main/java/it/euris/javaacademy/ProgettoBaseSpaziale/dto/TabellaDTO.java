@@ -17,17 +17,18 @@ import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.stringTo
 public class TabellaDTO implements Dto {
     private Integer id;
     private String trelloId;
-
     private String nome;
     private String lastUpdate;
+    private String trelloBoardId;
     @Override
     public Tabella toModel() {
+
         return Tabella.builder()
                 .id(id)
                 .nome(nome)
                 .lastUpdate(stringToLocalDateTime(lastUpdate))
                 .trelloId(trelloId)
-
+                .trelloBoardId(trelloBoardId)
                 .build();
     }
 }

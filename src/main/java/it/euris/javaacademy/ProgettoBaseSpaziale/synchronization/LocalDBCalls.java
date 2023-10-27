@@ -7,6 +7,7 @@ import com.google.gson.JsonObject;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Tabella;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Task;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.enums.Priorita;
+import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.BoardIdMissingException;
 import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.TabellaRepository;
 import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.TaskRepository;
 import it.euris.javaacademy.ProgettoBaseSpaziale.service.ApiKeyService;
@@ -66,6 +67,11 @@ public class LocalDBCalls {
         return cards;
     }
 
+//    private void updateKeys() {
+//        key = apiKeyService.findMostRecent().getKey();
+//        token = apiKeyService.findMostRecent().getToken();
+//    }
+
     @PutMapping("/synchronize")
     public void doSomething() {
         tabellaService.findAll().stream()
@@ -96,7 +102,14 @@ public class LocalDBCalls {
         Gson gson = new Gson();
         String key = "656d5bde047c3ac9c66eae4c33aa9230";
         String token = "ATTA27702686ff9d2e286aadb299d53c874f655dc93f653cb20c42ea2f2be5eb111399494FE0";
-        String idBoard = "652d5727a3301d21fa288a27";
+        String check = "missing board id";
+        String idBoard = tabellaService.findAll().stream()
+                .map(Tabella::getTrelloBoardId)
+                .filter(id -> id != null)
+                .findFirst().orElse(check);
+        if(idBoard.equals(check)) {
+            throw new BoardIdMissingException();
+        }
         HttpResponse<JsonNode> response = Unirest.post("https://api.trello.com/1/lists")
                 .queryString("name", tabella.getNome())
                 .queryString("idBoard", idBoard)
@@ -165,6 +178,8 @@ public class LocalDBCalls {
         String token = "ATTA27702686ff9d2e286aadb299d53c874f655dc93f653cb20c42ea2f2be5eb111399494FE0";
         String idCard = task.getTrelloId();
 
+        Card cardToUpdate = task.toTrelloEntity();
+        cardToUpdate.setIdList(task.getTabella().getTrelloId());
         Map<String, String> headers = new HashMap<>();
         headers.put("accept", "application/json");
         headers.put("content-type", "application/json");
@@ -174,17 +189,11 @@ public class LocalDBCalls {
                 .headers(headers)
                 .queryString("key", key)
                 .queryString("token", token)
-                .body(gson.toJson(task.toTrelloEntity()))
+                .body(gson.toJson(cardToUpdate))
                 .asJson();
 
         System.out.println(response.getBody().toPrettyString());
         return gson.fromJson(response.getBody().toPrettyString(), Card.class);
-    }
-
-
-    public static void main(String[] args) {
-//        LocalDBCalls client = new LocalDBCalls();
-
     }
 
     //TODO tidy this mess up and expose only the method to synchronize in a separate controller after you finish implementing the synchronization of checklist and checkmark

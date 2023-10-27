@@ -29,11 +29,11 @@ public class SynchronizationController {
     ChecklistRepository checklistRepository;
     TaskRepository taskRepository;
     TabellaRepository tabellaRepository;
+    ApiKeyService apiKeyService;
 
     @PutMapping("/synchronize")
     private void insertsSmooth() {
-        SynchronizeFromTrello synchronizeFromTrello = new SynchronizeFromTrello(
-                taskRepository, tabellaRepository, taskService, tabellaService,checkmarkService, checkmarkRepository, checklistService, checklistRepository
+        SynchronizeFromTrello synchronizeFromTrello = new SynchronizeFromTrello(apiKeyService, taskRepository, tabellaRepository, taskService, tabellaService,checkmarkService, checkmarkRepository, checklistService, checklistRepository
         );
         synchronizeFromTrello.updateAllTaskAndTabella();
     }
