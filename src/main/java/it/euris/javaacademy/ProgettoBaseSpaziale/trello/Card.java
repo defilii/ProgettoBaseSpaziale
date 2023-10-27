@@ -2,10 +2,12 @@ package it.euris.javaacademy.ProgettoBaseSpaziale.trello;
 
 import it.euris.javaacademy.ProgettoBaseSpaziale.converter.TrelloEntity;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Task;
+import it.euris.javaacademy.ProgettoBaseSpaziale.entity.UpdateTime;
 import it.euris.javaacademy.ProgettoBaseSpaziale.service.TabellaService;
 import it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter;
 import it.euris.javaacademy.ProgettoBaseSpaziale.utils.Exclude;
 import lombok.*;
+import org.hibernate.sql.Update;
 
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
@@ -39,16 +41,17 @@ public class Card implements TrelloEntity {
 
     private List<TrelloChecklist> trelloChecklists = new ArrayList<>();
 
-
+LocalDateTime lastUpdate;
     @Override
     public Task toLocalEntity() {
         return Task.builder()
                 .taskName(name)
                 .descrizione(desc)
-                .dataScadenza(due== null ? null : ZonedDateTime.parse(due).toLocalDateTime())
-                .lastUpdate(LocalDateTime.now())
+                .dataScadenza(due == null ? null : ZonedDateTime.parse(due).toLocalDateTime())
+               .lastUpdate(LocalDateTime.now())
                 .checklist(trelloChecklists.stream().map(TrelloChecklist::toLocalEntity).toList())
                 .build();
 
     }
+
 }
