@@ -7,7 +7,6 @@ import it.euris.javaacademy.ProgettoBaseSpaziale.dto.TaskDTO;
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.archetype.Model;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.enums.Priorita;
 import it.euris.javaacademy.ProgettoBaseSpaziale.trello.Card;
-import it.euris.javaacademy.ProgettoBaseSpaziale.trello.TrelloLabel;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -26,7 +25,7 @@ import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.priorita
 @Entity
 @ToString
 @Table(name = "task")
-public class Task implements Model, LocalEntity {
+public class Task implements Model, LocalEntity, UpdateTime {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -65,12 +64,11 @@ public class Task implements Model, LocalEntity {
     @Builder.Default
     private List<Checklist> checklist = new ArrayList<>();
 
-    @Column(name = "last_update", nullable=false)
-    @Builder.Default
-    private LocalDateTime lastUpdate = LocalDateTime.now();
-
     @Column(name = "trello_id")
     private String trelloId;
+
+     LocalDateTime lastUpdate;
+
 
     @Column(name = "trello_list_id")
     private String trelloListId;
@@ -83,7 +81,7 @@ public class Task implements Model, LocalEntity {
                 .priorita(prioritaToString(priorita))
                 .descrizione(descrizione)
                 .dataScadenza(localDateTimeToString(dataScadenza))
-                .lastUpdate(localDateTimeToString(lastUpdate))
+                .lastUpdate(checkLastUpdate())
                 .trelloId(trelloId)
                 .build();
     }
@@ -105,6 +103,26 @@ public class Task implements Model, LocalEntity {
                 .labels(List.of(trelloLabel))
                 .build();
     }
+
+    @Override
+    public LocalDateTime getLastUpdate() {
+        return lastUpdate;
+    }
+
+    @Override
+    public LocalDateTime checkLastUpdate() {
+        LocalDateTime taskLastUpdate = lastUpdate;
+        Card card = toTrelloEntity();
+        LocalDateTime cardLastUpdate = (card == null) ? null : card.toLocalEntity().getLastUpdate();
+        if (cardLastUpdate==null) {
+            return taskLastUpdate;
+        } else if (taskLastUpdate.isAfter(cardLastUpdate)) {
+            return taskLastUpdate;
+        } else {
+            return cardLastUpdate;
+        }
+    }
+
 
     private String prioritaToLabel() {
         if(null == priorita) {

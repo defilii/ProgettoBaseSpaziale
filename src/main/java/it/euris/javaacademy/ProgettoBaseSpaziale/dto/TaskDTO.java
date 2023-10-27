@@ -3,12 +3,14 @@ package it.euris.javaacademy.ProgettoBaseSpaziale.dto;
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.archetype.Dto;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Tabella;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Task;
+import it.euris.javaacademy.ProgettoBaseSpaziale.entity.UpdateTime;
+import it.euris.javaacademy.ProgettoBaseSpaziale.trello.Card;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.time.chrono.ChronoLocalDateTime;
 
-import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.stringToLocalDateTime;
-import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.stringToPriorita;
+import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.*;
 
 @Builder
 @Getter
@@ -29,7 +31,8 @@ public class TaskDTO implements Dto {
     private String trelloId;
 private String trelloListId;
     private Tabella tabella;
-    private String lastUpdate;
+    private LocalDateTime lastUpdate;
+
     @Override
     public Task toModel() {
         return Task.builder()
