@@ -62,7 +62,6 @@ public class Checklist implements Model, LocalEntity {
     @Override
     public TrelloChecklist toTrelloEntity() {
         return TrelloChecklist.builder()
-                .localId(String.valueOf(idChecklist))
                 .name(nome)
                 .checkItems(checklist.stream().map(Checkmark::toTrelloEntity).toList())
                 .build();

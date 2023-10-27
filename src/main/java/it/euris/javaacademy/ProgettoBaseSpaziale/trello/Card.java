@@ -2,13 +2,10 @@ package it.euris.javaacademy.ProgettoBaseSpaziale.trello;
 
 import it.euris.javaacademy.ProgettoBaseSpaziale.converter.TrelloEntity;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Task;
-import it.euris.javaacademy.ProgettoBaseSpaziale.service.TabellaService;
-import it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter;
+import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.TaskRepository;
 import it.euris.javaacademy.ProgettoBaseSpaziale.utils.Exclude;
 import lombok.*;
 
-import java.awt.*;
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,8 +17,6 @@ import java.util.List;
 @AllArgsConstructor
 @ToString
 public class Card implements TrelloEntity {
-
-    TabellaService tabellaService;
 
     private String id;
 
@@ -52,6 +47,7 @@ public class Card implements TrelloEntity {
                 .lastUpdate(ZonedDateTime.parse(dateLastActivity).toLocalDateTime())
                 .checklist(trelloChecklists.stream().map(TrelloChecklist::toLocalEntity).toList())
                 .trelloId(id)
+                .trelloListId(idList)
                 .priorita(labels.stream().map(labels -> labels.toPriority()).findAny().orElse(null))
                 .build();
 

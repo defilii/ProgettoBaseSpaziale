@@ -18,8 +18,6 @@ public class TrelloChecklist implements TrelloEntity {
     String name;
     String idCard;
 
-    @Exclude
-    String localId;
 
     List<CheckItem> checkItems = new ArrayList();
 

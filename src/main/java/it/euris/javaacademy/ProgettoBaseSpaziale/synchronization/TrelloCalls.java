@@ -2,6 +2,8 @@ package it.euris.javaacademy.ProgettoBaseSpaziale.synchronization;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Tabella;
+import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Task;
 import it.euris.javaacademy.ProgettoBaseSpaziale.service.ApiKeyService;
 import it.euris.javaacademy.ProgettoBaseSpaziale.trello.*;
 import it.euris.javaacademy.ProgettoBaseSpaziale.utils.ExclusionStrategy;
@@ -50,7 +52,7 @@ public class TrelloCalls {
                 .asJson();
 
 
-        System.out.println(response.getBody().toPrettyString());
+//        System.out.println(response.getBody().toPrettyString());
     }
 
     public void postNewCard() {
@@ -65,14 +67,14 @@ public class TrelloCalls {
                 .asJson();
 
 
-        System.out.println(response.getBody());
+//        System.out.println(response.getBody());
     }
 
     public void trelloListFromJsonList() {
         Gson gson = new GsonBuilder()
                 .excludeFieldsWithModifiers(Modifier.STATIC)
                 .create();
-       String boardId = "652d5727a3301d21fa288a27";
+        String boardId = "652d5727a3301d21fa288a27";
 
         HttpResponse<JsonNode> response = Unirest.get("https://api.trello.com/1/boards/" +
                         boardId +
@@ -82,12 +84,11 @@ public class TrelloCalls {
                 .queryString("token", token)
                 .asJson();
 
-        System.out.println(response.getBody().toPrettyString());
+//        System.out.println(response.getBody().toPrettyString());
 
         List<ListTrello> listTrellos = getList(response.getBody().toString(), ListTrello.class);
         System.out.println(listTrellos.toString());
     }
-
 
 
     public List<ListTrello> allTrelloListFromJsonListWithReturn() {
@@ -101,11 +102,11 @@ public class TrelloCalls {
                 .queryString("token", token)
                 .asJson();
 
-        System.out.println(response.getBody().toPrettyString());
-
+//        System.out.println(response.getBody().toPrettyString());
+//
         List<ListTrello> listTrellos = getList(response.getBody().toString(), ListTrello.class);
 
-        for (ListTrello listTrello: listTrellos) {
+        for (ListTrello listTrello : listTrellos) {
             cardsFromJsonListId(listTrello.getId());
         }
 
@@ -123,13 +124,13 @@ public class TrelloCalls {
                 .queryString("token", token)
                 .asJson();
 
-        System.out.println(response.getBody().toPrettyString());
+//        System.out.println(response.getBody().toPrettyString());
 
         List<ListTrello> listTrellos = getList(response.getBody().toString(), ListTrello.class);
-List<Card> listCards = new ArrayList<>();
-        for (ListTrello listTrello: listTrellos) {
+        List<Card> listCards = new ArrayList<>();
+        for (ListTrello listTrello : listTrellos) {
             List<Card> cards = cardsFromJsonListId(listTrello.getId());
-            for (Card card: cards) {
+            for (Card card : cards) {
                 listCards.add(card);
             }
         }
@@ -153,11 +154,11 @@ List<Card> listCards = new ArrayList<>();
 
         List<Card> cards = getList(response.getBody(), Card.class);
 
-        for (Card card: cards) {
+        for (Card card : cards) {
             getChecklistsAndSetItToCard(card);
         }
 
-        System.out.println(cards.toString());
+//        System.out.println(cards.toString());
         return cards;
     }
 
@@ -172,7 +173,7 @@ List<Card> listCards = new ArrayList<>();
 //        System.out.println(checklistResponse.getBody());
 
         List<TrelloChecklist> checklists = getList(checklistResponse.getBody(), TrelloChecklist.class);
-        for (TrelloChecklist trelloChecklist: checklists) {
+        for (TrelloChecklist trelloChecklist : checklists) {
             getCheckmarksAndSetItToChecklist(trelloChecklist);
         }
         card.setTrelloChecklists(checklists);
@@ -202,7 +203,7 @@ List<Card> listCards = new ArrayList<>();
                 .queryString("token", token)
                 .asString();
 
-        System.out.println(response.getBody());
+//        System.out.println(response.getBody());
 
         List<ListTrello> listTrellos = getList(response.getBody(), ListTrello.class);
         return listTrellos;
@@ -218,11 +219,12 @@ List<Card> listCards = new ArrayList<>();
                 .queryString("token", token)
                 .asString();
 
-        System.out.println(response.getBody());
+//        System.out.println(response.getBody());
 
         List<Members> membersList = getList(response.getBody(), Members.class);
         return membersList;
     }
+
 
 
     public static void main(String args[]) throws Exception {
@@ -236,9 +238,9 @@ List<Card> listCards = new ArrayList<>();
 //                );
 //
         System.out.println(
-                client.allTrelloListFromJsonListWithCardReturn().stream().map(Card::toLocalEntity).toList()
-                );
-;
+                client.allTrelloListFromJsonListWithCardReturn().stream().map(Card::toLocalEntity).map(Task::toTrelloEntity).toList()
+        );
+//;
 //
 
 //

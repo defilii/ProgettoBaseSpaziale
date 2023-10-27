@@ -19,8 +19,6 @@ public class ListTrello implements TrelloEntity {
     private String name;
 
     private String idBoard;
-    @Exclude
-    private String localId;
 
     private Boolean closed;
 
@@ -31,6 +29,7 @@ public class ListTrello implements TrelloEntity {
                 .builder()
                 .trelloId(id)
                 .nome(name)
+                .trelloBoardId(idBoard)
                 .build();
     }
 }

@@ -10,6 +10,7 @@ import lombok.*;
 @AllArgsConstructor
 @ToString
 public class TrelloLabel {
+    private String id;
     private String name;
     public Priorita toPriority() {
         switch (name) {

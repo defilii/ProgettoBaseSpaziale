@@ -60,7 +60,6 @@ public class User implements Model, LocalEntity {
         return Members.builder()
                 .fullName(fullName)
                 .username(username)
-                .localId(String.valueOf(idUser))
                 .build();
     }
 }

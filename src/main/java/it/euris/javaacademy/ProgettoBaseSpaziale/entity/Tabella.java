@@ -43,6 +43,9 @@ public class Tabella implements Model, LocalEntity {
 
     @Column(name = "trello_id")
     private String trelloId;
+
+    @Column(name = "trello_board_id")
+    private String trelloBoardId;
     @Override
     public TabellaDTO toDto() {
         return TabellaDTO.builder()
@@ -57,8 +60,8 @@ public class Tabella implements Model, LocalEntity {
     public ListTrello toTrelloEntity() {
         return ListTrello.builder()
                 .id(trelloId)
+                .idBoard(trelloBoardId)
                 .name(nome)
-                .localId(String.valueOf(id))
                 .build();
     }
 }

@@ -19,8 +19,6 @@ public class CheckItem implements TrelloEntity {
     private String name;
 
     private String idChecklist;
-    @Exclude
-    private String localId;
     @Override
     public Checkmark toLocalEntity() {
         return Checkmark.builder()

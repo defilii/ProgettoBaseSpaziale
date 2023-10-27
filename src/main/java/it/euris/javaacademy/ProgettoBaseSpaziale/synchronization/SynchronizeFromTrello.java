@@ -60,6 +60,7 @@ public class SynchronizeFromTrello {
 
     public void updateAllTaskAndTabella() {
         updateList();
+        String idBoardToSet = allList.stream().map(ListTrello::getIdBoard).findAny().orElse(null);
 
         allList.stream()
                 .forEach(trelloList ->
@@ -72,10 +73,12 @@ public class SynchronizeFromTrello {
                                 trelloList.toLocalEntity();
                         tabellaToUpdate.setId(tabellaRepository
                                 .findByTrelloId(trelloList.getId()).getId());
-
+                        tabellaToUpdate.setTrelloBoardId(idBoardToSet);
                         tabellaService.update(tabellaToUpdate);
                     } else {
-                        tabellaService.insert(trelloList.toLocalEntity());
+                        Tabella tabellaToInsert = trelloList.toLocalEntity();
+                        tabellaToInsert.setTrelloBoardId(idBoardToSet);
+                        tabellaService.insert(tabellaToInsert);
                     }
                 });
 
@@ -154,6 +157,8 @@ public class SynchronizeFromTrello {
                         tabellaService.deleteById(tabella.getId());
                     }
                 });
+
+
     }
 
     private Task updateCard(Card card) {

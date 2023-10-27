@@ -62,7 +62,6 @@ public class Checkmark implements Model, LocalEntity {
         return CheckItem.builder()
                 .state(isItDone ? "complete" : "incomplete")
                 .name(descrizione)
-                .localId(String.valueOf(idCheckmark))
                 .build();
     }
 }

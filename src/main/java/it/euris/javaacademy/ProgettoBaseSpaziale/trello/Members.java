@@ -15,7 +15,6 @@ public class Members implements TrelloEntity {
     private String id;
     private String fullName;
     private String username;
-    private String localId;
     @Override
     public User toLocalEntity() {
         return User.builder()
