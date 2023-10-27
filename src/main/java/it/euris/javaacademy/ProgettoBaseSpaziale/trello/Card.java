@@ -4,10 +4,8 @@ import it.euris.javaacademy.ProgettoBaseSpaziale.converter.TrelloEntity;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Task;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.UpdateTime;
 import it.euris.javaacademy.ProgettoBaseSpaziale.service.TabellaService;
-import it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter;
 import it.euris.javaacademy.ProgettoBaseSpaziale.utils.Exclude;
 import lombok.*;
-import org.hibernate.sql.Update;
 
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
@@ -20,7 +18,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class Card implements TrelloEntity {
+public class Card implements TrelloEntity, UpdateTime {
 
     TabellaService tabellaService;
 
@@ -49,10 +47,29 @@ public class Card implements TrelloEntity {
                 .taskName(name)
                 .descrizione(desc)
                 .dataScadenza(due == null ? null : ZonedDateTime.parse(due).toLocalDateTime())
-                .lastUpdate(LocalDateTime.now())
-                .checklist(trelloChecklists.stream().map(TrelloChecklist::toLocalEntity).toList())
+                .lastUpdate(getLastUpdate())
+                .checklist(trelloChecklists == null? null
+                        :trelloChecklists.stream().map(TrelloChecklist::toLocalEntity).toList())
                 .build();
 
     }
 
+    @Override
+    public LocalDateTime getLastUpdate() {
+        return lastUpdate;
+    }
+
+    @Override
+    public LocalDateTime checkLastUpdate() {
+        LocalDateTime cardLastUpdate = lastUpdate;
+        Task task = toLocalEntity();
+        LocalDateTime taskLastUpdate = (task == null) ? null : task.getLastUpdate();
+        if (taskLastUpdate == null) {
+            return cardLastUpdate;
+        } else if (taskLastUpdate.isAfter(cardLastUpdate)) {
+            return taskLastUpdate;
+        } else {
+            return cardLastUpdate;
+        }
+    }
 }

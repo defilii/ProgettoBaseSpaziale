@@ -76,7 +76,7 @@ public class Task implements Model, LocalEntity, UpdateTime {
                 .priorita(prioritaToString(priorita))
                 .descrizione(descrizione)
                 .dataScadenza(localDateTimeToString(dataScadenza))
-                .lastUpdate(getLastUpdate())
+                .lastUpdate(checkLastUpdate())
                 .build();
 
     }
@@ -86,25 +86,25 @@ public class Task implements Model, LocalEntity, UpdateTime {
         return Card.builder().build();
     }
 
-
-
+    @Override
+    public LocalDateTime getLastUpdate() {
+        return lastUpdate;
+    }
 
     @Override
     public LocalDateTime checkLastUpdate() {
         LocalDateTime taskLastUpdate = lastUpdate;
         Card card = toTrelloEntity();
-        LocalDateTime cardLastUpdate = (card == null) ? null : card.toLocalEntity().checkLastUpdate();
-        if (taskLastUpdate.isAfter(cardLastUpdate)) {
+        LocalDateTime cardLastUpdate = (card == null) ? null : card.toLocalEntity().getLastUpdate();
+        if (cardLastUpdate==null) {
+            return taskLastUpdate;
+        } else if (taskLastUpdate.isAfter(cardLastUpdate)) {
             return taskLastUpdate;
         } else {
             return cardLastUpdate;
         }
     }
 
-    @Override
-    public LocalDateTime getLastUpdate(){
-        return lastUpdate;
-    }
 }
 
 
