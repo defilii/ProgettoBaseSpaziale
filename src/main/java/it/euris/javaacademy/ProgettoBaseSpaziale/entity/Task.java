@@ -65,7 +65,7 @@ public class Task implements Model, LocalEntity, UpdateTime {
     @Column(name = "trello_id")
     private String trelloId;
 
-    private LocalDateTime lastUpdate;
+     LocalDateTime lastUpdate;
 
     @Override
     public TaskDTO toDto() {
