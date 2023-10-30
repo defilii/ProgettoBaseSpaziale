@@ -2,11 +2,9 @@ package it.euris.javaacademy.ProgettoBaseSpaziale.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import it.euris.javaacademy.ProgettoBaseSpaziale.converter.LocalEntity;
-import it.euris.javaacademy.ProgettoBaseSpaziale.converter.TrelloEntity;
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.TaskDTO;
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.archetype.Model;
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.archetype.ModelToPreInsert;
-import it.euris.javaacademy.ProgettoBaseSpaziale.dto.archetype.PreInsert;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.enums.Priorita;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.pre_insert.TaskInsert;
 import it.euris.javaacademy.ProgettoBaseSpaziale.trello.Card;
@@ -35,21 +33,21 @@ public class Task implements Model, LocalEntity, ModelToPreInsert {
     @Column(name = "id")
     private Integer idTask;
 
-    @Column(name = "task_name", nullable=false)
+    @Column(name = "task_name", nullable = false)
     private String taskName;
 
-    @Column(name = "priorita", nullable=true)
+    @Column(name = "priorita", nullable = true)
     @Enumerated(EnumType.STRING)
     private Priorita priorita;
 
-    @Column(name = "descrizione", nullable=true)
+    @Column(name = "descrizione", nullable = true)
     private String descrizione;
 
-    @Column(name = "data_scadenza", nullable=true)
+    @Column(name = "data_scadenza", nullable = true)
     private LocalDateTime dataScadenza;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="id_tabella", nullable=false)
+    @JoinColumn(name = "id_tabella", nullable = false)
     private Tabella tabella;
 
     @OneToMany(mappedBy = "task", fetch = FetchType.EAGER)
@@ -67,12 +65,13 @@ public class Task implements Model, LocalEntity, ModelToPreInsert {
     @Builder.Default
     private List<Checklist> checklist = new ArrayList<>();
 
-    @Column(name = "last_update", nullable=false)
+    @Column(name = "last_update", nullable = false)
     @Builder.Default
     private LocalDateTime lastUpdate = LocalDateTime.now();
 
     @Column(name = "trello_id")
     private String trelloId;
+
     @Override
     public TaskDTO toDto() {
         return TaskDTO.builder()

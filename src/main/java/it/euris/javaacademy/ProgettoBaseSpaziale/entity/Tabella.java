@@ -5,7 +5,6 @@ import it.euris.javaacademy.ProgettoBaseSpaziale.converter.LocalEntity;
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.TabellaDTO;
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.archetype.Model;
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.archetype.ModelToPreInsert;
-import it.euris.javaacademy.ProgettoBaseSpaziale.dto.archetype.PreInsert;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.pre_insert.TabellaInsert;
 import it.euris.javaacademy.ProgettoBaseSpaziale.trello.ListTrello;
 import jakarta.persistence.*;
@@ -32,7 +31,7 @@ public class Tabella implements Model, LocalEntity, ModelToPreInsert {
     @Column(name = "id")
     private Integer id;
 
-    @Column(name = "nome", nullable=false)
+    @Column(name = "nome", nullable = false)
     private String nome;
 
     @OneToMany(mappedBy = "tabella", fetch = FetchType.EAGER)
@@ -40,12 +39,13 @@ public class Tabella implements Model, LocalEntity, ModelToPreInsert {
     @Builder.Default
     private List<Task> tasks = new ArrayList<Task>();
 
-    @Column(name = "last_update", nullable=false)
+    @Column(name = "last_update", nullable = false)
     @Builder.Default
     private LocalDateTime lastUpdate = LocalDateTime.now();
 
     @Column(name = "trello_id")
     private String trelloId;
+
     @Override
     public TabellaDTO toDto() {
         return TabellaDTO.builder()
