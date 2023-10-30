@@ -5,7 +5,10 @@ import it.euris.javaacademy.ProgettoBaseSpaziale.converter.LocalEntity;
 import it.euris.javaacademy.ProgettoBaseSpaziale.converter.TrelloEntity;
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.TaskDTO;
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.archetype.Model;
+import it.euris.javaacademy.ProgettoBaseSpaziale.dto.archetype.ModelToPreInsert;
+import it.euris.javaacademy.ProgettoBaseSpaziale.dto.archetype.PreInsert;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.enums.Priorita;
+import it.euris.javaacademy.ProgettoBaseSpaziale.entity.pre_insert.TaskInsert;
 import it.euris.javaacademy.ProgettoBaseSpaziale.trello.Card;
 import jakarta.persistence.*;
 import lombok.*;
@@ -25,7 +28,7 @@ import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.priorita
 @Entity
 @ToString
 @Table(name = "task")
-public class Task implements Model, LocalEntity {
+public class Task implements Model, LocalEntity, ModelToPreInsert {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -86,5 +89,15 @@ public class Task implements Model, LocalEntity {
     @Override
     public Card toTrelloEntity() {
         return Card.builder().build();
+    }
+
+    @Override
+    public TaskInsert toPreInsert() {
+        return TaskInsert.builder()
+                .id(idTask)
+                .taskName(taskName)
+                .descrizione(descrizione)
+                .tabella(tabella.toPreInsert())
+                .build();
     }
 }

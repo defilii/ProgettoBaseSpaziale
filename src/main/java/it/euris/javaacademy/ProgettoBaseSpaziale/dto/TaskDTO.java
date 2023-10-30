@@ -28,7 +28,9 @@ public class TaskDTO implements Dto {
     private String dataScadenza;
 
     private Tabella tabella;
+
     private String lastUpdate;
+
     @Override
     public Task toModel() {
         return Task.builder()

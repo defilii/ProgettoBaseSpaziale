@@ -6,6 +6,7 @@ import it.euris.javaacademy.ProgettoBaseSpaziale.dto.TaskDTO;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Tabella;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Task;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.enums.Priorita;
+import it.euris.javaacademy.ProgettoBaseSpaziale.entity.pre_insert.TabellaInsert;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.IdMustBeNullException;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.IdMustNotBeNullException;
 import it.euris.javaacademy.ProgettoBaseSpaziale.service.TabellaService;
@@ -39,10 +40,10 @@ public class TabellaController {
     @Operation(description = """
             This method is used to insert a table to the database<br>
             """)
-    public TabellaDTO saveTabella(@RequestBody TabellaDTO tabellaDTO) {
+    public TabellaInsert saveTabella(@RequestBody TabellaInsert tabellaInsert) {
         try {
-            Tabella tabella = tabellaDTO.toModel();
-            return tabellaService.insert(tabella).toDto();
+            Tabella tabella = tabellaInsert.toModel();
+            return tabellaService.insert(tabella).toPreInsert();
         } catch (IdMustBeNullException e) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, e.getMessage());
@@ -53,10 +54,10 @@ public class TabellaController {
     @Operation(description = """
             This method is used to update a table from the database<br>
             """)
-    public TabellaDTO updateTabella(@RequestBody TabellaDTO tabellaDTO) {
+    public TabellaInsert updateTabella(@RequestBody TabellaInsert tabellaInsert) {
         try {
-            Tabella tabella = tabellaDTO.toModel();
-            return tabellaService.update(tabella).toDto();
+            Tabella tabella = tabellaInsert.toModel();
+            return tabellaService.update(tabella).toPreInsert();
         } catch (IdMustNotBeNullException e) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, e.getMessage());
