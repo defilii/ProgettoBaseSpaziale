@@ -9,6 +9,7 @@ import lombok.*;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Builder
 @Getter
@@ -29,6 +30,7 @@ public class Card implements TrelloEntity {
     private String due;
     private String dateLastActivity;
     private List<TrelloLabel> labels;
+    private List<String> idLabels;
 
     @Exclude
     private String localId;
@@ -48,7 +50,7 @@ public class Card implements TrelloEntity {
                 .checklist(trelloChecklists.stream().map(TrelloChecklist::toLocalEntity).toList())
                 .trelloId(id)
                 .trelloListId(idList)
-                .priorita(labels.stream().map(labels -> labels.toPriority()).findAny().orElse(null))
+                .priorities(labels.stream().map(TrelloLabel::toLocalEntity).collect(Collectors.toList()))
                 .build();
 
     }

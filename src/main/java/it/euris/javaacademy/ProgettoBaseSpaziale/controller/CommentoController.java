@@ -2,11 +2,7 @@ package it.euris.javaacademy.ProgettoBaseSpaziale.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.CommentoDTO;
-import it.euris.javaacademy.ProgettoBaseSpaziale.dto.TabellaDTO;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Commento;
-import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Tabella;
-import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Task;
-import it.euris.javaacademy.ProgettoBaseSpaziale.entity.User;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.IdMustBeNullException;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.IdMustNotBeNullException;
 import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.CommentoRepository;

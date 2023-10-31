@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd"
+        objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+
+    <changeSet id="2023-10-30-01-priority-create" author="De Filippi Ale">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="priority"/>
+            </not>
+        </preConditions>
+        <comment>task create</comment>
+
+        <createTable tableName="priority">
+            <column name="id" type="INT" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="trello_id" type="VARCHAR(255)">
+            </column>
+            <column name="id_task" type="INT">
+            </column>
+            <column name="color" type="VARCHAR(255)">
+            </column>
+            <column name="name" type="VARCHAR(255)">
+            </column>
+
+        </createTable>
+        <createTable tableName="priority_tasks">
+            <column name="task_id" type="INT" >
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PK_TASK_HAS_USER"/>
+            </column>
+            <column name="priority_id" type="INT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+
+        </createTable>
+        <addForeignKeyConstraint baseTableName="priority_tasks" baseColumnNames="priority_id"
+                                 constraintName="fk_priority_task_on_priority"
+                                 referencedTableName="priority"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="priority_tasks" baseColumnNames="task_id"
+                                 constraintName="fk_priority_task_on_task"
+                                 referencedTableName="task"
+                                 referencedColumnNames="id"/>
+
+        <rollback>
+            <dropTable tableName="priority"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

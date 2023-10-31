@@ -6,7 +6,6 @@ import it.euris.javaacademy.ProgettoBaseSpaziale.dto.TaskDTO;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Tabella;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Task;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.enums.Priorita;
-import it.euris.javaacademy.ProgettoBaseSpaziale.entity.pre_insert.TabellaInsert;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.IdMustBeNullException;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.IdMustNotBeNullException;
 import it.euris.javaacademy.ProgettoBaseSpaziale.service.TabellaService;
@@ -87,110 +86,10 @@ public class TabellaController {
         return tabellaService.findById(idTabella).getTasks().stream().map(Task::toDto).toList();
     }
 
-    @GetMapping("/v1/high-priority-tasks/{id}")
-    @Operation(description = """
-            This method is used to retrieve all the high priority tasks from a table id<br>
-            """)
-    public List<TaskDTO> getAllHighPriorityTasksByTabellaId(@PathVariable("id") Integer idTabella) {
-
-        return tabellaService.findById(idTabella).getTasks().stream()
-                .filter(task -> Priorita.ALTA.equals(task.getPriorita()))
-                .map(Task::toDto).toList();
-    }
-
-    @GetMapping("/v1/medium-priority-tasks/{id}")
-    @Operation(description = """
-            This method is used to retrieve all the medium priority tasks from a table id<br>
-            """)
-    public List<TaskDTO> getAllMediumPriorityTasksByTabellaId(@PathVariable("id") Integer idTabella) {
-
-        return tabellaService.findById(idTabella).getTasks().stream()
-                .filter(task -> Priorita.MEDIA.equals(task.getPriorita()))
-                .map(Task::toDto).toList();
-    }
-
-    @GetMapping("/v1/desired-priority-tasks/{id}")
-    @Operation(description = """
-            This method is used to retrieve all the desired priority tasks from a table id<br>
-            """)
-    public List<TaskDTO> getAllDesiredPriorityTasksByTabellaId(@PathVariable("id") Integer idTabella) {
-
-        return tabellaService.findById(idTabella).getTasks().stream()
-                .filter(task -> Priorita.DESIDERATA.equals(task.getPriorita()))
-                .map(Task::toDto).toList();
-    }
-
-    @GetMapping("/v1/low-priority-tasks/{id}")
-    @Operation(description = """
-            This method is used to retrieve all the low  priority tasks from a table id<br>
-            """)
-    public List<TaskDTO> getAllLowPriorityTasksByTabellaId(@PathVariable("id") Integer idTabella) {
-
-        return tabellaService.findById(idTabella).getTasks().stream()
-                .filter(task -> Priorita.BASSA.equals(task.getPriorita()))
-                .map(Task::toDto).toList();
-    }
-
-    @GetMapping("/v1/high-priority-tasks")
-    @Operation(description = """
-            This method is used to retrieve all the high priority tasks from the database <br>
-            """)
-    public List<TaskDTO> getAllHighPriorityTasks() {
-
-        return tabellaService.findAll().
-                stream()
-                .map(tabella -> tabella.getTasks())
-                .flatMap(Collection::stream)
-                .filter(task -> Priorita.ALTA.equals(task.getPriorita()))
-                .map(Task::toDto).toList();
-    }
-
-    @GetMapping("/v1/medium-priority-tasks")
-    @Operation(description = """
-            This method is used to retrieve all the medium priority tasks from the database <br>
-            """)
-    public List<TaskDTO> getAllMediumPriorityTasks() {
-
-        return tabellaService.findAll().
-                stream()
-                .map(tabella -> tabella.getTasks())
-                .flatMap(Collection::stream)
-                .filter(task -> Priorita.MEDIA.equals(task.getPriorita()))
-                .map(Task::toDto).toList();
-    }
-
-    @GetMapping("/v1/desired-priority-tasks")
-    @Operation(description = """
-            This method is used to retrieve all the desired priority tasks from the database <br>
-            """)
-    public List<TaskDTO> getAllDesiredPriorityTasks() {
-
-        return tabellaService.findAll().
-                stream()
-                .map(tabella -> tabella.getTasks())
-                .flatMap(Collection::stream)
-                .filter(task -> Priorita.DESIDERATA.equals(task.getPriorita()))
-                .map(Task::toDto).toList();
-    }
-
-    @GetMapping("/v1/low-priority-tasks")
-    @Operation(description = """
-            This method is used to retrieve all the low  priority tasks from the database <br>
-            """)
-    public List<TaskDTO> getAllLowPriorityTasks() {
-
-        return tabellaService.findAll().
-                stream()
-                .map(tabella -> tabella.getTasks())
-                .flatMap(Collection::stream)
-                .filter(task -> Priorita.BASSA.equals(task.getPriorita()))
-                .map(Task::toDto).toList();
-    }
-
     @GetMapping("/v1/expire-in-{days}")
     @Operation(description = """
-            This method is used to retrieve all the tasks about to expire from all tables from the database<br>
-            """)
+         This method is used to retrieve all the tasks about to expire from all tables from the database<br>
+         """)
     public List<TaskDTO> getAllTasksABoutToExpireIn(@PathVariable("days") Integer days) {
         return tabellaService.findAll().stream()
                 .map(Tabella::getTasks)
@@ -199,11 +98,10 @@ public class TabellaController {
                 .filter(task -> task.getDataScadenza().isBefore(LocalDateTime.now().plusDays(days)))
                 .map(Task::toDto).toList();
     }
-
     @GetMapping("/v1/expire-in-{days}/{id}")
     @Operation(description = """
-            This method is used to retrieve all the tasks about to expire from all tables from the database<br>
-            """)
+         This method is used to retrieve all the tasks about to expire from all tables from the database<br>
+         """)
     public List<TaskDTO> getAllTasksABoutToExpireByIdTabella(@PathVariable("days") Integer days, @PathVariable("id") Integer idTabella) {
         return tabellaService.findById(idTabella).getTasks().stream()
                 .filter(task -> null != task.getDataScadenza())

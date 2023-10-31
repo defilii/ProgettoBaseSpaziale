@@ -1,18 +1,9 @@
 package it.euris.javaacademy.ProgettoBaseSpaziale.synchronization;
 
-import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Checklist;
-import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Checkmark;
-import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Tabella;
-import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Task;
-import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.ChecklistRepository;
-import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.CheckmarkRepository;
-import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.TabellaRepository;
-import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.TaskRepository;
+import it.euris.javaacademy.ProgettoBaseSpaziale.entity.*;
+import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.*;
 import it.euris.javaacademy.ProgettoBaseSpaziale.service.*;
-import it.euris.javaacademy.ProgettoBaseSpaziale.trello.Card;
-import it.euris.javaacademy.ProgettoBaseSpaziale.trello.CheckItem;
-import it.euris.javaacademy.ProgettoBaseSpaziale.trello.ListTrello;
-import it.euris.javaacademy.ProgettoBaseSpaziale.trello.TrelloChecklist;
+import it.euris.javaacademy.ProgettoBaseSpaziale.trello.*;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
@@ -36,6 +27,9 @@ public class SynchronizeFromTrello {
     TabellaRepository tabellaRepository;
     ApiKeyService apiKeyService;
 
+    PriorityService priorityService;
+    PriorityRepository priorityRepository;
+
     List<ListTrello> allList;
     List<Card> allCard;
     List<TrelloChecklist> allTrelloChecklist;
@@ -44,8 +38,10 @@ public class SynchronizeFromTrello {
     List<Task> allTasks;
     List<Checklist> allChecklist;
     List<Checkmark> allCheckmark;
+    List<Priority> allPriority;
+    List<TrelloLabel> allLabel;
 
-    public SynchronizeFromTrello(ApiKeyService apiKeyService, TaskRepository taskRepository, TabellaRepository tabellaRepository, TaskService taskService, TabellaService tabellaService, CheckmarkService checkmarkService, CheckmarkRepository checkmarkRepository, ChecklistService checklistService, ChecklistRepository checklistRepository) {
+    public SynchronizeFromTrello(ApiKeyService apiKeyService, TaskRepository taskRepository, TabellaRepository tabellaRepository, TaskService taskService, TabellaService tabellaService, CheckmarkService checkmarkService, CheckmarkRepository checkmarkRepository, ChecklistService checklistService, ChecklistRepository checklistRepository, PriorityService priorityService, PriorityRepository priorityRepository) {
         this.apiKeyService = apiKeyService;
         this.taskRepository = taskRepository;
         this.tabellaRepository = tabellaRepository;
@@ -55,6 +51,8 @@ public class SynchronizeFromTrello {
         this.checklistrepository = checklistRepository;
         this.checkmarkRepository = checkmarkRepository;
         this.checklistService = checklistService;
+        this.priorityService = priorityService;
+        this.priorityRepository = priorityRepository;
     }
 
     public void updateAllTaskAndTabella() {
@@ -104,18 +102,23 @@ public class SynchronizeFromTrello {
                 .map(listTrello -> client.cardsFromJsonListId(listTrello.getId()))
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
+        allLabel = allCard.stream()
+                .map(Card::getLabels)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
         allTrelloChecklist = allCard.stream()
-                .map(card -> card.getTrelloChecklists())
+                .map(Card::getTrelloChecklists)
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
         allCheckitems = allTrelloChecklist.stream()
-                .map(card -> card.getCheckItems())
+                .map(TrelloChecklist::getCheckItems)
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
         allTabella = tabellaService.findAll();
         allTasks = taskService.findAll();
         allChecklist = checklistService.findAll();
         allCheckmark = checkmarkService.findAll();
+        allPriority = priorityService.findAll();
     }
 
     private void deleteFromDatabase() {
@@ -170,7 +173,6 @@ public class SynchronizeFromTrello {
         return updatedTask;
     }
 
-
     private Task insertCard(Card card) {
         Task newTask = card.toLocalEntity();
         newTask.setTabella(tabellaRepository.findByTrelloId(card.getIdList()));
@@ -178,7 +180,6 @@ public class SynchronizeFromTrello {
         insertChecklist(card, insertedTask);
         return insertedTask;
     }
-
 
     private void insertChecklist(Card card, Task updatedTask) {
         List<TrelloChecklist> newChecklists = card.getTrelloChecklists();

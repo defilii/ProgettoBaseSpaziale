@@ -5,7 +5,6 @@ import it.euris.javaacademy.ProgettoBaseSpaziale.converter.LocalEntity;
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.TaskDTO;
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.archetype.Model;
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.archetype.ModelToPreInsert;
-import it.euris.javaacademy.ProgettoBaseSpaziale.entity.enums.Priorita;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.pre_insert.TaskInsert;
 import it.euris.javaacademy.ProgettoBaseSpaziale.trello.Card;
 import jakarta.persistence.*;
@@ -36,10 +35,6 @@ public class Task implements Model, LocalEntity, ModelToPreInsert {
     @Column(name = "task_name", nullable=false)
     private String taskName;
 
-    @Column(name = "priorita", nullable=true)
-    @Enumerated(EnumType.STRING)
-    private Priorita priorita;
-
     @Column(name = "descrizione", nullable=true)
     private String descrizione;
 
@@ -60,6 +55,17 @@ public class Task implements Model, LocalEntity, ModelToPreInsert {
     @Builder.Default
     private List<TaskHasUser> usersTask = new ArrayList<>();
 
+    @ManyToMany(fetch = FetchType.LAZY,
+            cascade = {
+                    CascadeType.PERSIST,
+                    CascadeType.MERGE
+            })
+    @JoinTable(name = "priority_tasks",
+            joinColumns = { @JoinColumn(name = "task_id") },
+            inverseJoinColumns = { @JoinColumn(name = "priority_id") })
+    @Builder.Default
+    private List<Priority> priorities = new ArrayList<>();
+
     @OneToMany(mappedBy = "task", fetch = FetchType.EAGER)
     @JsonIgnore
     @Builder.Default
@@ -72,7 +78,6 @@ public class Task implements Model, LocalEntity, ModelToPreInsert {
     @Column(name = "trello_id")
     private String trelloId;
 
-
     @Column(name = "trello_list_id")
     private String trelloListId;
     @Override
@@ -81,7 +86,6 @@ public class Task implements Model, LocalEntity, ModelToPreInsert {
                 .idTask(idTask)
                 .tabella(tabella)
                 .taskName(taskName)
-                .priorita(prioritaToString(priorita))
                 .descrizione(descrizione)
                 .dataScadenza(localDateTimeToString(dataScadenza))
                 .lastUpdate(localDateTimeToString(lastUpdate))
@@ -99,6 +103,8 @@ public class Task implements Model, LocalEntity, ModelToPreInsert {
                 .idList(trelloListId)
                 .dateLastActivity(String.valueOf(lastUpdate))
                 .desc(descrizione)
+                .labels(priorities.stream().map(Priority::toTrelloEntity).toList())
+                .idLabels(priorities.stream().map(Priority::getTrelloId).toList())
                 .build();
     }
 
@@ -111,4 +117,9 @@ public class Task implements Model, LocalEntity, ModelToPreInsert {
                 .tabella(tabella.toPreInsert())
                 .build();
     }
+
+    public void addPriority(Priority priority) {
+        priorities.add(priority);
+    }
+
 }
