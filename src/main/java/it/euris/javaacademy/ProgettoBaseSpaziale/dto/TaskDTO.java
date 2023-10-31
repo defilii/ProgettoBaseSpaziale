@@ -5,10 +5,7 @@ import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Tabella;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Task;
 import lombok.*;
 
-import java.time.LocalDateTime;
-
-import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.stringToLocalDateTime;
-import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.stringToPriorita;
+import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.*;
 
 @Builder
 @Getter
@@ -29,8 +26,8 @@ public class TaskDTO implements Dto {
     private String trelloId;
 private String trelloListId;
     private Tabella tabella;
-
     private String lastUpdate;
+
 
     @Override
     public Task toModel() {
