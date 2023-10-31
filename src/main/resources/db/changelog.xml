@@ -16,5 +16,6 @@
     <include file="db/changelogs/2023-10-23-04-entity-alter-trello-reference-id-field.xml"/>
     <include file="db/changelogs/2023-10-25-01-comment-alter-trello-reference-id-field.xml"/>
     <include file="db/changelogs/2023-10-26-01-task-tabella-alter-trello-board-and-list-reference-id-field.xml"/>
+    <include file="db/changelogs/2023-10-30-01-priority-create.xml"/>
 
 </databaseChangeLog>

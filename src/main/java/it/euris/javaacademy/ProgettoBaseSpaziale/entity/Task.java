@@ -2,12 +2,9 @@ package it.euris.javaacademy.ProgettoBaseSpaziale.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import it.euris.javaacademy.ProgettoBaseSpaziale.converter.LocalEntity;
-import it.euris.javaacademy.ProgettoBaseSpaziale.converter.TrelloEntity;
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.TaskDTO;
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.archetype.Model;
-import it.euris.javaacademy.ProgettoBaseSpaziale.entity.enums.Priorita;
 import it.euris.javaacademy.ProgettoBaseSpaziale.trello.Card;
-import it.euris.javaacademy.ProgettoBaseSpaziale.trello.TrelloLabel;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -16,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.localDateTimeToString;
-import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.prioritaToString;
 
 @Builder
 @Getter
@@ -35,10 +31,6 @@ public class Task implements Model, LocalEntity {
 
     @Column(name = "task_name", nullable=false)
     private String taskName;
-
-    @Column(name = "priorita", nullable=true)
-    @Enumerated(EnumType.STRING)
-    private Priorita priorita;
 
     @Column(name = "descrizione", nullable=true)
     private String descrizione;
@@ -60,6 +52,17 @@ public class Task implements Model, LocalEntity {
     @Builder.Default
     private List<TaskHasUser> usersTask = new ArrayList<>();
 
+    @ManyToMany(fetch = FetchType.LAZY,
+            cascade = {
+                    CascadeType.PERSIST,
+                    CascadeType.MERGE
+            })
+    @JoinTable(name = "priority_tasks",
+            joinColumns = { @JoinColumn(name = "task_id") },
+            inverseJoinColumns = { @JoinColumn(name = "priority_id") })
+    @Builder.Default
+    private List<Priority> priorities = new ArrayList<>();
+
     @OneToMany(mappedBy = "task", fetch = FetchType.EAGER)
     @JsonIgnore
     @Builder.Default
@@ -80,7 +83,6 @@ public class Task implements Model, LocalEntity {
                 .idTask(idTask)
                 .tabella(tabella)
                 .taskName(taskName)
-                .priorita(prioritaToString(priorita))
                 .descrizione(descrizione)
                 .dataScadenza(localDateTimeToString(dataScadenza))
                 .lastUpdate(localDateTimeToString(lastUpdate))
@@ -90,10 +92,6 @@ public class Task implements Model, LocalEntity {
 
     @Override
     public Card toTrelloEntity() {
-        TrelloLabel trelloLabel = TrelloLabel.builder().name(
-                prioritaToLabel()
-        ).build();
-
         return Card.builder()
                 .localId(String.valueOf(idTask))
                 .name(taskName)
@@ -102,31 +100,13 @@ public class Task implements Model, LocalEntity {
                 .idList(trelloListId)
                 .dateLastActivity(String.valueOf(lastUpdate))
                 .desc(descrizione)
-                .labels(List.of(trelloLabel))
+                .labels(priorities.stream().map(Priority::toTrelloEntity).toList())
+                .idLabels(priorities.stream().map(Priority::getTrelloId).toList())
                 .build();
     }
 
-    private String prioritaToLabel() {
-        if(null == priorita) {
-            return null;
-        }
-        switch (priorita){
-            case BASSA -> {
-                return "Priorita bassa";
-            }
-            case ALTA -> {
-                return "Priorita alta";
-            }
-            case MEDIA -> {
-                return "Priorita media";
-            }
-            case DESIDERATA -> {
-                return "Desiderata";
-            }
-            default -> {
-                return null;
-            }
-        }
+    public void addPriority(Priority priority) {
+        priorities.add(priority);
     }
 
 }

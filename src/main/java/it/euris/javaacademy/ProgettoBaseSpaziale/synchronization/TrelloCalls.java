@@ -30,6 +30,7 @@ public class TrelloCalls {
     String key;
     String token;
 
+
     public TrelloCalls(ApiKeyService apiKeyService) {
         this.apiKeyService = apiKeyService;
     }
@@ -79,6 +80,34 @@ public class TrelloCalls {
             getChecklistsAndSetItToCard(card);
         }
 
+        System.out.println(cards.toString());
+
+        return cards;
+    }
+
+    public List<Card> cardsFromJsonList() {
+        Gson gson = new GsonBuilder()
+                .setPrettyPrinting()
+                .registerTypeAdapter(ZonedDateTime.class, new ZonedTimeAdapter())
+                .create();
+
+        String listId = "652d5727a3301d21fa288a28";
+        HttpResponse<String> response = Unirest.get("https://api.trello.com/1/lists/" +
+                        listId +
+                        "/cards")
+                .header("Accept", "application/json")
+                .queryString("key", key)
+                .queryString("token", token)
+                .asString();
+
+        List<Card> cards = getList(response.getBody(), Card.class);
+
+        for (Card card : cards) {
+            getChecklistsAndSetItToCard(card);
+        }
+
+        System.out.println(cards.stream().map(Card::toLocalEntity).toList());
+
         return cards;
     }
 
@@ -109,6 +138,12 @@ public class TrelloCalls {
 
         List<CheckItem> checkItems = getList(checkitemResponse.getBody(), CheckItem.class);
         trelloChecklist.setCheckItems(checkItems);
+    }
+
+    public static void main(String[] args) {
+        TrelloCalls client = new TrelloCalls();
+        client.cardsFromJsonList();
+
     }
 
 }

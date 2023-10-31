@@ -17,8 +17,6 @@ public class TrelloChecklist implements TrelloEntity {
     String id;
     String name;
     String idCard;
-
-
     List<CheckItem> checkItems = new ArrayList();
 
     @Override

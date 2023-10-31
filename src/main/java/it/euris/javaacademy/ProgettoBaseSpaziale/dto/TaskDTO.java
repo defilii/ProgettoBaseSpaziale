@@ -36,7 +36,7 @@ private String trelloListId;
                 .idTask(idTask)
                 .tabella(tabella)
                 .taskName(taskName)
-                .priorita(stringToPriorita(priorita))
+//                .priorita(stringToPriorita(priorita))
                 .descrizione(descrizione)
                 .dataScadenza(stringToLocalDateTime(dataScadenza))
                 .lastUpdate(stringToLocalDateTime(lastUpdate))
