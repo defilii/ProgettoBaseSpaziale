@@ -170,7 +170,6 @@ public class SynchronizeFromTrello {
         newTask.setTabella(tabellaRepository.findByTrelloId(card.getIdList()));
         Task updatedTask = taskService.update(newTask);
         insertChecklist(card, updatedTask);
-        insertPriority(card, updatedTask);
         return updatedTask;
     }
 
@@ -179,30 +178,8 @@ public class SynchronizeFromTrello {
         newTask.setTabella(tabellaRepository.findByTrelloId(card.getIdList()));
         Task insertedTask = taskService.insert(newTask);
         insertChecklist(card, insertedTask);
-        insertPriority(card, insertedTask);
         return insertedTask;
     }
-
-
-//TODO fix this method, it adds all priority even without the conditional that checks, and readd all of them, still assigns the right priority to a task
-    private void insertPriority(Card card, Task updatedTask) {
-        List<TrelloLabel> newPriorities = card.getLabels();
-        for (TrelloLabel trelloLabel :
-                newPriorities) {
-            Priority priorityToInsert = trelloLabel.toLocalEntity();
-//            priorityToInsert.addTask(updatedTask);
-            if (allPriority.stream()
-                    .map(Priority::getTrelloId)
-                    .anyMatch(trelloId -> trelloId.equals(priorityToInsert.getTrelloId()))) {
-                priorityToInsert.setId(priorityRepository.findByTrelloId(trelloLabel.getId()).stream().findFirst().get().getId());
-                Priority updatedPriority = priorityService.update(priorityToInsert);
-            } else if (priorityRepository.findByTrelloId(priorityToInsert.getTrelloId()).isEmpty()){
-                Priority insertedPriority = priorityService.insert(priorityToInsert);
-
-            }
-        }
-    }
-
 
     private void insertChecklist(Card card, Task updatedTask) {
         List<TrelloChecklist> newChecklists = card.getTrelloChecklists();

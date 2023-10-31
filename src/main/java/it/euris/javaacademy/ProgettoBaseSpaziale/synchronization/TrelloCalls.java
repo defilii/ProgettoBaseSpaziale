@@ -140,6 +140,20 @@ public class TrelloCalls {
         trelloChecklist.setCheckItems(checkItems);
     }
 
+    private void getAllPriority(Card card) {
+        HttpResponse<String> response = Unirest.get("https://api.trello.com/1/boards/{id}/labels")
+                .queryString("key", "APIKey")
+                .queryString("token", "APIToken")
+                .asString();
+
+        List<TrelloChecklist> checklists = getList(response.getBody(), TrelloChecklist.class);
+        for (TrelloChecklist trelloChecklist : checklists) {
+            getCheckmarksAndSetItToChecklist(trelloChecklist);
+        }
+        card.setTrelloChecklists(checklists);
+    }
+
+
     public static void main(String[] args) {
         TrelloCalls client = new TrelloCalls();
         client.cardsFromJsonList();
