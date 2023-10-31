@@ -18,6 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "user")
+@ToString
 public class User implements Model, LocalEntity {
 
     @Id

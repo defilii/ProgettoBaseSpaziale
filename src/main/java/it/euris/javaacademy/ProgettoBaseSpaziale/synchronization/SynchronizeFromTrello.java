@@ -40,6 +40,7 @@ public class SynchronizeFromTrello {
     List<Checkmark> allCheckmark;
     List<Priority> allPriority;
     List<TrelloLabel> allLabel;
+    List<Members> allMembers;
 
     public SynchronizeFromTrello(ApiKeyService apiKeyService, TaskRepository taskRepository, TabellaRepository tabellaRepository, TaskService taskService, TabellaService tabellaService, CheckmarkService checkmarkService, CheckmarkRepository checkmarkRepository, ChecklistService checklistService, ChecklistRepository checklistRepository, PriorityService priorityService, PriorityRepository priorityRepository) {
         this.apiKeyService = apiKeyService;
@@ -78,6 +79,18 @@ public class SynchronizeFromTrello {
                         tabellaService.insert(tabellaToInsert);
                     }
                 });
+        allLabel.stream().
+                forEach(label ->
+                {
+                    if (allPriority.stream()
+                            .map(priority -> priority.getTrelloId())
+                            .collect(Collectors.toList())
+                            .contains(label.getId())) {
+                        updateLabel(label);
+                    } else {
+                        insertLabel(label);
+                    }
+                });
 
         allCard.stream().
                 forEach(card ->
@@ -92,8 +105,12 @@ public class SynchronizeFromTrello {
                     }
                 });
 
+
+
         deleteFromDatabase();
     }
+
+
 
     private void updateList() {
         TrelloCalls client = new TrelloCalls(apiKeyService);
@@ -102,10 +119,8 @@ public class SynchronizeFromTrello {
                 .map(listTrello -> client.cardsFromJsonListId(listTrello.getId()))
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
-        allLabel = allCard.stream()
-                .map(Card::getLabels)
-                .flatMap(Collection::stream)
-                .collect(Collectors.toList());
+        allLabel = client.getAllTrelloLabels();
+        allMembers = client.getAllMembers();
         allTrelloChecklist = allCard.stream()
                 .map(Card::getTrelloChecklists)
                 .flatMap(Collection::stream)
@@ -170,6 +185,7 @@ public class SynchronizeFromTrello {
         newTask.setTabella(tabellaRepository.findByTrelloId(card.getIdList()));
         Task updatedTask = taskService.update(newTask);
         insertChecklist(card, updatedTask);
+        insertLabelToCard(card, updatedTask);
         return updatedTask;
     }
 
@@ -178,7 +194,36 @@ public class SynchronizeFromTrello {
         newTask.setTabella(tabellaRepository.findByTrelloId(card.getIdList()));
         Task insertedTask = taskService.insert(newTask);
         insertChecklist(card, insertedTask);
+        insertMember(card, insertedTask);
+        insertLabelToCard(card, insertedTask);
         return insertedTask;
+    }
+
+    private void insertLabelToCard(Card card, Task insertedTask) {
+        List<String> idLabels = card.getIdLabels();
+        for (String idLabel: idLabels) {
+            Priority matchingPriority = priorityRepository.findByTrelloId(idLabel);
+            matchingPriority.addTask(insertedTask);
+            insertedTask.addPriority(matchingPriority);
+        }
+    }
+
+    private Priority insertLabel(TrelloLabel label) {
+        Priority newPriority = label.toLocalEntity();
+        Priority insertedPriority = priorityService.insert(newPriority);
+        return insertedPriority;
+    }
+
+    private Priority updateLabel(TrelloLabel label) {
+        Priority newPriority = label.toLocalEntity();
+        newPriority.setId(priorityRepository
+                .findByTrelloId(label.getId()).getId());
+        Priority insertedPriority = priorityService.update(newPriority);
+        return insertedPriority;
+    }
+
+    private void insertMember(Card card, Task insertedTask) {
+
     }
 
     private void insertChecklist(Card card, Task updatedTask) {

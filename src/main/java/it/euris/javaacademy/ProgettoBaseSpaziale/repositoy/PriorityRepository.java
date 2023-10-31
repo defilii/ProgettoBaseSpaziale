@@ -11,5 +11,5 @@ import java.util.List;
 public interface PriorityRepository extends JpaRepository<Priority, Integer> {
 
     @Query("SELECT s FROM Priority s WHERE s.trelloId = :idToLook")
-    List<Priority> findByTrelloId(@Param("idToLook") String idToLook);
+    Priority findByTrelloId(@Param("idToLook") String idToLook);
 }

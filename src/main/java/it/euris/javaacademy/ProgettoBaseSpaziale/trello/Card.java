@@ -29,7 +29,7 @@ public class Card implements TrelloEntity {
 
     private String due;
     private String dateLastActivity;
-    private List<TrelloLabel> labels;
+//    private List<TrelloLabel> labels;
     private List<String> idLabels;
 
     @Exclude
@@ -50,7 +50,7 @@ public class Card implements TrelloEntity {
                 .checklist(trelloChecklists.stream().map(TrelloChecklist::toLocalEntity).toList())
                 .trelloId(id)
                 .trelloListId(idList)
-                .priorities(labels.stream().map(TrelloLabel::toLocalEntity).collect(Collectors.toList()))
+//                .priorities(labels.stream().map(TrelloLabel::toLocalEntity).collect(Collectors.toList()))
                 .build();
 
     }

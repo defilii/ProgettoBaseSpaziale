@@ -103,7 +103,7 @@ public class Task implements Model, LocalEntity, ModelToPreInsert {
                 .idList(trelloListId)
                 .dateLastActivity(String.valueOf(lastUpdate))
                 .desc(descrizione)
-                .labels(priorities.stream().map(Priority::toTrelloEntity).toList())
+//                .labels(priorities.stream().map(Priority::toTrelloEntity).toList())
                 .idLabels(priorities.stream().map(Priority::getTrelloId).toList())
                 .build();
     }

@@ -65,7 +65,6 @@ public class Tabella implements Model, LocalEntity, ModelToPreInsert {
                 .id(trelloId)
                 .idBoard(trelloBoardId)
                 .name(nome)
-                .localId(String.valueOf(id))
                 .build();
     }
 

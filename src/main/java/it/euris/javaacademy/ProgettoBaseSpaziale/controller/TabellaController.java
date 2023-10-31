@@ -6,6 +6,7 @@ import it.euris.javaacademy.ProgettoBaseSpaziale.dto.TaskDTO;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Tabella;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Task;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.enums.Priorita;
+import it.euris.javaacademy.ProgettoBaseSpaziale.entity.pre_insert.TabellaInsert;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.IdMustBeNullException;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.IdMustNotBeNullException;
 import it.euris.javaacademy.ProgettoBaseSpaziale.service.TabellaService;
