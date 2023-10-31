@@ -32,7 +32,7 @@ public class User implements Model, LocalEntity {
     @Column(name = "trello_id")
     private String trelloId;
 
-    @Column(name = "email", nullable = false)
+    @Column(name = "full_name", nullable = false)
     private String fullName;
 
     @ManyToMany(fetch = FetchType.LAZY,
