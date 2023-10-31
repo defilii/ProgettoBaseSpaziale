@@ -24,7 +24,7 @@ public class TaskDTO implements Dto {
 
     private String dataScadenza;
     private String trelloId;
-private String trelloListId;
+    private String trelloListId;
     private Tabella tabella;
     private String lastUpdate;
 
