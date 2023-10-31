@@ -1,5 +1,8 @@
 package it.euris.javaacademy.ProgettoBaseSpaziale.trello;
 
+import it.euris.javaacademy.ProgettoBaseSpaziale.converter.LocalEntity;
+import it.euris.javaacademy.ProgettoBaseSpaziale.converter.TrelloEntity;
+import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Priority;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.enums.Priorita;
 import lombok.*;
 
@@ -9,25 +12,18 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class TrelloLabel {
+public class TrelloLabel implements TrelloEntity {
     private String id;
     private String name;
-    public Priorita toPriority() {
-        switch (name) {
-            case "Bassa Priorità":
-                return Priorita.BASSA;
+    private String color;
 
-            case "Alta Priorità":
-                return Priorita.ALTA;
-
-            case "Media Priorità":
-                return Priorita.MEDIA;
-
-            case "Desiderata":
-                return Priorita.DESIDERATA;
-
-            default:
-                return null;
-        }
+    @Override
+    public Priority toLocalEntity() {
+        return Priority.builder()
+                .trelloId(id)
+                .name(name)
+                .color(color)
+                .build()
+                ;
     }
 }

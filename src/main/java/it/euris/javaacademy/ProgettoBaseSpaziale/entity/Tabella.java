@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import it.euris.javaacademy.ProgettoBaseSpaziale.converter.LocalEntity;
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.TabellaDTO;
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.archetype.Model;
+import it.euris.javaacademy.ProgettoBaseSpaziale.dto.archetype.ModelToPreInsert;
+import it.euris.javaacademy.ProgettoBaseSpaziale.entity.pre_insert.TabellaInsert;
 import it.euris.javaacademy.ProgettoBaseSpaziale.trello.ListTrello;
 import jakarta.persistence.*;
 import lombok.*;
@@ -22,7 +24,7 @@ import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.localDat
 @Entity
 @ToString
 @Table(name = "tabella")
-public class Tabella implements Model, LocalEntity {
+public class Tabella implements Model, LocalEntity, ModelToPreInsert {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,6 +46,7 @@ public class Tabella implements Model, LocalEntity {
     @Column(name = "trello_id")
     private String trelloId;
 
+
     @Column(name = "trello_board_id")
     private String trelloBoardId;
     @Override
@@ -62,6 +65,14 @@ public class Tabella implements Model, LocalEntity {
                 .id(trelloId)
                 .idBoard(trelloBoardId)
                 .name(nome)
+                .build();
+    }
+
+    @Override
+    public TabellaInsert toPreInsert() {
+        return TabellaInsert.builder()
+                .id(id)
+                .nome(nome)
                 .build();
     }
 }

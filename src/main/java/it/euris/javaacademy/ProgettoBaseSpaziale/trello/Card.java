@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.localDateTimeToString;
 import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.stringToLocalDateTime;
@@ -35,7 +36,8 @@ public class Card implements TrelloEntity, UpdateTime {
 
     private String due;
     private String dateLastActivity;
-    private List<TrelloLabel> labels;
+//    private List<TrelloLabel> labels;
+    private List<String> idLabels;
 
     @Exclude
     private String localId;
@@ -58,7 +60,7 @@ public class Card implements TrelloEntity, UpdateTime {
                         : trelloChecklists.stream().map(TrelloChecklist::toLocalEntity).toList())
                 .trelloId(id)
                 .trelloListId(idList)
-                .priorita(labels.stream().map(labels -> labels.toPriority()).findAny().orElse(null))
+//                .priorities(labels.stream().map(TrelloLabel::toLocalEntity).collect(Collectors.toList()))
                 .build();
 
     }

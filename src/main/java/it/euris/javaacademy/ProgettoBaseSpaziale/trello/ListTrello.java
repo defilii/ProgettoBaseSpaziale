@@ -5,6 +5,8 @@ import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Tabella;
 import it.euris.javaacademy.ProgettoBaseSpaziale.utils.Exclude;
 import lombok.*;
 
+import java.util.List;
+
 @Builder
 @Getter
 @Setter
