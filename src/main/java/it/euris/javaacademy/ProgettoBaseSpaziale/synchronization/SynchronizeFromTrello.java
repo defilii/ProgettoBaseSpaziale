@@ -34,6 +34,9 @@ public class SynchronizeFromTrello {
     UserService userService;
     UserRepository userRepository;
 
+    CommentoService commentoService;
+    CommentoRepository commentoRepository;
+
     List<ListTrello> allList;
     List<Card> allCard;
     List<TrelloChecklist> allTrelloChecklist;
@@ -46,6 +49,8 @@ public class SynchronizeFromTrello {
     List<TrelloLabel> allLabel;
     List<Members> allMembers;
     List<User> allUser;
+    List<Commento> allComments;
+    List<TrelloAction> allTrelloActions;
 
     public void updateAllTaskAndTabella() {
         updateList();
@@ -136,6 +141,7 @@ public class SynchronizeFromTrello {
                 .collect(Collectors.toList());
         allTabella = tabellaService.findAll();
         allTasks = taskService.findAll();
+        allComments = commentoService.findAll();
         allChecklist = checklistService.findAll();
         allCheckmark = checkmarkService.findAll();
         allPriority = priorityService.findAll();
@@ -193,6 +199,8 @@ public class SynchronizeFromTrello {
         insertChecklist(card, updatedTask);
         insertMemberTocard(card, updatedTask);
         insertLabelToCard(card, updatedTask);
+        if (!card.getTrelloActions().isEmpty())
+        {insertComment(card, updatedTask);}
         return updatedTask;
     }
 
@@ -203,6 +211,7 @@ public class SynchronizeFromTrello {
         insertChecklist(card, insertedTask);
         insertMemberTocard(card, insertedTask);
         insertLabelToCard(card, insertedTask);
+        insertComment(card, insertedTask);
         return insertedTask;
     }
 
@@ -272,6 +281,27 @@ public class SynchronizeFromTrello {
                 Checklist insertedChecklist = checklistService.insert(checklistToInsert);
 
 //                insertCheckmark(trelloChecklist,insertedChecklist);
+            }
+        }
+    }
+
+    private void insertComment(Card card, Task updatedTask) {
+        List<TrelloAction> newComments = card.getTrelloActions();
+        for (TrelloAction trelloComment :
+                newComments) {
+            Commento commentToInsert = trelloComment.toLocalEntity();
+            commentToInsert.setTask(updatedTask);
+            commentToInsert.setUser(userRepository.findByTrelloId(trelloComment.getIdMemberCreator()));
+            if (allComments.stream()
+                    .map(Commento::getTrelloId)
+                    .toList()
+                    .contains(trelloComment.getId())) {
+
+                commentToInsert.setIdCommento(commentoRepository
+                        .findByTrelloId(trelloComment.getId()).getIdCommento());
+                Commento updatedChecklist = commentoService.update(commentToInsert);
+            } else {
+                Commento insertedChecklist = commentoService.insert(commentToInsert);
             }
         }
     }

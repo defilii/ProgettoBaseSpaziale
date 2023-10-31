@@ -10,5 +10,5 @@ import java.util.Collection;
 public interface CommentoRepository extends JpaRepository<Commento, Integer> {
 
     @Query("SELECT s FROM Commento s WHERE s.trelloId = :idToLook")
-    Collection findByTrelloId(@Param("idToLook") String idToLook);
+    Commento findByTrelloId(@Param("idToLook") String idToLook);
 }

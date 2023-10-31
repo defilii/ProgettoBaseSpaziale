@@ -38,6 +38,7 @@ public class Card implements TrelloEntity {
     private List<String> idMembers = new ArrayList<>();
 
     private List<TrelloChecklist> trelloChecklists = new ArrayList<>();
+    private List<TrelloAction> trelloActions = new ArrayList<>();
 
     String lastUpdate;
 
@@ -52,6 +53,7 @@ public class Card implements TrelloEntity {
                         : trelloChecklists.stream().map(TrelloChecklist::toLocalEntity).toList())
                 .trelloId(id)
                 .trelloListId(idList)
+                .commenti(trelloActions.stream().map(TrelloAction::toLocalEntity).toList())
                 .build();
 
     }

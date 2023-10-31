@@ -23,8 +23,10 @@ public class TrelloCalls {
 
     ApiKeyService apiKeyService;
 
-    String key;
-    String token;
+//    String key;
+//    String token;
+    String key ="656d5bde047c3ac9c66eae4c33aa9230";
+    String token ="ATTA27702686ff9d2e286aadb299d53c874f655dc93f653cb20c42ea2f2be5eb111399494FE0";
 
 
     public TrelloCalls(ApiKeyService apiKeyService) {
@@ -37,7 +39,7 @@ public class TrelloCalls {
     }
 
     public List<ListTrello> allTrelloListFromJsonListWithReturn() {
-        updateKeys();
+//        updateKeys();
         String idBoard = "652d5727a3301d21fa288a27";
         HttpResponse<JsonNode> response = Unirest.get("https://api.trello.com/1/boards/" +
                         idBoard +
@@ -74,6 +76,7 @@ public class TrelloCalls {
 
         for (Card card : cards) {
             getChecklistsAndSetItToCard(card);
+            getAllCommentsFromCard(card);
         }
 
         System.out.println(cards.toString());
@@ -100,6 +103,7 @@ public class TrelloCalls {
 
         for (Card card : cards) {
             getChecklistsAndSetItToCard(card);
+
         }
 
         System.out.println(cards.stream().map(Card::toLocalEntity).toList());
@@ -137,8 +141,7 @@ public class TrelloCalls {
     }
 
     public List<TrelloLabel> getAllTrelloLabels() {
-        String key ="656d5bde047c3ac9c66eae4c33aa9230";
-        String token ="ATTA27702686ff9d2e286aadb299d53c874f655dc93f653cb20c42ea2f2be5eb111399494FE0";
+
         String idBoard = "652d5727a3301d21fa288a27";
         HttpResponse<String> response = Unirest.get("https://api.trello.com/1/boards/" +
                         idBoard +
@@ -166,10 +169,28 @@ public class TrelloCalls {
         return members;
     }
 
+    public List<TrelloAction> getAllCommentsFromCard(Card card){
+        String key ="656d5bde047c3ac9c66eae4c33aa9230";
+        String token ="ATTA27702686ff9d2e286aadb299d53c874f655dc93f653cb20c42ea2f2be5eb111399494FE0";
+        HttpResponse<String> response = Unirest.get("https://api.trello.com/1/cards/" +
+                        card.getId() +
+                        "/actions")
+                .queryString("key", key)
+                .queryString("token", token)
+                .asString();
+
+        List<TrelloAction> trelloActions = getList(response.getBody(), TrelloAction.class);
+        if(!trelloActions.isEmpty() || null == trelloActions) {
+            trelloActions.removeIf(trelloAction -> null == trelloAction.getData().getText());
+        }
+        card.setTrelloActions(trelloActions);
+        return trelloActions;
+    }
+
 
     public static void main(String[] args) {
         TrelloCalls client = new TrelloCalls();
-        System.out.println(client.getAllMembers().stream().map(Members::toLocalEntity).toList());;
+    client.allTrelloListFromJsonListWithReturn();
 
     }
 

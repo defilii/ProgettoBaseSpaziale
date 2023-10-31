@@ -18,5 +18,6 @@
     <include file="db/changelogs/2023-10-26-01-task-tabella-alter-trello-board-and-list-reference-id-field.xml"/>
     <include file="db/changelogs/2023-10-30-01-priority-create.xml"/>
     <include file="db/changelogs/2023-10-31-01-user-alter-column-name.xml"/>
+    <include file="db/changelogs/2023-10-31-02-commento-last-update-alter.xml"/>
 
 </databaseChangeLog>
