@@ -35,10 +35,14 @@ public class User implements Model, LocalEntity {
     @Column(name = "email", nullable = false)
     private String fullName;
 
-    @OneToMany(mappedBy = "user")
-    @JsonIgnore
+    @ManyToMany(fetch = FetchType.LAZY,
+            cascade = {
+                    CascadeType.PERSIST,
+                    CascadeType.MERGE
+            },
+            mappedBy = "users")
     @Builder.Default
-    private List<TaskHasUser> usersTask = new ArrayList<>();
+    private List<Task> tasks = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @JsonIgnore
@@ -61,5 +65,9 @@ public class User implements Model, LocalEntity {
                 .fullName(fullName)
                 .username(username)
                 .build();
+    }
+
+    public void addTask (Task task){
+        tasks.add(task);
     }
 }

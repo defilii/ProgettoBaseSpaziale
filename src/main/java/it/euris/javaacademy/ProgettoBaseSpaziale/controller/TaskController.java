@@ -74,9 +74,8 @@ public class TaskController {
             This method is used to retrieve the members assigned to a task from the database<br>
             """)
     public List<UserDTO> getMembersById(@PathVariable("id") Integer idTask) {
-        return taskService.findById(idTask).getUsersTask()
+        return taskService.findById(idTask).getUsers()
                 .stream()
-                .map(taskHasUser -> taskHasUser.getUser())
                 .map(User::toDto)
                 .toList();
     }

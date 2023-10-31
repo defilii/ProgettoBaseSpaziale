@@ -50,10 +50,16 @@ public class Task implements Model, LocalEntity, ModelToPreInsert {
         @Builder.Default
         private List<Commento> commenti = new ArrayList<>();
 
-        @OneToMany(mappedBy = "task")
-        @JsonIgnore
+        @ManyToMany(fetch = FetchType.LAZY,
+                cascade = {
+                        CascadeType.PERSIST,
+                        CascadeType.MERGE
+                })
+        @JoinTable(name = "task_has_user",
+                joinColumns = {@JoinColumn(name = "task_id")},
+                inverseJoinColumns = {@JoinColumn(name = "user_id")})
         @Builder.Default
-        private List<TaskHasUser> usersTask = new ArrayList<>();
+        private List<User> users = new ArrayList<>();
 
         @ManyToMany(fetch = FetchType.LAZY,
                 cascade = {
@@ -120,6 +126,11 @@ public class Task implements Model, LocalEntity, ModelToPreInsert {
 
         public void addPriority(Priority priority) {
             priorities.add(priority);
+
+        }
+
+        public void addUser(User user) {
+                users.add(user);
 
         }
     }

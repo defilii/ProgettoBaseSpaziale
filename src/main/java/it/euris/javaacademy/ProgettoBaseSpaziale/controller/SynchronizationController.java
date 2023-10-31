@@ -17,25 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 @Data
 @RequestMapping("/synchronizeFromTrello")
 public class SynchronizationController {
-    TabellaService tabellaService;
-    UserService userService;
-    TaskService taskService;
-    CheckmarkService checkmarkService;
-    ChecklistService checklistService;
-    CheckmarkRepository checkmarkRepository;
-    ChecklistRepository checklistRepository;
-    TaskRepository taskRepository;
-    TabellaRepository tabellaRepository;
-    ApiKeyService apiKeyService;
 
-    PriorityRepository priorityRepository;
-
-    PriorityService priorityService;
+    SynchronizeFromTrello synchronizeFromTrello;
 
     @PutMapping("/synchronize")
     private void insertsSmooth() {
-        SynchronizeFromTrello synchronizeFromTrello = new SynchronizeFromTrello(apiKeyService, taskRepository, tabellaRepository, taskService, tabellaService,checkmarkService, checkmarkRepository, checklistService, checklistRepository
-        , priorityService, priorityRepository);
         synchronizeFromTrello.updateAllTaskAndTabella();
     }
 }
