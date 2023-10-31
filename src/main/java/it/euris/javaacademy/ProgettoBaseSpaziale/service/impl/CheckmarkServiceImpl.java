@@ -10,7 +10,6 @@ import it.euris.javaacademy.ProgettoBaseSpaziale.service.CheckmarkService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -32,7 +31,6 @@ public class CheckmarkServiceImpl implements CheckmarkService {
         if (checkmark.getChecklist() == null || checklistRepository.findById(checkmark.getChecklist().getIdChecklist()).isEmpty()) {
             throw new ForeignKeyIdMustNotBeNullException();
         }
-        checkmark.setLastUpdate(LocalDateTime.now());
         return checkmarkRepository.save(checkmark);
     }
 
@@ -44,7 +42,6 @@ public class CheckmarkServiceImpl implements CheckmarkService {
         if (checkmark.getChecklist() == null || checklistRepository.findById(checkmark.getChecklist().getIdChecklist()).isEmpty()) {
             throw new ForeignKeyIdMustNotBeNullException();
         }
-        checkmark.setLastUpdate(LocalDateTime.now());
         return checkmarkRepository.save(checkmark);
     }
 

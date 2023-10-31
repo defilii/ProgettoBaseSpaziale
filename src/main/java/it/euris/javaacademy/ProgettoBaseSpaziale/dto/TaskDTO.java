@@ -29,7 +29,9 @@ public class TaskDTO implements Dto {
     private String trelloId;
 private String trelloListId;
     private Tabella tabella;
+
     private String lastUpdate;
+
     @Override
     public Task toModel() {
         return Task.builder()

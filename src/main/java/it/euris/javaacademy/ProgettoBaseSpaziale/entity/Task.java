@@ -2,12 +2,12 @@ package it.euris.javaacademy.ProgettoBaseSpaziale.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import it.euris.javaacademy.ProgettoBaseSpaziale.converter.LocalEntity;
-import it.euris.javaacademy.ProgettoBaseSpaziale.converter.TrelloEntity;
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.TaskDTO;
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.archetype.Model;
+import it.euris.javaacademy.ProgettoBaseSpaziale.dto.archetype.ModelToPreInsert;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.enums.Priorita;
+import it.euris.javaacademy.ProgettoBaseSpaziale.entity.pre_insert.TaskInsert;
 import it.euris.javaacademy.ProgettoBaseSpaziale.trello.Card;
-import it.euris.javaacademy.ProgettoBaseSpaziale.trello.TrelloLabel;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -26,7 +26,7 @@ import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.priorita
 @Entity
 @ToString
 @Table(name = "task")
-public class Task implements Model, LocalEntity {
+public class Task implements Model, LocalEntity, ModelToPreInsert {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -72,6 +72,7 @@ public class Task implements Model, LocalEntity {
     @Column(name = "trello_id")
     private String trelloId;
 
+
     @Column(name = "trello_list_id")
     private String trelloListId;
     @Override
@@ -90,10 +91,6 @@ public class Task implements Model, LocalEntity {
 
     @Override
     public Card toTrelloEntity() {
-        TrelloLabel trelloLabel = TrelloLabel.builder().name(
-                prioritaToLabel()
-        ).build();
-
         return Card.builder()
                 .localId(String.valueOf(idTask))
                 .name(taskName)
@@ -102,31 +99,16 @@ public class Task implements Model, LocalEntity {
                 .idList(trelloListId)
                 .dateLastActivity(String.valueOf(lastUpdate))
                 .desc(descrizione)
-                .labels(List.of(trelloLabel))
                 .build();
     }
 
-    private String prioritaToLabel() {
-        if(null == priorita) {
-            return null;
-        }
-        switch (priorita){
-            case BASSA -> {
-                return "Priorita bassa";
-            }
-            case ALTA -> {
-                return "Priorita alta";
-            }
-            case MEDIA -> {
-                return "Priorita media";
-            }
-            case DESIDERATA -> {
-                return "Desiderata";
-            }
-            default -> {
-                return null;
-            }
-        }
+    @Override
+    public TaskInsert toPreInsert() {
+        return TaskInsert.builder()
+                .id(idTask)
+                .taskName(taskName)
+                .descrizione(descrizione)
+                .tabella(tabella.toPreInsert())
+                .build();
     }
-
 }

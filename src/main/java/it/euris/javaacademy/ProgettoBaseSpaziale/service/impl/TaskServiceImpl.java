@@ -10,12 +10,11 @@ import it.euris.javaacademy.ProgettoBaseSpaziale.service.TaskService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 @AllArgsConstructor
-public class TaskServiceImpl implements TaskService {
+public class TaskServiceImpl  implements TaskService {
 
     TabellaRepository tabellaRepository;
 
@@ -34,7 +33,6 @@ public class TaskServiceImpl implements TaskService {
         if (task.getTabella() == null ||tabellaRepository.findById(task.getTabella().getId()).isEmpty()) {
             throw new ForeignKeyIdMustNotBeNullException();
         }
-        task.setLastUpdate(LocalDateTime.now());
         return taskRepository.save(task);
     }
 
@@ -46,7 +44,6 @@ public class TaskServiceImpl implements TaskService {
         if (task.getTabella() == null || tabellaRepository.findById(task.getTabella().getId()).isEmpty() ){
             throw new ForeignKeyIdMustNotBeNullException();
         }
-        task.setLastUpdate(LocalDateTime.now());
         return taskRepository.save(task);
     }
 

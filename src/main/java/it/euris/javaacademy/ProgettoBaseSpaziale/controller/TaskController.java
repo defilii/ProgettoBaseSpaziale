@@ -7,6 +7,7 @@ import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Checkmark;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Tabella;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Task;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.User;
+import it.euris.javaacademy.ProgettoBaseSpaziale.entity.pre_insert.TaskInsert;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.ForeignKeyIdMustNotBeNullException;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.IdAndForeignKeyMustNotBeNullException;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.IdMustBeNullException;
@@ -105,10 +106,10 @@ public class TaskController {
     @Operation(description = """
             This method is used to save one task in the database<br>
             """)
-    public TaskDTO saveTask(@RequestBody TaskDTO taskDTO) {
+    public TaskInsert saveTask(@RequestBody TaskInsert taskInsert) {
         try {
-            Task task = taskDTO.toModel();
-            return taskService.insert(task).toDto();
+            Task task = taskInsert.toModel();
+            return taskService.insert(task).toPreInsert();
         } catch (IdMustBeNullException e) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, e.getMessage());
@@ -122,10 +123,10 @@ public class TaskController {
     @Operation(description = """
             This method is used to update one task in the database<br>
             """)
-    public TaskDTO updateTask(@RequestBody TaskDTO taskDTO) {
+    public TaskInsert updateTask(@RequestBody TaskInsert taskInsert) {
         try {
-            Task task = taskDTO.toModel();
-            return taskService.update(task).toDto();
+            Task task = taskInsert.toModel();
+            return taskService.update(task).toPreInsert();
         } catch (IdMustNotBeNullException e) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, e.getMessage());

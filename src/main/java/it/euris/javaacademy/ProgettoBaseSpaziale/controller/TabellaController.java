@@ -6,6 +6,7 @@ import it.euris.javaacademy.ProgettoBaseSpaziale.dto.TaskDTO;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Tabella;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Task;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.enums.Priorita;
+import it.euris.javaacademy.ProgettoBaseSpaziale.entity.pre_insert.TabellaInsert;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.IdMustBeNullException;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.IdMustNotBeNullException;
 import it.euris.javaacademy.ProgettoBaseSpaziale.service.TabellaService;
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -39,10 +39,10 @@ public class TabellaController {
     @Operation(description = """
             This method is used to insert a table to the database<br>
             """)
-    public TabellaDTO saveTabella(@RequestBody TabellaDTO tabellaDTO) {
+    public TabellaInsert saveTabella(@RequestBody TabellaInsert tabellaInsert) {
         try {
-            Tabella tabella = tabellaDTO.toModel();
-            return tabellaService.insert(tabella).toDto();
+            Tabella tabella = tabellaInsert.toModel();
+            return tabellaService.insert(tabella).toPreInsert();
         } catch (IdMustBeNullException e) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, e.getMessage());
@@ -53,10 +53,10 @@ public class TabellaController {
     @Operation(description = """
             This method is used to update a table from the database<br>
             """)
-    public TabellaDTO updateTabella(@RequestBody TabellaDTO tabellaDTO) {
+    public TabellaInsert updateTabella(@RequestBody TabellaInsert tabellaInsert) {
         try {
-            Tabella tabella = tabellaDTO.toModel();
-            return tabellaService.update(tabella).toDto();
+            Tabella tabella = tabellaInsert.toModel();
+            return tabellaService.update(tabella).toPreInsert();
         } catch (IdMustNotBeNullException e) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, e.getMessage());
@@ -87,7 +87,7 @@ public class TabellaController {
         return tabellaService.findById(idTabella).getTasks().stream().map(Task::toDto).toList();
     }
 
-   @GetMapping("/v1/high-priority-tasks/{id}")
+    @GetMapping("/v1/high-priority-tasks/{id}")
     @Operation(description = """
             This method is used to retrieve all the high priority tasks from a table id<br>
             """)
@@ -189,8 +189,8 @@ public class TabellaController {
 
     @GetMapping("/v1/expire-in-{days}")
     @Operation(description = """
-         This method is used to retrieve all the tasks about to expire from all tables from the database<br>
-         """)
+            This method is used to retrieve all the tasks about to expire from all tables from the database<br>
+            """)
     public List<TaskDTO> getAllTasksABoutToExpireIn(@PathVariable("days") Integer days) {
         return tabellaService.findAll().stream()
                 .map(Tabella::getTasks)
@@ -199,10 +199,11 @@ public class TabellaController {
                 .filter(task -> task.getDataScadenza().isBefore(LocalDateTime.now().plusDays(days)))
                 .map(Task::toDto).toList();
     }
+
     @GetMapping("/v1/expire-in-{days}/{id}")
     @Operation(description = """
-         This method is used to retrieve all the tasks about to expire from all tables from the database<br>
-         """)
+            This method is used to retrieve all the tasks about to expire from all tables from the database<br>
+            """)
     public List<TaskDTO> getAllTasksABoutToExpireByIdTabella(@PathVariable("days") Integer days, @PathVariable("id") Integer idTabella) {
         return tabellaService.findById(idTabella).getTasks().stream()
                 .filter(task -> null != task.getDataScadenza())
