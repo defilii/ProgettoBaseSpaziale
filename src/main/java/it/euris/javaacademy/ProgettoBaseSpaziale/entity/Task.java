@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.localDateTimeToString;
-import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.prioritaToString;
 
 @Builder
 @Getter
@@ -27,28 +26,28 @@ import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.priorita
 @Table(name = "task")
 public class Task implements Model, LocalEntity, ModelToPreInsert {
 
-        @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        @Column(name = "id")
-        private Integer idTask;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Integer idTask;
 
-        @Column(name = "task_name", nullable = false)
-        private String taskName;
+    @Column(name = "task_name", nullable = false)
+    private String taskName;
 
-        @Column(name = "descrizione", nullable = true)
-        private String descrizione;
+    @Column(name = "descrizione", nullable = true)
+    private String descrizione;
 
-        @Column(name = "data_scadenza", nullable = true)
-        private LocalDateTime dataScadenza;
+    @Column(name = "data_scadenza", nullable = true)
+    private LocalDateTime dataScadenza;
 
-        @ManyToOne(fetch = FetchType.EAGER)
-        @JoinColumn(name = "id_tabella", nullable = false)
-        private Tabella tabella;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_tabella", nullable = false)
+    private Tabella tabella;
 
-        @OneToMany(mappedBy = "task", fetch = FetchType.EAGER)
-        @JsonIgnore
-        @Builder.Default
-        private List<Commento> commenti = new ArrayList<>();
+    @OneToMany(mappedBy = "task", fetch = FetchType.EAGER)
+    @JsonIgnore
+    @Builder.Default
+    private List<Commento> commenti = new ArrayList<>();
 
         @ManyToMany(fetch = FetchType.LAZY,
                 cascade = {
@@ -61,30 +60,32 @@ public class Task implements Model, LocalEntity, ModelToPreInsert {
         @Builder.Default
         private List<User> users = new ArrayList<>();
 
-        @ManyToMany(fetch = FetchType.LAZY,
-                cascade = {
-                        CascadeType.PERSIST,
-                        CascadeType.MERGE
-                })
-        @JoinTable(name = "priority_tasks",
-                joinColumns = {@JoinColumn(name = "task_id")},
-                inverseJoinColumns = {@JoinColumn(name = "priority_id")})
-        @Builder.Default
-        private List<Priority> priorities = new ArrayList<>();
+    @ManyToMany(fetch = FetchType.LAZY,
+            cascade = {
+                    CascadeType.PERSIST,
+                    CascadeType.MERGE
+            })
+    @JoinTable(name = "priority_tasks",
+            joinColumns = {@JoinColumn(name = "task_id")},
+            inverseJoinColumns = {@JoinColumn(name = "priority_id")})
+    @Builder.Default
+    private List<Priority> priorities = new ArrayList<>();
 
-        @OneToMany(mappedBy = "task", fetch = FetchType.EAGER)
-        @JsonIgnore
-        @Builder.Default
-        private List<Checklist> checklist = new ArrayList<>();
+    @OneToMany(mappedBy = "task", fetch = FetchType.EAGER)
+    @JsonIgnore
+    @Builder.Default
+    private List<Checklist> checklist = new ArrayList<>();
 
-        @Column(name = "trello_id")
-        private String trelloId;
+    @Column(name = "trello_id")
+    private String trelloId;
 
-        LocalDateTime lastUpdate;
+    @Column(name = "last_update", nullable = false)
+    @Builder.Default
+    private LocalDateTime lastUpdate = LocalDateTime.now();
 
 
-        @Column(name = "trello_list_id")
-        private String trelloListId;
+    @Column(name = "trello_list_id")
+    private String trelloListId;
 
         @Override
         public TaskDTO toDto() {
@@ -124,15 +125,16 @@ public class Task implements Model, LocalEntity, ModelToPreInsert {
                     .build();
         }
 
-        public void addPriority(Priority priority) {
-            priorities.add(priority);
-
-        }
 
         public void addUser(User user) {
                 users.add(user);
 
         }
+
+    public void addPriority(Priority priority) {
+        priorities.add(priority);
+
     }
+}
 
 
