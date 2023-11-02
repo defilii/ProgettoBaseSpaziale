@@ -16,4 +16,6 @@ public interface PriorityService {
 
     Priority findById(Integer idPriority);
 
+    Priority findByName(String name);
+
 }
