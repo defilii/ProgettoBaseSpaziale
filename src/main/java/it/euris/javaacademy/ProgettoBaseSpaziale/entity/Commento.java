@@ -19,6 +19,7 @@ import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.localDat
 @AllArgsConstructor
 @Entity
 @Table(name = "commento")
+@ToString
 public class Commento implements Model, LocalEntity {
 
     @Id

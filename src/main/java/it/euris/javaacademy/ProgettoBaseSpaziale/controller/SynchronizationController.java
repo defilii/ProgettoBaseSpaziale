@@ -3,6 +3,7 @@ package it.euris.javaacademy.ProgettoBaseSpaziale.controller;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Task;
 import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.*;
 import it.euris.javaacademy.ProgettoBaseSpaziale.service.*;
+import it.euris.javaacademy.ProgettoBaseSpaziale.synchronization.LocalDBCalls;
 import it.euris.javaacademy.ProgettoBaseSpaziale.synchronization.SynchronizeFromTrello;
 import it.euris.javaacademy.ProgettoBaseSpaziale.trello.Card;
 import lombok.AllArgsConstructor;
@@ -15,12 +16,19 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor
 @RestController
 @Data
-@RequestMapping("/synchronizeFromTrello")
+@RequestMapping("/synchronize")
 public class SynchronizationController {
 
     SynchronizeFromTrello synchronizeFromTrello;
 
-    @PutMapping("/synchronize")
+    LocalDBCalls client;
+
+    @PutMapping("/synchronizeToTrello")
+    public void synchronize() {
+        client.synchronize();
+    }
+
+    @PutMapping("/synchronizeFromTrello")
     private void insertsSmooth() {
         synchronizeFromTrello.updateAllTaskAndTabella();
     }

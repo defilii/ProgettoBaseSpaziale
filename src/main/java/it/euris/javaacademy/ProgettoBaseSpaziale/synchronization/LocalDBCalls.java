@@ -1,35 +1,28 @@
 package it.euris.javaacademy.ProgettoBaseSpaziale.synchronization;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
+import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Commento;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Tabella;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Task;
-import it.euris.javaacademy.ProgettoBaseSpaziale.entity.enums.Priorita;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.BoardIdMissingException;
+import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.CommentoRepository;
 import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.TabellaRepository;
 import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.TaskRepository;
 import it.euris.javaacademy.ProgettoBaseSpaziale.service.ApiKeyService;
+import it.euris.javaacademy.ProgettoBaseSpaziale.service.CommentoService;
 import it.euris.javaacademy.ProgettoBaseSpaziale.service.TabellaService;
 import it.euris.javaacademy.ProgettoBaseSpaziale.service.TaskService;
-import it.euris.javaacademy.ProgettoBaseSpaziale.trello.*;
-import it.euris.javaacademy.ProgettoBaseSpaziale.utils.ExclusionStrategy;
+import it.euris.javaacademy.ProgettoBaseSpaziale.trello.Card;
+import it.euris.javaacademy.ProgettoBaseSpaziale.trello.ListTrello;
+import it.euris.javaacademy.ProgettoBaseSpaziale.trello.TrelloAction;
 import kong.unirest.core.HttpResponse;
 import kong.unirest.core.JsonNode;
 import kong.unirest.core.Unirest;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import org.json.JSONObject;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
-import java.lang.reflect.Modifier;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,9 +30,7 @@ import java.util.Map;
 import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.GsonUtils.getList;
 
 @AllArgsConstructor
-@RestController
-@RequestMapping("/synchronizeToTrello")
-@SpringBootApplication
+@Service
 public class LocalDBCalls {
 
     TaskRepository taskRepository;
@@ -47,6 +38,8 @@ public class LocalDBCalls {
     TabellaService tabellaService;
     TaskService taskService;
     ApiKeyService apiKeyService;
+    CommentoService commentoService;
+    CommentoRepository commentoRepository;
 
 
     public List<Card> trelloGetCardsOnABoard() {
@@ -72,8 +65,8 @@ public class LocalDBCalls {
 //        token = apiKeyService.findMostRecent().getToken();
 //    }
 
-    @PutMapping("/synchronize")
-    public void doSomething() {
+
+    public void synchronize() {
         tabellaService.findAll().stream()
                 .forEach(tabella -> {
                     if (null == tabella.getTrelloId()) {
@@ -91,11 +84,55 @@ public class LocalDBCalls {
                         updateCard(task);
                     }
                 });
+        commentoService.findAll().stream()
+                .forEach(commento -> {
+                    if (null == commento.getTrelloId()) {
+                        postNewCommento(commento);
+                    } else {
+                        updateCommento(commento);
+                    }
+                });
     }
 
-    @PutMapping("/something")
-    public List<Tabella> doSomethingg() {
-        return tabellaService.findAll();
+    private void updateCommento(Commento commento) {
+        Gson gson = new Gson();
+        String key = "656d5bde047c3ac9c66eae4c33aa9230";
+        String token = "ATTA27702686ff9d2e286aadb299d53c874f655dc93f653cb20c42ea2f2be5eb111399494FE0";
+
+        Map<String, String> headers = new HashMap<>();
+        headers.put("accept", "application/json");
+        headers.put("content-type", "application/json");
+
+        HttpResponse<JsonNode> response = Unirest.put("https://api.trello.com/1/actions/" +
+                        commento.getTrelloId())
+                .headers(headers)
+                .queryString("key", key)
+                .queryString("token", token)
+                .queryString("text", commento.getCommento())
+                .asJson();
+    }
+
+    private void postNewCommento(Commento commento) {
+        Gson gson = new Gson();
+        String key = "656d5bde047c3ac9c66eae4c33aa9230";
+        String token = "ATTA27702686ff9d2e286aadb299d53c874f655dc93f653cb20c42ea2f2be5eb111399494FE0";
+        String idCard = commento.getTask().getTrelloId();
+
+        Map<String, String> headers = new HashMap<>();
+        headers.put("accept", "application/json");
+        headers.put("content-type", "application/json");
+
+        HttpResponse<JsonNode> response = Unirest.post("https://api.trello.com/1/cards/" +
+                       idCard +
+                        "/actions/comments")
+                .headers(headers)
+                .queryString("key", key)
+                .queryString("token", token)
+                .queryString("text", commento.getCommento())
+                .asJson();
+        TrelloAction trelloAction =  gson.fromJson(response.getBody().toPrettyString(), TrelloAction.class);
+        commento.setTrelloId(trelloAction.getId());
+        commentoService.update(commento);
     }
 
     private ListTrello postNewTabella(Tabella tabella) {
