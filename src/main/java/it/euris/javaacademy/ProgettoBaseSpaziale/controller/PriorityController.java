@@ -2,6 +2,7 @@ package it.euris.javaacademy.ProgettoBaseSpaziale.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.PriorityDTO;
+import it.euris.javaacademy.ProgettoBaseSpaziale.dto.TaskDTO;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Priority;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Task;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.IdMustBeNullException;
@@ -9,6 +10,7 @@ import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.IdMustNotBeNullExcep
 import it.euris.javaacademy.ProgettoBaseSpaziale.service.PriorityService;
 import it.euris.javaacademy.ProgettoBaseSpaziale.service.TaskService;
 import lombok.AllArgsConstructor;
+import lombok.ToString;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -18,6 +20,7 @@ import java.util.List;
 
 @AllArgsConstructor
 @RestController
+@ToString
 @RequestMapping("/priorities")
 public class PriorityController {
     PriorityService priorityService;
@@ -82,16 +85,37 @@ public class PriorityController {
         return priorityService.findByName(name).toDto();
     }
 
-    @PutMapping("/add-priority-to-task/{name}-{id-task}")
+    @PutMapping("/add-existing-priority-to-task/{name}-{id-task}")
     @Operation(description = """
             This method is used to add a priority to a task
             """)
-    public PriorityDTO addPriorityToTask(@PathVariable("name") String name, @PathVariable("id-task") Integer idTask) {
+    public TaskDTO addExistingPriorityToTask(@PathVariable("name") String name, @PathVariable("id-task") Integer idTask) {
         Task task = taskService.findById(idTask);
         Priority priority = priorityService.findByName(name);
         priority.addTask(task);
         task.addPriority(priority);
-        taskService.update(task).toDto();
-        return priorityService.update(priority).toDto();
+        taskService.findById(idTask).toDto().setPriorita(priority.getName());
+        priorityService.update(priority).toDto();
+
+        return taskService.update(task).toDto();
+    }
+
+    @PostMapping("/insert-new-priority-add-to-task/{id-task}")
+    @Operation(description = """
+            This method is used to add a priority to a task
+            """)
+    public TaskDTO insertNewPriorityAddToTask( @PathVariable("id-task") Integer idTask, @RequestBody PriorityDTO priorityDto) {
+        Task task = taskService.findById(idTask);
+        try {
+            Priority priority = priorityDto.toModel();
+            priority.addTask(task);
+            task.addPriority(priority);
+            taskService.findById(idTask).toDto().setPriorita(priority.getName());
+            priorityService.insert(priority).toDto();
+        }catch (IdMustBeNullException e) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, e.getMessage()+(" in priority"));
+        }
+        return taskService.update(task).toDto();
     }
 }

@@ -13,6 +13,7 @@ import lombok.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.localDateTimeToString;
 
@@ -89,6 +90,7 @@ public class Task implements Model, LocalEntity, ModelToPreInsert {
                 .taskName(taskName)
                 .descrizione(descrizione)
                 .dataScadenza(localDateTimeToString(dataScadenza))
+                .priorita(priorities.stream().map(Priority::getName).toList().toString())
                 .lastUpdate(lastUpdate.toString())
                 .trelloId(trelloId)
                 .build();

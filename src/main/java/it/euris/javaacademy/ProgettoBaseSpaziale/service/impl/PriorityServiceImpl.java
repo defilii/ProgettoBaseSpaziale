@@ -3,6 +3,7 @@ package it.euris.javaacademy.ProgettoBaseSpaziale.service.impl;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Priority;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.IdMustBeNullException;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.IdMustNotBeNullException;
+import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.NameMustNotExistException;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.NameNotFoundException;
 import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.PriorityRepository;
 import it.euris.javaacademy.ProgettoBaseSpaziale.service.PriorityService;
@@ -24,8 +25,12 @@ public class PriorityServiceImpl implements PriorityService {
 
     @Override
     public Priority insert(Priority priority) {
+
         if (priority.getId() != null && priority.getId() > 0) {
             throw new IdMustBeNullException();
+        }
+        if (priorityRepository.findByNameIgnoreCase(priority.getName()) != null) {
+            throw new NameMustNotExistException();
         }
         return priorityRepository.save(priority);
     }

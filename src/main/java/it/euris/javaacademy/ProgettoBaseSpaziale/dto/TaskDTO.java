@@ -1,9 +1,12 @@
 package it.euris.javaacademy.ProgettoBaseSpaziale.dto;
 
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.archetype.Dto;
+import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Priority;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Tabella;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Task;
 import lombok.*;
+
+import java.util.List;
 
 import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.*;
 
@@ -12,6 +15,7 @@ import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class TaskDTO implements Dto {
 
     private Integer idTask;

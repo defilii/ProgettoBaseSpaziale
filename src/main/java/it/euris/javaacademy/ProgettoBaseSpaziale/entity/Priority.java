@@ -62,7 +62,7 @@ public class Priority implements Model, LocalEntity {
                 .build();
     }
 
-    public void addTask(Task task) {
+    public void addTask (Task task){
         tasks.add(task);
     }
 }
