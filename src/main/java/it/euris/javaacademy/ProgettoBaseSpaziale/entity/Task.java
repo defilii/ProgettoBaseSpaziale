@@ -44,7 +44,7 @@ public class Task implements Model, LocalEntity, ModelToPreInsert {
     @JoinColumn(name = "id_tabella", nullable = false)
     private Tabella tabella;
 
-    @OneToMany(mappedBy = "task", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "task", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE, orphanRemoval = true)
     @JsonIgnore
     @Builder.Default
     private List<Commento> commenti = new ArrayList<>();

@@ -5,7 +5,6 @@ import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.*;
 import it.euris.javaacademy.ProgettoBaseSpaziale.service.*;
 import it.euris.javaacademy.ProgettoBaseSpaziale.trello.*;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -115,11 +114,8 @@ public class SynchronizeFromTrello {
                 });
 
 
-
-
         deleteFromDatabase();
     }
-
 
 
     private void updateList() {
@@ -152,16 +148,16 @@ public class SynchronizeFromTrello {
         allCheckmark.stream()
                 .forEach(checkmark ->
                 {
-                    if (!allCheckitems.stream()
+                    if (checkmark.getTrelloId() != null && !allCheckitems.stream()
                             .map(checkitem -> checkitem.getIdCheckItem())
-                            .collect(Collectors.toList()).contains(checkmark.getTrelloId())) {
+                            .toList().contains(checkmark.getTrelloId())) {
                         checkmarkService.deleteById(checkmark.getIdCheckmark());
                     }
                 });
         allChecklist.stream()
                 .forEach(checklist ->
                 {
-                    if (!allTrelloChecklist.stream()
+                    if (checklist.getTrelloId() != null && !allTrelloChecklist.stream()
                             .map(trelloChecklist -> trelloChecklist.getId())
                             .collect(Collectors.toList()).contains(checklist.getTrelloId())) {
                         checklistService.deleteById(checklist.getIdChecklist());
@@ -170,7 +166,7 @@ public class SynchronizeFromTrello {
         allTasks.stream()
                 .forEach(task ->
                 {
-                    if (!allCard.stream()
+                    if (task.getTrelloId() != null && !allCard.stream()
                             .map(card -> card.getId())
                             .collect(Collectors.toList()).contains(task.getTrelloId())) {
                         taskService.deleteById(task.getIdTask());
@@ -180,13 +176,12 @@ public class SynchronizeFromTrello {
         allTabella.stream()
                 .forEach(tabella ->
                 {
-                    if (!allList.stream()
+                    if (tabella.getTrelloId() != null && !allList.stream()
                             .map(listTrello -> listTrello.getId())
                             .collect(Collectors.toList()).contains(tabella.getTrelloId())) {
                         tabellaService.deleteById(tabella.getId());
                     }
                 });
-
 
     }
 
@@ -199,8 +194,9 @@ public class SynchronizeFromTrello {
         insertChecklist(card, updatedTask);
         insertMemberTocard(card, updatedTask);
         insertLabelToCard(card, updatedTask);
-        if (!card.getTrelloActions().isEmpty())
-        {insertComment(card, updatedTask);}
+        if (!card.getTrelloActions().isEmpty()) {
+            insertComment(card, updatedTask);
+        }
         return updatedTask;
     }
 
@@ -217,7 +213,7 @@ public class SynchronizeFromTrello {
 
     private void insertLabelToCard(Card card, Task insertedTask) {
         List<String> idLabels = card.getIdLabels();
-        for (String idLabel: idLabels) {
+        for (String idLabel : idLabels) {
             Priority matchingPriority = priorityRepository.findByTrelloId(idLabel);
             matchingPriority.addTask(insertedTask);
             insertedTask.addPriority(matchingPriority);
@@ -240,7 +236,7 @@ public class SynchronizeFromTrello {
 
     private void insertMemberTocard(Card card, Task insertedTask) {
         List<String> idMembers = card.getIdMembers();
-        for (String idMember: idMembers) {
+        for (String idMember : idMembers) {
             User matchingUser = userRepository.findByTrelloId(idMember);
             matchingUser.addTask(insertedTask);
             insertedTask.addUser(matchingUser);
