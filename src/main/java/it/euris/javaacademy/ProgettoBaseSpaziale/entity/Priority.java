@@ -1,17 +1,14 @@
 package it.euris.javaacademy.ProgettoBaseSpaziale.entity;
 
 import it.euris.javaacademy.ProgettoBaseSpaziale.converter.LocalEntity;
-import it.euris.javaacademy.ProgettoBaseSpaziale.converter.TrelloEntity;
-import it.euris.javaacademy.ProgettoBaseSpaziale.dto.archetype.Dto;
+import it.euris.javaacademy.ProgettoBaseSpaziale.dto.PriorityDTO;
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.archetype.Model;
 import it.euris.javaacademy.ProgettoBaseSpaziale.trello.TrelloLabel;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Builder
 @Getter
@@ -56,8 +53,13 @@ public class Priority implements Model, LocalEntity {
     }
 
     @Override
-    public Dto toDto() {
-        return null;
+    public PriorityDTO toDto() {
+        return PriorityDTO.builder()
+                .idPriority(id)
+                .color(color)
+                .name(name)
+                .trelloId(trelloId)
+                .build();
     }
 
     public void addTask (Task task){

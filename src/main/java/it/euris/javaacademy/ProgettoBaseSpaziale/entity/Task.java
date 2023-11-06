@@ -87,48 +87,48 @@ public class Task implements Model, LocalEntity, ModelToPreInsert {
     @Column(name = "trello_list_id")
     private String trelloListId;
 
-        @Override
-        public TaskDTO toDto() {
-            return TaskDTO.builder()
-                    .idTask(idTask)
-                    .tabella(tabella)
-                    .taskName(taskName)
-                    .descrizione(descrizione)
-                    .dataScadenza(localDateTimeToString(dataScadenza))
-                    .lastUpdate(lastUpdate.toString())
-                    .trelloId(trelloId)
-                    .build();
-        }
+    @Override
+    public TaskDTO toDto() {
+        return TaskDTO.builder()
+                .idTask(idTask)
+                .tabella(tabella)
+                .taskName(taskName)
+                .descrizione(descrizione)
+                .dataScadenza(localDateTimeToString(dataScadenza))
+                .priorita(priorities.stream().map(Priority::getName).toList().toString())
+                .lastUpdate(lastUpdate.toString())
+                .trelloId(trelloId)
+                .build();
+    }
 
-        @Override
-        public Card toTrelloEntity() {
-            return Card.builder()
-                    .localId(String.valueOf(idTask))
-                    .name(taskName)
-                    .id(trelloId)
-                    .due(String.valueOf(dataScadenza))
-                    .idList(trelloListId)
-                    .dateLastActivity(String.valueOf(lastUpdate))
-                    .desc(descrizione)
+    @Override
+    public Card toTrelloEntity() {
+        return Card.builder()
+                .localId(String.valueOf(idTask))
+                .name(taskName)
+                .id(trelloId)
+                .due(String.valueOf(dataScadenza))
+                .idList(trelloListId)
+                .dateLastActivity(String.valueOf(lastUpdate))
+                .desc(descrizione)
 //                .labels(priorities.stream().map(Priority::toTrelloEntity).toList())
-                    .idLabels(priorities.stream().map(Priority::getTrelloId).toList())
-                    .build();
-        }
+                .idLabels(priorities.stream().map(Priority::getTrelloId).toList())
+                .build();
+    }
 
-        @Override
-        public TaskInsert toPreInsert() {
-            return TaskInsert.builder()
-                    .id(idTask)
-                    .taskName(taskName)
-                    .descrizione(descrizione)
-                    .tabella(tabella.toPreInsert())
-                    .build();
-        }
+    @Override
+    public TaskInsert toPreInsert() {
+        return TaskInsert.builder()
+                .id(idTask)
+                .taskName(taskName)
+                .descrizione(descrizione)
+                .tabella(tabella.toPreInsert())
+                .build();
+    }
 
 
         public void addUser(User user) {
                 users.add(user);
-
         }
 
     public void addPriority(Priority priority) {

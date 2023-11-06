@@ -3,12 +3,15 @@ package it.euris.javaacademy.ProgettoBaseSpaziale.service.impl;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Priority;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.IdMustBeNullException;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.IdMustNotBeNullException;
+import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.NameMustNotExistException;
+import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.NameNotFoundException;
 import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.PriorityRepository;
 import it.euris.javaacademy.ProgettoBaseSpaziale.service.PriorityService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
 @Service
 @AllArgsConstructor
 public class PriorityServiceImpl implements PriorityService {
@@ -22,8 +25,12 @@ public class PriorityServiceImpl implements PriorityService {
 
     @Override
     public Priority insert(Priority priority) {
+
         if (priority.getId() != null && priority.getId() > 0) {
             throw new IdMustBeNullException();
+        }
+        if (priorityRepository.findByNameIgnoreCase(priority.getName()) != null) {
+            throw new NameMustNotExistException();
         }
         return priorityRepository.save(priority);
     }
@@ -45,5 +52,14 @@ public class PriorityServiceImpl implements PriorityService {
     @Override
     public Priority findById(Integer idPriority) {
         return priorityRepository.findById(idPriority).orElse(Priority.builder().build());
+    }
+
+    @Override
+    public Priority findByName(String name) {
+
+        if (priorityRepository.findByNameIgnoreCase(name.trim()) == null) {
+            throw new NameNotFoundException();
+        }
+        return priorityRepository.findByNameIgnoreCase(name.trim());
     }
 }
