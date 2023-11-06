@@ -44,11 +44,12 @@ public class Task implements Model, LocalEntity, ModelToPreInsert {
     @JoinColumn(name = "id_tabella", nullable = false)
     private Tabella tabella;
 
-    @OneToMany(mappedBy = "task", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "task", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @JsonIgnore
     @Builder.Default
     private List<Commento> commenti = new ArrayList<>();
 
-        @ManyToMany(fetch = FetchType.EAGER,
+        @ManyToMany(fetch = FetchType.LAZY,
                 cascade = {
                         CascadeType.PERSIST,
                         CascadeType.MERGE
@@ -59,7 +60,7 @@ public class Task implements Model, LocalEntity, ModelToPreInsert {
         @Builder.Default
         private List<User> users = new ArrayList<>();
 
-    @ManyToMany(fetch = FetchType.EAGER,
+    @ManyToMany(fetch = FetchType.LAZY,
             cascade = {
                     CascadeType.PERSIST,
                     CascadeType.MERGE
@@ -68,10 +69,10 @@ public class Task implements Model, LocalEntity, ModelToPreInsert {
             joinColumns = {@JoinColumn(name = "task_id")},
             inverseJoinColumns = {@JoinColumn(name = "priority_id")})
     @Builder.Default
-
     private List<Priority> priorities = new ArrayList<>();
 
     @OneToMany(mappedBy = "task", fetch = FetchType.EAGER)
+    @JsonIgnore
     @Builder.Default
     private List<Checklist> checklist = new ArrayList<>();
 
