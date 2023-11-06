@@ -7,6 +7,7 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
+import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.stringToInteger;
 import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.stringToLocalDateTime;
 
 @Builder
@@ -20,7 +21,7 @@ public class ChecklistDTO implements Dto {
 
     private String nome;
 
-    private Task task;
+    private String task;
 
     private String lastUpdate;
     private String trelloId;
@@ -29,7 +30,7 @@ public class ChecklistDTO implements Dto {
     public Checklist toModel() {
         return Checklist.builder()
                 .idChecklist(idChecklist)
-                .task(task)
+                .task(Task.builder().idTask(stringToInteger(task)).build())
                 .nome(nome)
                 .lastUpdate(stringToLocalDateTime(lastUpdate))
                 .trelloId(trelloId)

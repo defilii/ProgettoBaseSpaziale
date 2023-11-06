@@ -1,5 +1,6 @@
 package it.euris.javaacademy.ProgettoBaseSpaziale.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import it.euris.javaacademy.ProgettoBaseSpaziale.converter.LocalEntity;
 import it.euris.javaacademy.ProgettoBaseSpaziale.converter.TrelloEntity;
@@ -22,6 +23,7 @@ import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.localDat
 @AllArgsConstructor
 @Entity
 @ToString
+//@Data
 @Table(name = "checklist")
 public class Checklist implements Model, LocalEntity {
 
@@ -33,8 +35,9 @@ public class Checklist implements Model, LocalEntity {
     @Column(name = "nome", nullable=false)
     private String nome;
 
-    @ManyToOne
+    @ManyToOne /*(fetch = FetchType.EAGER)*/
     @JoinColumn(name="id_task", nullable=false)
+//    @JsonIgnore
     private Task task;
 
     @OneToMany(mappedBy = "checklist", fetch = FetchType.EAGER)
@@ -53,7 +56,7 @@ public class Checklist implements Model, LocalEntity {
         return ChecklistDTO.builder()
                 .idChecklist(idChecklist)
                 .nome(nome)
-                .task(task)
+                .task(task == null ? null : task.getTaskName())
                 .trelloId(trelloId)
                 .lastUpdate(localDateTimeToString(lastUpdate))
                 .build();
