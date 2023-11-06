@@ -61,8 +61,8 @@ public class Commento implements Model, LocalEntity {
                 .idCommento(idCommento)
                 .commento(commento)
                 .dataCommento(dataCommento == null ? localDateTimeToString(dataCommento = LocalDateTime.now()) : localDateTimeToString(dataCommento))
-                .task(task)
-                .user(user)
+                .task(task == null ? null : task.getTaskName())
+                .user(user == null ? null : user.getUsername())
                 .trelloId(trelloId)
                 .build();
     }

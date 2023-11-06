@@ -120,7 +120,7 @@ public class TabellaController {
     public List<TaskDTO> getAllHighPrioritiesTasks(@PathVariable("id") Integer idTabella) {
         return tabellaService.findById(idTabella).getTasks().stream()
                 .filter(task -> task.getPriorities().stream()
-                        .anyMatch(priority -> "alta".equalsIgnoreCase(priority.getName())))
+                        .anyMatch(priority -> "Alta Priorità".equalsIgnoreCase(priority.getName())))
                 .map(Task::toDto).toList();
     }
 
@@ -145,7 +145,7 @@ public class TabellaController {
                 .map(tabella -> tabella.getTasks())
                 .flatMap(Collection::stream)
                 .filter(task -> task.getPriorities().stream()
-                        .anyMatch(priority -> "alta".equalsIgnoreCase(priority.getName())))
+                        .anyMatch(priority -> "Alta Priorità".equalsIgnoreCase(priority.getName())))
                 .map(Task::toDto).toList();
     }
 

@@ -20,8 +20,8 @@ public class CommentoDTO implements Dto {
     private Integer idCommento;
     private String commento;
     private String dataCommento;
-    private Task task;
-    private User user;
+    private String task;
+    private String user;
     private String trelloId;
 
     @Override
@@ -31,8 +31,8 @@ public class CommentoDTO implements Dto {
                 .commento(commento)
                 .dataCommento(dataCommento == null ? stringToLocalDateTime(dataCommento = LocalDateTime.now()
                         .toString()) : stringToLocalDateTime(dataCommento))
-                .task(task)
-                .user(user)
+//                .task(task)
+//                .user(user)
                 .trelloId(trelloId)
 
                 .build();

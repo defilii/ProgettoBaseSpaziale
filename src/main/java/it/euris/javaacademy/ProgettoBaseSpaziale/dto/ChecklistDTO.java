@@ -30,7 +30,7 @@ public class ChecklistDTO implements Dto {
     public Checklist toModel() {
         return Checklist.builder()
                 .idChecklist(idChecklist)
-                .task(Task.builder().idTask(stringToInteger(task)).build())
+//                .task(Task.builder().idTask(stringToInteger(task)).build())
                 .nome(nome)
                 .lastUpdate(stringToLocalDateTime(lastUpdate))
                 .trelloId(trelloId)
