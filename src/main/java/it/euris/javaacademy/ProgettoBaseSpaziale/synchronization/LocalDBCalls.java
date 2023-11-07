@@ -7,6 +7,7 @@ import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Priority;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Tabella;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Task;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.BoardIdMissingException;
+import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.ColorInputWrongOrNotSupportedException;
 import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.CommentoRepository;
 import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.PriorityRepository;
 import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.TabellaRepository;
@@ -61,7 +62,6 @@ public class LocalDBCalls {
     }
 
 
-
     public void synchronize() {
         tabellaService.findAll().stream()
                 .forEach(tabella -> {
@@ -90,15 +90,20 @@ public class LocalDBCalls {
                 });
         priorityService.findAll().stream()
                 .forEach(priority -> {
-                    if (null == priority.getTrelloId()) {
-                        postNewPriority(priority);
-                    } else {
-                        updatePriority(priority);
+
+                    try {
+                        if (null == priority.getTrelloId()) {
+                            postNewPriority(priority);
+                        } else {
+                            updatePriority(priority);
+                        }
+                    } catch (ColorInputWrongOrNotSupportedException e) {
+                        System.out.println(e.getMessage());;
                     }
                 });
     }
 
-    public void updatePriority(Priority priority) {
+    public void updatePriority(Priority priority) throws ColorInputWrongOrNotSupportedException {
         Gson gson = new Gson();
         String labelJson = gson.toJson(priority.toTrelloEntity());
 
@@ -106,18 +111,23 @@ public class LocalDBCalls {
         headers.put("accept", "application/json");
         headers.put("content-type", "application/json");
 
+
         String key = apiKeyService.findMostRecent().getKey();
         String token = apiKeyService.findMostRecent().getToken();
-        HttpResponse<String> response = Unirest.put("https://api.trello.com/1/labels/" +
-                        priority.getTrelloId() )
+        HttpResponse<JsonNode> response = Unirest.put("https://api.trello.com/1/labels/" +
+                        priority.getTrelloId())
                 .headers(headers)
                 .queryString("key", key)
                 .queryString("token", token)
                 .body(labelJson)
-                .asString();
+                .asJson();
+
+        if (response.getBody().toPrettyString().contains("ERROR")) {
+            throw new ColorInputWrongOrNotSupportedException();
+        }
     }
 
-    public void postNewPriority(Priority priority) {
+    public void postNewPriority(Priority priority) throws ColorInputWrongOrNotSupportedException {
 
         Gson gson = new Gson();
         System.out.println(priority.toTrelloEntity());
@@ -139,6 +149,10 @@ public class LocalDBCalls {
                 .queryString("token", token)
                 .body(labelJson)
                 .asJson();
+
+        if (response.getBody().toPrettyString().contains("ERROR")) {
+            throw new ColorInputWrongOrNotSupportedException();
+        }
 
         TrelloLabel label = gson.fromJson(response.getBody().toPrettyString(), TrelloLabel.class);
         priority.setTrelloId(label.getId());
