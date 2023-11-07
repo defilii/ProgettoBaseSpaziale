@@ -1,21 +1,16 @@
 package it.euris.javaacademy.ProgettoBaseSpaziale.synchronization;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.InvalidKeyOrToken;
 import it.euris.javaacademy.ProgettoBaseSpaziale.service.ApiKeyService;
 import it.euris.javaacademy.ProgettoBaseSpaziale.trello.*;
-import kong.unirest.core.HttpResponse;
-import kong.unirest.core.JsonNode;
-import kong.unirest.core.Unirest;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.ZonedDateTime;
 import java.util.List;
 
 import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.GsonUtils.getList;
+import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.RestCallUtils.getJsonStringFromUrlGetCall;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -24,23 +19,12 @@ public class TrelloCalls {
 
     ApiKeyService apiKeyService;
 
-
     public List<ListTrello> allTrelloListFromJsonListWithReturn() throws InvalidKeyOrToken {
-        String key = apiKeyService.findMostRecent().getKey();
-        String token = apiKeyService.findMostRecent().getToken();
         String idBoard = "652d5727a3301d21fa288a27";
-        HttpResponse<JsonNode> response = Unirest.get("https://api.trello.com/1/boards/" +
-                        idBoard +
-                        "/lists")
-                .header("Accept", "application/json")
-                .queryString("key", key)
-                .queryString("token", token)
-                .asJson();
-        if (null == response) {
-            throw new InvalidKeyOrToken();
-        }
+        String url = "https://api.trello.com/1/boards/" + idBoard + "/lists";
+        String response = getJsonStringFromUrlGetCall(url, apiKeyService);
 
-        List<ListTrello> listTrellos = getList(response.getBody().toString(), ListTrello.class);
+        List<ListTrello> listTrellos = getList(response, ListTrello.class);
 
         for (ListTrello listTrello : listTrellos) {
             cardsFromJsonListId(listTrello.getId());
@@ -50,51 +34,24 @@ public class TrelloCalls {
     }
 
     public List<Card> cardsFromJsonListId(String listId) throws InvalidKeyOrToken {
-        String key = apiKeyService.findMostRecent().getKey();
-        String token = apiKeyService.findMostRecent().getToken();
-        Gson gson = new GsonBuilder()
-                .setPrettyPrinting()
-                .registerTypeAdapter(ZonedDateTime.class, new ZonedTimeAdapter())
-                .create();
+        String url = "https://api.trello.com/1/lists/" + listId + "/cards";
+        String response = getJsonStringFromUrlGetCall(url, apiKeyService);
 
-        HttpResponse<String> response = Unirest.get("https://api.trello.com/1/lists/" +
-                        listId +
-                        "/cards")
-                .header("Accept", "application/json")
-                .queryString("key", key)
-                .queryString("token", token)
-                .asString();
-
-        if (null == response) {
-            throw new InvalidKeyOrToken();
-        }
-        List<Card> cards = getList(response.getBody(), Card.class);
+        List<Card> cards = getList(response, Card.class);
 
         for (Card card : cards) {
             getChecklistsAndSetItToCard(card);
             getAllCommentsFromCard(card);
         }
 
-        System.out.println(cards.toString());
-
         return cards;
     }
 
     private void getChecklistsAndSetItToCard(Card card) throws InvalidKeyOrToken {
-        String key = apiKeyService.findMostRecent().getKey();
-        String token = apiKeyService.findMostRecent().getToken();
-        HttpResponse<String> checklistResponse = Unirest.get("https://api.trello.com/1/cards/" +
-                        card.getId()
-                        +
-                        "/checklists")
-                .queryString("key", key)
-                .queryString("token", token)
-                .asString();
-        if (null == checklistResponse) {
-            throw new InvalidKeyOrToken();
-        }
+        String url = "https://api.trello.com/1/cards/" + card.getId() + "/checklists";
+        String response = getJsonStringFromUrlGetCall(url, apiKeyService);
 
-        List<TrelloChecklist> checklists = getList(checklistResponse.getBody(), TrelloChecklist.class);
+        List<TrelloChecklist> checklists = getList(response, TrelloChecklist.class);
         for (TrelloChecklist trelloChecklist : checklists) {
             getCheckmarksAndSetItToChecklist(trelloChecklist);
         }
@@ -102,75 +59,38 @@ public class TrelloCalls {
     }
 
     private void getCheckmarksAndSetItToChecklist(TrelloChecklist trelloChecklist) throws InvalidKeyOrToken {
-        String key = apiKeyService.findMostRecent().getKey();
-        String token = apiKeyService.findMostRecent().getToken();
-        HttpResponse<String> checkitemResponse = Unirest.get("https://api.trello.com/1/checklists/" +
-                        trelloChecklist.getId()
-                        +
-                        "/checkItems")
-                .queryString("key", key)
-                .queryString("token", token)
-                .asString();
+        String url = "https://api.trello.com/1/checklists/" + trelloChecklist.getId() + "/checkItems";
+        String response = getJsonStringFromUrlGetCall(url, apiKeyService);
 
-        if (null == checkitemResponse) {
-            throw new InvalidKeyOrToken();
-        }
 
-        List<CheckItem> checkItems = getList(checkitemResponse.getBody(), CheckItem.class);
+        List<CheckItem> checkItems = getList(response, CheckItem.class);
         trelloChecklist.setCheckItems(checkItems);
     }
 
     public List<TrelloLabel> getAllTrelloLabels() throws InvalidKeyOrToken {
-        String key = apiKeyService.findMostRecent().getKey();
-        String token = apiKeyService.findMostRecent().getToken();
         String idBoard = "652d5727a3301d21fa288a27";
-        HttpResponse<String> response = Unirest.get("https://api.trello.com/1/boards/" +
-                        idBoard +
-                        "/labels")
-                .queryString("key", key)
-                .queryString("token", token)
-                .asString();
-        if (null == response) {
-            throw new InvalidKeyOrToken();
-        }
+        String url = "https://api.trello.com/1/boards/" + idBoard + "/labels";
+        String response = getJsonStringFromUrlGetCall(url, apiKeyService);
 
-        List<TrelloLabel> trelloLabels = getList(response.getBody(), TrelloLabel.class);
-    return trelloLabels;
+        List<TrelloLabel> trelloLabels = getList(response, TrelloLabel.class);
+        return trelloLabels;
     }
 
     public List<Members> getAllMembers() throws InvalidKeyOrToken {
-        String key = apiKeyService.findMostRecent().getKey();
-        String token = apiKeyService.findMostRecent().getToken();
         String idBoard = "652d5727a3301d21fa288a27";
-        HttpResponse<String> response = Unirest.get("https://api.trello.com/1/boards/" +
-                        idBoard +
-                        "/members")
-                .queryString("key", key)
-                .queryString("token", token)
-                .asString();
-        if (null == response) {
-            throw new InvalidKeyOrToken();
-        }
+        String url = "https://api.trello.com/1/boards/" + idBoard + "/members";
+        String response = getJsonStringFromUrlGetCall(url, apiKeyService);
 
-        List<Members> members = getList(response.getBody(), Members.class);
+        List<Members> members = getList(response, Members.class);
         return members;
     }
 
     public List<TrelloAction> getAllCommentsFromCard(Card card) throws InvalidKeyOrToken {
-        String key = apiKeyService.findMostRecent().getKey();
-        String token = apiKeyService.findMostRecent().getToken();
-        HttpResponse<String> response = Unirest.get("https://api.trello.com/1/cards/" +
-                        card.getId() +
-                        "/actions")
-                .queryString("key", key)
-                .queryString("token", token)
-                .asString();
-        if (null == response) {
-            throw new InvalidKeyOrToken();
-        }
+        String url = "https://api.trello.com/1/cards/" + card.getId() + "/actions";
+        String response = getJsonStringFromUrlGetCall(url, apiKeyService);
 
-        List<TrelloAction> trelloActions = getList(response.getBody(), TrelloAction.class);
-        if(!trelloActions.isEmpty() || null == trelloActions) {
+        List<TrelloAction> trelloActions = getList(response, TrelloAction.class);
+        if (!trelloActions.isEmpty() || null == trelloActions) {
             trelloActions.removeIf(trelloAction -> null == trelloAction.getData().getText());
         }
         card.setTrelloActions(trelloActions);

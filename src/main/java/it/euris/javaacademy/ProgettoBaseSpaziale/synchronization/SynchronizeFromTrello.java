@@ -80,18 +80,7 @@ public class SynchronizeFromTrello {
                     }
                 });
 
-        allCard.stream().
-                forEach(card ->
-                {
-                    if (allTasks.stream()
-                            .map(Task::getTrelloId)
-                            .toList()
-                            .contains(card.getId())) {
-                        updateCard(card);
-                    } else {
-                        insertCard(card);
-                    }
-                });
+
         allLabel.stream().
                 forEach(label ->
                 {
@@ -104,6 +93,7 @@ public class SynchronizeFromTrello {
                         insertLabel(label);
                     }
                 });
+
         allMembers.stream().
                 forEach(member ->
                 {
@@ -114,6 +104,19 @@ public class SynchronizeFromTrello {
                         updateMember(member);
                     } else {
                         insertMember(member);
+                    }
+                });
+
+        allCard.stream().
+                forEach(card ->
+                {
+                    if (allTasks.stream()
+                            .map(Task::getTrelloId)
+                            .toList()
+                            .contains(card.getId())) {
+                        updateCard(card);
+                    } else {
+                        insertCard(card);
                     }
                 });
 
