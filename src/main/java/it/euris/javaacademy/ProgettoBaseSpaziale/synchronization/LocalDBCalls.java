@@ -2,20 +2,21 @@ package it.euris.javaacademy.ProgettoBaseSpaziale.synchronization;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import io.swagger.v3.core.util.Json;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Commento;
+import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Priority;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Tabella;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Task;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.BoardIdMissingException;
 import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.CommentoRepository;
+import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.PriorityRepository;
 import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.TabellaRepository;
 import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.TaskRepository;
-import it.euris.javaacademy.ProgettoBaseSpaziale.service.ApiKeyService;
-import it.euris.javaacademy.ProgettoBaseSpaziale.service.CommentoService;
-import it.euris.javaacademy.ProgettoBaseSpaziale.service.TabellaService;
-import it.euris.javaacademy.ProgettoBaseSpaziale.service.TaskService;
+import it.euris.javaacademy.ProgettoBaseSpaziale.service.*;
 import it.euris.javaacademy.ProgettoBaseSpaziale.trello.Card;
 import it.euris.javaacademy.ProgettoBaseSpaziale.trello.ListTrello;
 import it.euris.javaacademy.ProgettoBaseSpaziale.trello.TrelloAction;
+import it.euris.javaacademy.ProgettoBaseSpaziale.trello.TrelloLabel;
 import kong.unirest.core.HttpResponse;
 import kong.unirest.core.JsonNode;
 import kong.unirest.core.Unirest;
@@ -40,7 +41,8 @@ public class LocalDBCalls {
     ApiKeyService apiKeyService;
     CommentoService commentoService;
     CommentoRepository commentoRepository;
-
+    PriorityService priorityService;
+    PriorityRepository priorityRepository;
 
     public List<Card> trelloGetCardsOnABoard() {
         String boardId = "652d5727a3301d21fa288a27";
@@ -92,6 +94,63 @@ public class LocalDBCalls {
                         updateCommento(commento);
                     }
                 });
+        priorityService.findAll().stream()
+                .forEach(priority -> {
+                    if (null == priority.getTrelloId()) {
+                        postNewPriority(priority);
+                    } else {
+                        updatePriority(priority);
+                    }
+                });
+    }
+
+    public void updatePriority(Priority priority) {
+        Gson gson = new Gson();
+        String labelJson = gson.toJson(priority.toTrelloEntity());
+
+        Map<String, String> headers = new HashMap<>();
+        headers.put("accept", "application/json");
+        headers.put("content-type", "application/json");
+
+        String key = "656d5bde047c3ac9c66eae4c33aa9230";
+        String token = "ATTA27702686ff9d2e286aadb299d53c874f655dc93f653cb20c42ea2f2be5eb111399494FE0";
+        HttpResponse<String> response = Unirest.put("https://api.trello.com/1/labels/" +
+                        priority.getTrelloId() )
+                .headers(headers)
+                .queryString("key", key)
+                .queryString("token", token)
+                .body(labelJson)
+                .asString();
+    }
+
+    public void postNewPriority(Priority priority) {
+
+        Gson gson = new Gson();
+        System.out.println(priority.toTrelloEntity());
+        String boardId = "652d5727a3301d21fa288a27";
+        String key = "656d5bde047c3ac9c66eae4c33aa9230";
+        String token = "ATTA27702686ff9d2e286aadb299d53c874f655dc93f653cb20c42ea2f2be5eb111399494FE0";
+
+        String labelJson = gson.toJson(priority.toTrelloEntity());
+        System.out.println(labelJson);
+
+        Map<String, String> headers = new HashMap<>();
+        headers.put("accept", "application/json");
+        headers.put("content-type", "application/json");
+
+        HttpResponse<JsonNode> response = Unirest.post("https://api.trello.com/1/labels")
+                .headers(headers)
+                .queryString("idBoard", boardId)
+                .queryString("key", key)
+                .queryString("token", token)
+                .body(labelJson)
+                .asJson();
+
+        TrelloLabel label = gson.fromJson(response.getBody().toPrettyString(), TrelloLabel.class);
+        priority.setTrelloId(label.getId());
+        priorityService.update(priority);
+
+        System.out.println(response);
     }
 
     private void updateCommento(Commento commento) {
@@ -123,14 +182,14 @@ public class LocalDBCalls {
         headers.put("content-type", "application/json");
 
         HttpResponse<JsonNode> response = Unirest.post("https://api.trello.com/1/cards/" +
-                       idCard +
+                        idCard +
                         "/actions/comments")
                 .headers(headers)
                 .queryString("key", key)
                 .queryString("token", token)
                 .queryString("text", commento.getCommento())
                 .asJson();
-        TrelloAction trelloAction =  gson.fromJson(response.getBody().toPrettyString(), TrelloAction.class);
+        TrelloAction trelloAction = gson.fromJson(response.getBody().toPrettyString(), TrelloAction.class);
         commento.setTrelloId(trelloAction.getId());
         commentoService.update(commento);
     }
@@ -144,7 +203,7 @@ public class LocalDBCalls {
                 .map(Tabella::getTrelloBoardId)
                 .filter(id -> id != null)
                 .findFirst().orElse(check);
-        if(idBoard.equals(check)) {
+        if (idBoard.equals(check)) {
             throw new BoardIdMissingException();
         }
         HttpResponse<JsonNode> response = Unirest.post("https://api.trello.com/1/lists")
@@ -155,7 +214,7 @@ public class LocalDBCalls {
                 .asJson();
 
         System.out.println(response.getBody().toPrettyString());
-        ListTrello listTrello =  gson.fromJson(response.getBody().toPrettyString(), ListTrello.class);
+        ListTrello listTrello = gson.fromJson(response.getBody().toPrettyString(), ListTrello.class);
         tabella.setTrelloId(listTrello.getId());
         tabella.setTrelloBoardId(listTrello.getIdBoard());
         tabellaService.update(tabella);
@@ -202,7 +261,7 @@ public class LocalDBCalls {
                 .asJson();
 
         System.out.println(response.getBody().toPrettyString());
-        Card card =  gson.fromJson(response.getBody().toPrettyString(), Card.class);
+        Card card = gson.fromJson(response.getBody().toPrettyString(), Card.class);
         task.setTrelloId(card.getId());
         task.setTrelloListId(card.getIdList());
         taskService.update(task);
