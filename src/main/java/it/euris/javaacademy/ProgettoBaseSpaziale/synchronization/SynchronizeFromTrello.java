@@ -129,7 +129,7 @@ public class SynchronizeFromTrello {
                     try {
                         return client.cardsFromJsonListId(listTrello.getId());
                     } catch (InvalidKeyOrToken e) {
-                        System.out.println(e.getMessage());;
+                        throw new RuntimeException(e);
                     }
                 })
                 .flatMap(Collection::stream)
