@@ -1,6 +1,7 @@
 package it.euris.javaacademy.ProgettoBaseSpaziale.synchronization;
 
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.*;
+import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.InvalidKeyOrToken;
 import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.*;
 import it.euris.javaacademy.ProgettoBaseSpaziale.service.*;
 import it.euris.javaacademy.ProgettoBaseSpaziale.trello.*;
@@ -52,7 +53,11 @@ public class SynchronizeFromTrello {
     List<TrelloAction> allTrelloActions;
 
     public void updateAllTaskAndTabella() {
-        updateList();
+        try {
+            updateList();
+        } catch (InvalidKeyOrToken e) {
+            throw new RuntimeException(e.getMessage());
+        }
         String idBoardToSet = allList.stream().map(ListTrello::getIdBoard).findAny().orElse(null);
 
         allList.stream()
@@ -116,11 +121,17 @@ public class SynchronizeFromTrello {
     }
 
 
-    private void updateList() {
+    private void updateList() throws InvalidKeyOrToken {
         TrelloCalls client = new TrelloCalls(apiKeyService);
         allList = client.allTrelloListFromJsonListWithReturn();
         allCard = allList.stream()
-                .map(listTrello -> client.cardsFromJsonListId(listTrello.getId()))
+                .map(listTrello -> {
+                    try {
+                        return client.cardsFromJsonListId(listTrello.getId());
+                    } catch (InvalidKeyOrToken e) {
+                        System.out.println(e.getMessage());;
+                    }
+                })
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
         allLabel = client.getAllTrelloLabels();
