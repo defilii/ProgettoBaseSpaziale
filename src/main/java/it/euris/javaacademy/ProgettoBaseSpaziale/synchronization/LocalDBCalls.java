@@ -2,7 +2,6 @@ package it.euris.javaacademy.ProgettoBaseSpaziale.synchronization;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import io.swagger.v3.core.util.Json;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Commento;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Priority;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Tabella;
@@ -22,7 +21,6 @@ import kong.unirest.core.JsonNode;
 import kong.unirest.core.Unirest;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PutMapping;
 
 import java.util.HashMap;
 import java.util.List;
@@ -46,8 +44,8 @@ public class LocalDBCalls {
 
     public List<Card> trelloGetCardsOnABoard() {
         String boardId = "652d5727a3301d21fa288a27";
-        String key = "656d5bde047c3ac9c66eae4c33aa9230";
-        String token = "ATTA27702686ff9d2e286aadb299d53c874f655dc93f653cb20c42ea2f2be5eb111399494FE0";
+        String key = apiKeyService.findMostRecent().getKey();
+        String token = apiKeyService.findMostRecent().getToken();
         HttpResponse<JsonNode> response = Unirest.get("https://api.trello.com/1/boards/" +
                         boardId +
                         "/cards")
@@ -62,10 +60,6 @@ public class LocalDBCalls {
         return cards;
     }
 
-//    private void updateKeys() {
-//        key = apiKeyService.findMostRecent().getKey();
-//        token = apiKeyService.findMostRecent().getToken();
-//    }
 
 
     public void synchronize() {
@@ -112,8 +106,8 @@ public class LocalDBCalls {
         headers.put("accept", "application/json");
         headers.put("content-type", "application/json");
 
-        String key = "656d5bde047c3ac9c66eae4c33aa9230";
-        String token = "ATTA27702686ff9d2e286aadb299d53c874f655dc93f653cb20c42ea2f2be5eb111399494FE0";
+        String key = apiKeyService.findMostRecent().getKey();
+        String token = apiKeyService.findMostRecent().getToken();
         HttpResponse<String> response = Unirest.put("https://api.trello.com/1/labels/" +
                         priority.getTrelloId() )
                 .headers(headers)
@@ -128,8 +122,8 @@ public class LocalDBCalls {
         Gson gson = new Gson();
         System.out.println(priority.toTrelloEntity());
         String boardId = "652d5727a3301d21fa288a27";
-        String key = "656d5bde047c3ac9c66eae4c33aa9230";
-        String token = "ATTA27702686ff9d2e286aadb299d53c874f655dc93f653cb20c42ea2f2be5eb111399494FE0";
+        String key = apiKeyService.findMostRecent().getKey();
+        String token = apiKeyService.findMostRecent().getToken();
 
         String labelJson = gson.toJson(priority.toTrelloEntity());
         System.out.println(labelJson);
@@ -155,8 +149,8 @@ public class LocalDBCalls {
 
     private void updateCommento(Commento commento) {
         Gson gson = new Gson();
-        String key = "656d5bde047c3ac9c66eae4c33aa9230";
-        String token = "ATTA27702686ff9d2e286aadb299d53c874f655dc93f653cb20c42ea2f2be5eb111399494FE0";
+        String key = apiKeyService.findMostRecent().getKey();
+        String token = apiKeyService.findMostRecent().getToken();
 
         Map<String, String> headers = new HashMap<>();
         headers.put("accept", "application/json");
@@ -173,8 +167,8 @@ public class LocalDBCalls {
 
     private void postNewCommento(Commento commento) {
         Gson gson = new Gson();
-        String key = "656d5bde047c3ac9c66eae4c33aa9230";
-        String token = "ATTA27702686ff9d2e286aadb299d53c874f655dc93f653cb20c42ea2f2be5eb111399494FE0";
+        String key = apiKeyService.findMostRecent().getKey();
+        String token = apiKeyService.findMostRecent().getToken();
         String idCard = commento.getTask().getTrelloId();
 
         Map<String, String> headers = new HashMap<>();
@@ -196,8 +190,8 @@ public class LocalDBCalls {
 
     private ListTrello postNewTabella(Tabella tabella) {
         Gson gson = new Gson();
-        String key = "656d5bde047c3ac9c66eae4c33aa9230";
-        String token = "ATTA27702686ff9d2e286aadb299d53c874f655dc93f653cb20c42ea2f2be5eb111399494FE0";
+        String key = apiKeyService.findMostRecent().getKey();
+        String token = apiKeyService.findMostRecent().getToken();
         String check = "missing board id";
         String idBoard = tabellaService.findAll().stream()
                 .map(Tabella::getTrelloBoardId)
@@ -223,8 +217,8 @@ public class LocalDBCalls {
 
     private ListTrello updateTabella(Tabella tabella) {
         Gson gson = new Gson();
-        String key = "656d5bde047c3ac9c66eae4c33aa9230";
-        String token = "ATTA27702686ff9d2e286aadb299d53c874f655dc93f653cb20c42ea2f2be5eb111399494FE0";
+        String key = apiKeyService.findMostRecent().getKey();
+        String token = apiKeyService.findMostRecent().getToken();
 
         HttpResponse<JsonNode> response = Unirest.put("https://api.trello.com/1/lists/" +
                         tabella.getTrelloId())
@@ -240,8 +234,8 @@ public class LocalDBCalls {
 
     public Card postNewCard(Task task) {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        String key = "656d5bde047c3ac9c66eae4c33aa9230";
-        String token = "ATTA27702686ff9d2e286aadb299d53c874f655dc93f653cb20c42ea2f2be5eb111399494FE0";
+        String key = apiKeyService.findMostRecent().getKey();
+        String token = apiKeyService.findMostRecent().getToken();
 
         String cardJson = gson.toJson(task.toTrelloEntity());
         System.out.println(cardJson);
@@ -270,8 +264,8 @@ public class LocalDBCalls {
 
     private Card updateCard(Task task) {
         Gson gson = new Gson();
-        String key = "656d5bde047c3ac9c66eae4c33aa9230";
-        String token = "ATTA27702686ff9d2e286aadb299d53c874f655dc93f653cb20c42ea2f2be5eb111399494FE0";
+        String key = apiKeyService.findMostRecent().getKey();
+        String token = apiKeyService.findMostRecent().getToken();
         String idCard = task.getTrelloId();
 
         Card cardToUpdate = task.toTrelloEntity();

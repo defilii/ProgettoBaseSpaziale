@@ -74,31 +74,6 @@ public class SynchronizeFromTrello {
                         tabellaService.insert(tabellaToInsert);
                     }
                 });
-        allLabel.stream().
-                forEach(label ->
-                {
-                    if (allPriority.stream()
-                            .map(Priority::getTrelloId)
-                            .toList()
-                            .contains(label.getId())) {
-                        updateLabel(label);
-                    } else {
-                        insertLabel(label);
-                    }
-                });
-
-        allMembers.stream().
-                forEach(member ->
-                {
-                    if (allUser.stream()
-                            .map(User::getTrelloId)
-                            .toList()
-                            .contains(member.getId())) {
-                        updateMember(member);
-                    } else {
-                        insertMember(member);
-                    }
-                });
 
         allCard.stream().
                 forEach(card ->
@@ -112,7 +87,30 @@ public class SynchronizeFromTrello {
                         insertCard(card);
                     }
                 });
-
+        allLabel.stream().
+                forEach(label ->
+                {
+                    if (allPriority.stream()
+                            .map(Priority::getTrelloId)
+                            .toList()
+                            .contains(label.getId())) {
+                        updateLabel(label);
+                    } else {
+                        insertLabel(label);
+                    }
+                });
+        allMembers.stream().
+                forEach(member ->
+                {
+                    if (allUser.stream()
+                            .map(User::getTrelloId)
+                            .toList()
+                            .contains(member.getId())) {
+                        updateMember(member);
+                    } else {
+                        insertMember(member);
+                    }
+                });
 
         deleteFromDatabase();
     }

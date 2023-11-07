@@ -23,23 +23,10 @@ public class TrelloCalls {
 
     ApiKeyService apiKeyService;
 
-//    String key;
-//    String token;
-    String key ="656d5bde047c3ac9c66eae4c33aa9230";
-    String token ="ATTA27702686ff9d2e286aadb299d53c874f655dc93f653cb20c42ea2f2be5eb111399494FE0";
-
-
-    public TrelloCalls(ApiKeyService apiKeyService) {
-        this.apiKeyService = apiKeyService;
-    }
-
-    private void updateKeys() {
-        key = apiKeyService.findMostRecent().getKey();
-        token = apiKeyService.findMostRecent().getToken();
-    }
 
     public List<ListTrello> allTrelloListFromJsonListWithReturn() {
-//        updateKeys();
+        String key = apiKeyService.findMostRecent().getKey();
+        String token = apiKeyService.findMostRecent().getToken();
         String idBoard = "652d5727a3301d21fa288a27";
         HttpResponse<JsonNode> response = Unirest.get("https://api.trello.com/1/boards/" +
                         idBoard +
@@ -59,6 +46,8 @@ public class TrelloCalls {
     }
 
     public List<Card> cardsFromJsonListId(String listId) {
+        String key = apiKeyService.findMostRecent().getKey();
+        String token = apiKeyService.findMostRecent().getToken();
         Gson gson = new GsonBuilder()
                 .setPrettyPrinting()
                 .registerTypeAdapter(ZonedDateTime.class, new ZonedTimeAdapter())
@@ -84,34 +73,9 @@ public class TrelloCalls {
         return cards;
     }
 
-    public List<Card> cardsFromJsonList() {
-        Gson gson = new GsonBuilder()
-                .setPrettyPrinting()
-                .registerTypeAdapter(ZonedDateTime.class, new ZonedTimeAdapter())
-                .create();
-
-        String listId = "652d5727a3301d21fa288a28";
-        HttpResponse<String> response = Unirest.get("https://api.trello.com/1/lists/" +
-                        listId +
-                        "/cards")
-                .header("Accept", "application/json")
-                .queryString("key", key)
-                .queryString("token", token)
-                .asString();
-
-        List<Card> cards = getList(response.getBody(), Card.class);
-
-        for (Card card : cards) {
-            getChecklistsAndSetItToCard(card);
-
-        }
-
-        System.out.println(cards.stream().map(Card::toLocalEntity).toList());
-
-        return cards;
-    }
-
     private void getChecklistsAndSetItToCard(Card card) {
+        String key = apiKeyService.findMostRecent().getKey();
+        String token = apiKeyService.findMostRecent().getToken();
         HttpResponse<String> checklistResponse = Unirest.get("https://api.trello.com/1/cards/" +
                         card.getId()
                         +
@@ -128,6 +92,8 @@ public class TrelloCalls {
     }
 
     private void getCheckmarksAndSetItToChecklist(TrelloChecklist trelloChecklist) {
+        String key = apiKeyService.findMostRecent().getKey();
+        String token = apiKeyService.findMostRecent().getToken();
         HttpResponse<String> checkitemResponse = Unirest.get("https://api.trello.com/1/checklists/" +
                         trelloChecklist.getId()
                         +
@@ -141,7 +107,8 @@ public class TrelloCalls {
     }
 
     public List<TrelloLabel> getAllTrelloLabels() {
-
+        String key = apiKeyService.findMostRecent().getKey();
+        String token = apiKeyService.findMostRecent().getToken();
         String idBoard = "652d5727a3301d21fa288a27";
         HttpResponse<String> response = Unirest.get("https://api.trello.com/1/boards/" +
                         idBoard +
@@ -155,8 +122,8 @@ public class TrelloCalls {
     }
 
     public List<Members> getAllMembers() {
-        String key ="656d5bde047c3ac9c66eae4c33aa9230";
-        String token ="ATTA27702686ff9d2e286aadb299d53c874f655dc93f653cb20c42ea2f2be5eb111399494FE0";
+        String key = apiKeyService.findMostRecent().getKey();
+        String token = apiKeyService.findMostRecent().getToken();
         String idBoard = "652d5727a3301d21fa288a27";
         HttpResponse<String> response = Unirest.get("https://api.trello.com/1/boards/" +
                         idBoard +
@@ -170,8 +137,8 @@ public class TrelloCalls {
     }
 
     public List<TrelloAction> getAllCommentsFromCard(Card card){
-        String key ="656d5bde047c3ac9c66eae4c33aa9230";
-        String token ="ATTA27702686ff9d2e286aadb299d53c874f655dc93f653cb20c42ea2f2be5eb111399494FE0";
+        String key = apiKeyService.findMostRecent().getKey();
+        String token = apiKeyService.findMostRecent().getToken();
         HttpResponse<String> response = Unirest.get("https://api.trello.com/1/cards/" +
                         card.getId() +
                         "/actions")
@@ -185,13 +152,6 @@ public class TrelloCalls {
         }
         card.setTrelloActions(trelloActions);
         return trelloActions;
-    }
-
-
-    public static void main(String[] args) {
-        TrelloCalls client = new TrelloCalls();
-    client.allTrelloListFromJsonListWithReturn();
-
     }
 
 }

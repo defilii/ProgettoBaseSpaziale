@@ -1,6 +1,5 @@
 package it.euris.javaacademy.ProgettoBaseSpaziale.controller;
 
-import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Priority;
 import it.euris.javaacademy.ProgettoBaseSpaziale.synchronization.LocalDBCalls;
 import it.euris.javaacademy.ProgettoBaseSpaziale.synchronization.SynchronizeFromTrello;
 import lombok.AllArgsConstructor;
@@ -22,20 +21,6 @@ public class SynchronizationController {
     @PutMapping("/synchronizeToTrello")
     public void synchronize() {
         synchronizeToTrello.synchronize();
-    }
-
-    @PutMapping("/test")
-    public void testingMethods() {
-        Priority priority = Priority.builder()
-                .color("purple")
-                .name("name")
-                .build();
-
-        synchronizeToTrello.postNewPriority(priority);
-
-        priority.setName("new name");
-        priority.setColor("black");
-        synchronizeToTrello.updatePriority(priority);
     }
 
     @PutMapping("/synchronizeFromTrello")
