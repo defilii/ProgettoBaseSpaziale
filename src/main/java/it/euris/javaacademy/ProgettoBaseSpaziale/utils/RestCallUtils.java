@@ -27,7 +27,7 @@ public class RestCallUtils {
         return response.getBody().toPrettyString();
     }
 
-    public String postJsonString(String url, String json, ApiKeyService apiKeyService) throws InvalidKeyOrToken {
+    public static String postJsonString(String url, String json, ApiKeyService apiKeyService) throws InvalidKeyOrToken {
         String key = apiKeyService.findMostRecent().getKey();
         String token = apiKeyService.findMostRecent().getToken();
         Map<String, String> headers = new HashMap<>();
@@ -38,7 +38,7 @@ public class RestCallUtils {
                 .headers(headers)
                 .queryString("key", key)
                 .queryString("token", token)
-                .body(json)
+                .body(json == null ? "" : json)
                 .asJson();
         if (null == response.getBody()) {
             throw new InvalidKeyOrToken();
@@ -47,7 +47,7 @@ public class RestCallUtils {
         return response.getBody().toPrettyString();
     }
 
-    public String putJsonString(String url, String json, ApiKeyService apiKeyService) throws InvalidKeyOrToken {
+    public static String putJsonString(String url, String json, ApiKeyService apiKeyService) throws InvalidKeyOrToken {
         String key = apiKeyService.findMostRecent().getKey();
         String token = apiKeyService.findMostRecent().getToken();
         Map<String, String> headers = new HashMap<>();

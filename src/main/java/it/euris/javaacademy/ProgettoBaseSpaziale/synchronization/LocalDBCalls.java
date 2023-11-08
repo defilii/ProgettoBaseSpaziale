@@ -8,6 +8,7 @@ import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Tabella;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Task;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.BoardIdMissingException;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.ColorInputWrongOrNotSupportedException;
+import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.InvalidKeyOrToken;
 import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.CommentoRepository;
 import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.PriorityRepository;
 import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.TabellaRepository;
@@ -26,8 +27,11 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.GsonUtils.getList;
+import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.RestCallUtils.postJsonString;
+import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.RestCallUtils.putJsonString;
 
 @AllArgsConstructor
 @Service
@@ -65,19 +69,27 @@ public class LocalDBCalls {
     public void synchronize() {
         tabellaService.findAll().stream()
                 .forEach(tabella -> {
+                    try {
                     if (null == tabella.getTrelloId()) {
                         postNewTabella(tabella);
                     } else {
                         updateTabella(tabella);
                     }
+                    } catch (InvalidKeyOrToken e) {
+                        throw new RuntimeException(e);
+                    }
                 });
 
         taskService.findAll().stream()
                 .forEach(task -> {
+                    try {
                     if (null == task.getTrelloId()) {
-                        postNewCard(task);
+                            postNewCard(task);
                     } else {
                         updateCard(task);
+                    }
+                    } catch (InvalidKeyOrToken e) {
+                        throw new RuntimeException(e);
                     }
                 });
         commentoService.findAll().stream()
@@ -90,75 +102,46 @@ public class LocalDBCalls {
                 });
         priorityService.findAll().stream()
                 .forEach(priority -> {
-
                     try {
                         if (null == priority.getTrelloId()) {
                             postNewPriority(priority);
                         } else {
                             updatePriority(priority);
                         }
-                    } catch (ColorInputWrongOrNotSupportedException e) {
-                        System.out.println(e.getMessage());;
+                    } catch (ColorInputWrongOrNotSupportedException | InvalidKeyOrToken e) {
+                        throw new RuntimeException(e);
                     }
                 });
     }
 
-    public void updatePriority(Priority priority) throws ColorInputWrongOrNotSupportedException {
+    public void updatePriority(Priority priority) throws ColorInputWrongOrNotSupportedException, InvalidKeyOrToken {
         Gson gson = new Gson();
         String labelJson = gson.toJson(priority.toTrelloEntity());
 
-        Map<String, String> headers = new HashMap<>();
-        headers.put("accept", "application/json");
-        headers.put("content-type", "application/json");
+        String url = "https://api.trello.com/1/labels/" + priority.getTrelloId();
+        String response = putJsonString(url, labelJson, apiKeyService);
 
-
-        String key = apiKeyService.findMostRecent().getKey();
-        String token = apiKeyService.findMostRecent().getToken();
-        HttpResponse<JsonNode> response = Unirest.put("https://api.trello.com/1/labels/" +
-                        priority.getTrelloId())
-                .headers(headers)
-                .queryString("key", key)
-                .queryString("token", token)
-                .body(labelJson)
-                .asJson();
-
-        if (response.getBody().toPrettyString().contains("ERROR")) {
+        if (response.contains("ERROR")) {
             throw new ColorInputWrongOrNotSupportedException();
         }
     }
 
-    public void postNewPriority(Priority priority) throws ColorInputWrongOrNotSupportedException {
-
+    public void postNewPriority(Priority priority) throws ColorInputWrongOrNotSupportedException, InvalidKeyOrToken {
         Gson gson = new Gson();
-        System.out.println(priority.toTrelloEntity());
+
         String boardId = "652d5727a3301d21fa288a27";
-        String key = apiKeyService.findMostRecent().getKey();
-        String token = apiKeyService.findMostRecent().getToken();
-
         String labelJson = gson.toJson(priority.toTrelloEntity());
-        System.out.println(labelJson);
 
-        Map<String, String> headers = new HashMap<>();
-        headers.put("accept", "application/json");
-        headers.put("content-type", "application/json");
+        String url = "https://api.trello.com/1/labels?idBoard=" + boardId;
+        String response = postJsonString(url, labelJson, apiKeyService);
 
-        HttpResponse<JsonNode> response = Unirest.post("https://api.trello.com/1/labels")
-                .headers(headers)
-                .queryString("idBoard", boardId)
-                .queryString("key", key)
-                .queryString("token", token)
-                .body(labelJson)
-                .asJson();
-
-        if (response.getBody().toPrettyString().contains("ERROR")) {
+        if (response.contains("ERROR")) {
             throw new ColorInputWrongOrNotSupportedException();
         }
 
-        TrelloLabel label = gson.fromJson(response.getBody().toPrettyString(), TrelloLabel.class);
+        TrelloLabel label = gson.fromJson(response, TrelloLabel.class);
         priority.setTrelloId(label.getId());
         priorityService.update(priority);
-
-        System.out.println(response);
     }
 
     private void updateCommento(Commento commento) {
@@ -202,102 +185,66 @@ public class LocalDBCalls {
         commentoService.update(commento);
     }
 
-    private ListTrello postNewTabella(Tabella tabella) {
+    private ListTrello postNewTabella(Tabella tabella) throws InvalidKeyOrToken {
         Gson gson = new Gson();
-        String key = apiKeyService.findMostRecent().getKey();
-        String token = apiKeyService.findMostRecent().getToken();
         String check = "missing board id";
         String idBoard = tabellaService.findAll().stream()
                 .map(Tabella::getTrelloBoardId)
-                .filter(id -> id != null)
+                .filter(Objects::nonNull)
                 .findFirst().orElse(check);
         if (idBoard.equals(check)) {
             throw new BoardIdMissingException();
         }
-        HttpResponse<JsonNode> response = Unirest.post("https://api.trello.com/1/lists")
-                .queryString("name", tabella.getNome())
-                .queryString("idBoard", idBoard)
-                .queryString("key", key)
-                .queryString("token", token)
-                .asJson();
+        String url = "https://api.trello.com/1/lists?name=" + tabella.getNome() + "&idBoard=" + idBoard;
+        String response = postJsonString(url,null, apiKeyService);
 
-        System.out.println(response.getBody().toPrettyString());
-        ListTrello listTrello = gson.fromJson(response.getBody().toPrettyString(), ListTrello.class);
+        ListTrello listTrello = gson.fromJson(response, ListTrello.class);
         tabella.setTrelloId(listTrello.getId());
         tabella.setTrelloBoardId(listTrello.getIdBoard());
         tabellaService.update(tabella);
         return listTrello;
     }
 
-    private ListTrello updateTabella(Tabella tabella) {
+    private ListTrello updateTabella(Tabella tabella) throws InvalidKeyOrToken {
         Gson gson = new Gson();
-        String key = apiKeyService.findMostRecent().getKey();
-        String token = apiKeyService.findMostRecent().getToken();
 
-        HttpResponse<JsonNode> response = Unirest.put("https://api.trello.com/1/lists/" +
-                        tabella.getTrelloId())
-                .queryString("key", key)
-                .queryString("token", token)
-                .queryString("name", tabella.getNome())
-                .asJson();
+        String url = "https://api.trello.com/1/lists/" + tabella.getTrelloId();
+        String listJson = gson.toJson(tabella.toTrelloEntity());
+        String response = putJsonString(url, listJson, apiKeyService);
 
-        System.out.println(response.getBody().toPrettyString());
-        ListTrello listTrello = gson.fromJson(response.getBody().toPrettyString(), ListTrello.class);
+        ListTrello listTrello = gson.fromJson(response, ListTrello.class);
         return listTrello;
     }
 
-    public Card postNewCard(Task task) {
+    public Card postNewCard(Task task) throws InvalidKeyOrToken {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        String key = apiKeyService.findMostRecent().getKey();
-        String token = apiKeyService.findMostRecent().getToken();
 
         String cardJson = gson.toJson(task.toTrelloEntity());
-        System.out.println(cardJson);
-
-        Map<String, String> headers = new HashMap<>();
-        headers.put("accept", "application/json");
-        headers.put("content-type", "application/json");
 
         String listId = task.getTabella().getTrelloId();
 
-        HttpResponse<JsonNode> response = Unirest.post("https://api.trello.com/1/cards/")
-                .headers(headers)
-                .queryString("idList", listId)
-                .queryString("key", key)
-                .queryString("token", token)
-                .body(cardJson)
-                .asJson();
+        String url = "https://api.trello.com/1/cards?idList=" + listId;
+        String response = postJsonString(url, cardJson, apiKeyService);
 
-        System.out.println(response.getBody().toPrettyString());
-        Card card = gson.fromJson(response.getBody().toPrettyString(), Card.class);
+        Card card = gson.fromJson(response, Card.class);
         task.setTrelloId(card.getId());
         task.setTrelloListId(card.getIdList());
         taskService.update(task);
         return card;
     }
 
-    private Card updateCard(Task task) {
+    private Card updateCard(Task task) throws InvalidKeyOrToken {
         Gson gson = new Gson();
-        String key = apiKeyService.findMostRecent().getKey();
-        String token = apiKeyService.findMostRecent().getToken();
         String idCard = task.getTrelloId();
 
         Card cardToUpdate = task.toTrelloEntity();
         cardToUpdate.setIdList(task.getTabella().getTrelloId());
-        Map<String, String> headers = new HashMap<>();
-        headers.put("accept", "application/json");
-        headers.put("content-type", "application/json");
 
-        HttpResponse<JsonNode> response = Unirest.put("https://api.trello.com/1/cards/" +
-                        idCard)
-                .headers(headers)
-                .queryString("key", key)
-                .queryString("token", token)
-                .body(gson.toJson(cardToUpdate))
-                .asJson();
+        String cardJson = gson.toJson(cardToUpdate);
+        String url = "https://api.trello.com/1/cards/" + idCard;
+        String response = putJsonString(url, cardJson, apiKeyService);
 
-        System.out.println(response.getBody().toPrettyString());
-        return gson.fromJson(response.getBody().toPrettyString(), Card.class);
+        return gson.fromJson(response, Card.class);
     }
 
     //TODO tidy this mess up and expose only the method to synchronize in a separate controller after you finish implementing the synchronization of checklist and checkmark
