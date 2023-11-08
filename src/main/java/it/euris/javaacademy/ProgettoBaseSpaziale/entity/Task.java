@@ -49,7 +49,7 @@ public class Task implements Model, LocalEntity, ModelToPreInsert {
     @Builder.Default
     private List<Commento> commenti = new ArrayList<>();
 
-        @ManyToMany(fetch = FetchType.LAZY,
+        @ManyToMany(fetch = FetchType.EAGER,
                 cascade = {
                         CascadeType.PERSIST,
                         CascadeType.MERGE
@@ -60,7 +60,7 @@ public class Task implements Model, LocalEntity, ModelToPreInsert {
         @Builder.Default
         private List<User> users = new ArrayList<>();
 
-    @ManyToMany(fetch = FetchType.LAZY,
+    @ManyToMany(fetch = FetchType.EAGER,
             cascade = {
                     CascadeType.PERSIST,
                     CascadeType.MERGE

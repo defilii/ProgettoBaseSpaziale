@@ -35,7 +35,7 @@ public class User implements Model, LocalEntity {
     @Column(name = "full_name", nullable = false)
     private String fullName;
 
-    @ManyToMany(fetch = FetchType.LAZY,
+    @ManyToMany(fetch = FetchType.EAGER,
             cascade = {
                     CascadeType.PERSIST,
                     CascadeType.MERGE
@@ -44,7 +44,7 @@ public class User implements Model, LocalEntity {
     @Builder.Default
     private List<Task> tasks = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     @JsonIgnore
     @Builder.Default
     private List<Commento> commenti = new ArrayList<>();
