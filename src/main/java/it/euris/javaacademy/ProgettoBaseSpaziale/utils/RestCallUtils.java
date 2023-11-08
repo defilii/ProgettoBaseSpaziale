@@ -58,7 +58,7 @@ public class RestCallUtils {
                 .headers(headers)
                 .queryString("key", key)
                 .queryString("token", token)
-                .body(json)
+                .body(json == null ? "" : json)
                 .asJson();
         if (null == response.getBody()) {
             throw new InvalidKeyOrToken();

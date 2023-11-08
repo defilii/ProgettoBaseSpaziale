@@ -94,10 +94,14 @@ public class LocalDBCalls {
                 });
         commentoService.findAll().stream()
                 .forEach(commento -> {
+                    try {
                     if (null == commento.getTrelloId()) {
                         postNewCommento(commento);
                     } else {
                         updateCommento(commento);
+                    }
+                    } catch (InvalidKeyOrToken e) {
+                        throw new RuntimeException(e);
                     }
                 });
         priorityService.findAll().stream()
@@ -144,43 +148,21 @@ public class LocalDBCalls {
         priorityService.update(priority);
     }
 
-    private void updateCommento(Commento commento) {
+    private void updateCommento(Commento commento) throws InvalidKeyOrToken {
         Gson gson = new Gson();
-        String key = apiKeyService.findMostRecent().getKey();
-        String token = apiKeyService.findMostRecent().getToken();
 
-        Map<String, String> headers = new HashMap<>();
-        headers.put("accept", "application/json");
-        headers.put("content-type", "application/json");
-
-        HttpResponse<JsonNode> response = Unirest.put("https://api.trello.com/1/actions/" +
-                        commento.getTrelloId())
-                .headers(headers)
-                .queryString("key", key)
-                .queryString("token", token)
-                .queryString("text", commento.getCommento())
-                .asJson();
+        String url = "https://api.trello.com/1/actions/" + commento.getTrelloId() + "?text=" + commento.getCommento();
+        putJsonString(url, null, apiKeyService);
     }
 
-    private void postNewCommento(Commento commento) {
+    private void postNewCommento(Commento commento) throws InvalidKeyOrToken {
         Gson gson = new Gson();
-        String key = apiKeyService.findMostRecent().getKey();
-        String token = apiKeyService.findMostRecent().getToken();
         String idCard = commento.getTask().getTrelloId();
 
-        Map<String, String> headers = new HashMap<>();
-        headers.put("accept", "application/json");
-        headers.put("content-type", "application/json");
+        String url = "https://api.trello.com/1/cards/" + idCard + "/actions/comments?text=" +  commento.getCommento();
+        String response = postJsonString(url, null, apiKeyService);
 
-        HttpResponse<JsonNode> response = Unirest.post("https://api.trello.com/1/cards/" +
-                        idCard +
-                        "/actions/comments")
-                .headers(headers)
-                .queryString("key", key)
-                .queryString("token", token)
-                .queryString("text", commento.getCommento())
-                .asJson();
-        TrelloAction trelloAction = gson.fromJson(response.getBody().toPrettyString(), TrelloAction.class);
+        TrelloAction trelloAction = gson.fromJson(response, TrelloAction.class);
         commento.setTrelloId(trelloAction.getId());
         commentoService.update(commento);
     }
