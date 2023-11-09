@@ -1,6 +1,6 @@
 package it.euris.javaacademy.ProgettoBaseSpaziale.utils;
 
-import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.InvalidKeyOrToken;
+import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.InvalidKeyTokenOrUrl;
 import it.euris.javaacademy.ProgettoBaseSpaziale.service.ApiKeyService;
 import kong.unirest.core.HttpResponse;
 import kong.unirest.core.JsonNode;
@@ -11,7 +11,7 @@ import java.util.Map;
 
 public class RestCallUtils {
 
-    public static String getJsonStringFromUrlGetCall(String url, ApiKeyService apiKeyService) throws InvalidKeyOrToken {
+    public static String getJsonStringFromUrlGetCall(String url, ApiKeyService apiKeyService) throws InvalidKeyTokenOrUrl {
         String key = apiKeyService.findMostRecent().getKey();
         String token = apiKeyService.findMostRecent().getToken();
         HttpResponse<JsonNode> response = Unirest.get(url)
@@ -20,14 +20,14 @@ public class RestCallUtils {
                 .queryString("token", token)
                 .asJson();
         if (null == response.getBody()) {
-            throw new InvalidKeyOrToken();
+            throw new InvalidKeyTokenOrUrl();
         }
 
         System.out.println(response.getBody().toPrettyString());
         return response.getBody().toPrettyString();
     }
 
-    public static String postJsonString(String url, String json, ApiKeyService apiKeyService) throws InvalidKeyOrToken {
+    public static String postJsonString(String url, String json, ApiKeyService apiKeyService) throws InvalidKeyTokenOrUrl {
         String key = apiKeyService.findMostRecent().getKey();
         String token = apiKeyService.findMostRecent().getToken();
         Map<String, String> headers = new HashMap<>();
@@ -41,27 +41,48 @@ public class RestCallUtils {
                 .body(json == null ? "" : json)
                 .asJson();
         if (null == response.getBody()) {
-            throw new InvalidKeyOrToken();
+            throw new InvalidKeyTokenOrUrl();
         }
 
         return response.getBody().toPrettyString();
     }
 
-    public static String putJsonString(String url, String json, ApiKeyService apiKeyService) throws InvalidKeyOrToken {
+    public static String putJsonString(String url, String json, ApiKeyService apiKeyService) throws InvalidKeyTokenOrUrl {
         String key = apiKeyService.findMostRecent().getKey();
         String token = apiKeyService.findMostRecent().getToken();
         Map<String, String> headers = new HashMap<>();
         headers.put("accept", "application/json");
         headers.put("content-type", "application/json");
 
+        System.out.println(url);
         HttpResponse<JsonNode> response = Unirest.put(url)
                 .headers(headers)
                 .queryString("key", key)
                 .queryString("token", token)
                 .body(json == null ? "" : json)
                 .asJson();
+
         if (null == response.getBody()) {
-            throw new InvalidKeyOrToken();
+            throw new InvalidKeyTokenOrUrl();
+        }
+
+        return response.getBody().toPrettyString();
+    }
+
+    public static String deleteWithRestCall(String url, ApiKeyService apiKeyService) throws InvalidKeyTokenOrUrl {
+        String key = apiKeyService.findMostRecent().getKey();
+        String token = apiKeyService.findMostRecent().getToken();
+        Map<String, String> headers = new HashMap<>();
+        headers.put("accept", "application/json");
+        headers.put("content-type", "application/json");
+
+        HttpResponse<JsonNode> response = Unirest.delete(url)
+                .headers(headers)
+                .queryString("key", key)
+                .queryString("token", token)
+                .asJson();
+        if (null == response.getBody()) {
+            throw new InvalidKeyTokenOrUrl();
         }
 
         return response.getBody().toPrettyString();

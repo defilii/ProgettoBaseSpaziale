@@ -8,10 +8,6 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class TrelloComment {
-    private String text;
-    private String dateLastEdited;
-    private CardInsideAction card;
-
-
+public class CardInsideAction {
+    private String id;
 }

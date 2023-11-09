@@ -1,7 +1,7 @@
 package it.euris.javaacademy.ProgettoBaseSpaziale.synchronization;
 
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.*;
-import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.InvalidKeyOrToken;
+import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.InvalidKeyTokenOrUrl;
 import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.*;
 import it.euris.javaacademy.ProgettoBaseSpaziale.service.*;
 import it.euris.javaacademy.ProgettoBaseSpaziale.trello.*;
@@ -55,10 +55,12 @@ public class SynchronizeFromTrello {
     List<Commento> allComments;
     List<TrelloAction> allTrelloActions;
 
+    AllListFromRestAndDB allListFromRestAndDB;
+
     public void updateAllTaskAndTabella() {
         try {
             updateList();
-        } catch (InvalidKeyOrToken e) {
+        } catch (InvalidKeyTokenOrUrl e) {
             throw new RuntimeException(e.getMessage());
         }
         String idBoardToSet = allList.stream().map(ListTrello::getIdBoard).findAny().orElse(null);
@@ -153,40 +155,22 @@ public class SynchronizeFromTrello {
     }
 
 
-    private void updateList() throws InvalidKeyOrToken {
-        TrelloCalls client = new TrelloCalls(apiKeyService);
-        allList = client.allTrelloListFromJsonListWithReturn();
-        allCard = allList.stream()
-                .map(listTrello -> {
-                    try {
-                        return client.cardsFromJsonListId(listTrello.getId());
-                    } catch (InvalidKeyOrToken e) {
-                        throw new RuntimeException(e);
-                    }
-                })
-                .flatMap(Collection::stream)
-                .collect(Collectors.toList());
-        allLabel = client.getAllTrelloLabels();
-        allMembers = client.getAllMembers();
-        allTrelloChecklist = allCard.stream()
-                .map(Card::getTrelloChecklists)
-                .flatMap(Collection::stream)
-                .collect(Collectors.toList());
-        allCheckitems = allTrelloChecklist.stream()
-                .map(TrelloChecklist::getCheckItems)
-                .flatMap(Collection::stream)
-                .collect(Collectors.toList());
-        allTrelloActions = allCard.stream()
-                .map(Card::getTrelloActions)
-                .flatMap(Collection::stream)
-                .collect(Collectors.toList());
-        allTabella = tabellaService.findAll();
-        allTasks = taskService.findAll();
-        allComments = commentoService.findAll();
-        allChecklist = checklistService.findAll();
-        allCheckmark = checkmarkService.findAll();
-        allPriority = priorityService.findAll();
-        allUser = userRepository.findAll();
+    private void updateList() throws InvalidKeyTokenOrUrl {
+        allListFromRestAndDB.updateList();
+        allList = allListFromRestAndDB.getAllList();
+        allCard = allListFromRestAndDB.allCard;
+        allLabel = allListFromRestAndDB.allLabel;
+        allMembers = allListFromRestAndDB.allMembers;
+        allTrelloChecklist = allListFromRestAndDB.allTrelloChecklist;
+        allCheckitems = allListFromRestAndDB.allCheckitems;
+        allTrelloActions = allListFromRestAndDB.allTrelloActions;
+        allTabella = allListFromRestAndDB.allTabella;
+        allTasks = allListFromRestAndDB.allTasks;
+        allComments = allListFromRestAndDB.allComments;
+        allChecklist = allListFromRestAndDB.allChecklist;
+        allCheckmark = allListFromRestAndDB.allCheckmark;
+        allPriority = allListFromRestAndDB.allPriority;
+        allUser = allListFromRestAndDB.allUser;
     }
 
     private void deleteFromDatabase() {

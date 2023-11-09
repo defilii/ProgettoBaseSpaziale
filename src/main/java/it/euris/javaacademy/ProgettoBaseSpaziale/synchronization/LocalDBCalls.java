@@ -8,7 +8,7 @@ import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Tabella;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Task;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.BoardIdMissingException;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.ColorInputWrongOrNotSupportedException;
-import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.InvalidKeyOrToken;
+import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.InvalidKeyTokenOrUrl;
 import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.CommentoRepository;
 import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.PriorityRepository;
 import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.TabellaRepository;
@@ -18,20 +18,12 @@ import it.euris.javaacademy.ProgettoBaseSpaziale.trello.Card;
 import it.euris.javaacademy.ProgettoBaseSpaziale.trello.ListTrello;
 import it.euris.javaacademy.ProgettoBaseSpaziale.trello.TrelloAction;
 import it.euris.javaacademy.ProgettoBaseSpaziale.trello.TrelloLabel;
-import kong.unirest.core.HttpResponse;
-import kong.unirest.core.JsonNode;
-import kong.unirest.core.Unirest;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
-import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.GsonUtils.getList;
-import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.RestCallUtils.postJsonString;
-import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.RestCallUtils.putJsonString;
+import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.RestCallUtils.*;
 
 @AllArgsConstructor
 @Service
@@ -47,24 +39,7 @@ public class LocalDBCalls {
     PriorityService priorityService;
     PriorityRepository priorityRepository;
 
-    public List<Card> trelloGetCardsOnABoard() {
-        String boardId = "652d5727a3301d21fa288a27";
-        String key = apiKeyService.findMostRecent().getKey();
-        String token = apiKeyService.findMostRecent().getToken();
-        HttpResponse<JsonNode> response = Unirest.get("https://api.trello.com/1/boards/" +
-                        boardId +
-                        "/cards")
-                .queryString("key", key)
-                .queryString("token", token)
-                .asJson();
-
-
-        System.out.println(response.getBody().toPrettyString());
-
-        List<Card> cards = getList(response.getBody().toString(), Card.class);
-        return cards;
-    }
-
+    DeleteEntitiesOnTrello delete;
 
     public void synchronize() {
         tabellaService.findAll().stream()
@@ -75,7 +50,7 @@ public class LocalDBCalls {
                     } else {
                         updateTabella(tabella);
                     }
-                    } catch (InvalidKeyOrToken e) {
+                    } catch (InvalidKeyTokenOrUrl e) {
                         throw new RuntimeException(e);
                     }
                 });
@@ -88,7 +63,7 @@ public class LocalDBCalls {
                     } else {
                         updateCard(task);
                     }
-                    } catch (InvalidKeyOrToken e) {
+                    } catch (InvalidKeyTokenOrUrl e) {
                         throw new RuntimeException(e);
                     }
                 });
@@ -100,7 +75,7 @@ public class LocalDBCalls {
                     } else {
                         updateCommento(commento);
                     }
-                    } catch (InvalidKeyOrToken e) {
+                    } catch (InvalidKeyTokenOrUrl e) {
                         throw new RuntimeException(e);
                     }
                 });
@@ -112,13 +87,20 @@ public class LocalDBCalls {
                         } else {
                             updatePriority(priority);
                         }
-                    } catch (ColorInputWrongOrNotSupportedException | InvalidKeyOrToken e) {
+                    } catch (ColorInputWrongOrNotSupportedException | InvalidKeyTokenOrUrl e) {
                         throw new RuntimeException(e);
                     }
                 });
+        try {
+            delete.deleteTrelloEntities();
+        } catch (InvalidKeyTokenOrUrl e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public void updatePriority(Priority priority) throws ColorInputWrongOrNotSupportedException, InvalidKeyOrToken {
+
+
+    public void updatePriority(Priority priority) throws ColorInputWrongOrNotSupportedException, InvalidKeyTokenOrUrl {
         Gson gson = new Gson();
         String labelJson = gson.toJson(priority.toTrelloEntity());
 
@@ -130,7 +112,7 @@ public class LocalDBCalls {
         }
     }
 
-    public void postNewPriority(Priority priority) throws ColorInputWrongOrNotSupportedException, InvalidKeyOrToken {
+    public void postNewPriority(Priority priority) throws ColorInputWrongOrNotSupportedException, InvalidKeyTokenOrUrl {
         Gson gson = new Gson();
 
         String boardId = "652d5727a3301d21fa288a27";
@@ -148,14 +130,16 @@ public class LocalDBCalls {
         priorityService.update(priority);
     }
 
-    private void updateCommento(Commento commento) throws InvalidKeyOrToken {
+
+
+    private void updateCommento(Commento commento) throws InvalidKeyTokenOrUrl {
         Gson gson = new Gson();
 
         String url = "https://api.trello.com/1/actions/" + commento.getTrelloId() + "?text=" + commento.getCommento();
         putJsonString(url, null, apiKeyService);
     }
 
-    private void postNewCommento(Commento commento) throws InvalidKeyOrToken {
+    private void postNewCommento(Commento commento) throws InvalidKeyTokenOrUrl {
         Gson gson = new Gson();
         String idCard = commento.getTask().getTrelloId();
 
@@ -167,7 +151,9 @@ public class LocalDBCalls {
         commentoService.update(commento);
     }
 
-    private ListTrello postNewTabella(Tabella tabella) throws InvalidKeyOrToken {
+
+
+    private ListTrello postNewTabella(Tabella tabella) throws InvalidKeyTokenOrUrl {
         Gson gson = new Gson();
         String check = "missing board id";
         String idBoard = tabellaService.findAll().stream()
@@ -187,7 +173,7 @@ public class LocalDBCalls {
         return listTrello;
     }
 
-    private ListTrello updateTabella(Tabella tabella) throws InvalidKeyOrToken {
+    private ListTrello updateTabella(Tabella tabella) throws InvalidKeyTokenOrUrl {
         Gson gson = new Gson();
 
         String url = "https://api.trello.com/1/lists/" + tabella.getTrelloId();
@@ -198,7 +184,7 @@ public class LocalDBCalls {
         return listTrello;
     }
 
-    public Card postNewCard(Task task) throws InvalidKeyOrToken {
+    public Card postNewCard(Task task) throws InvalidKeyTokenOrUrl {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
         String cardJson = gson.toJson(task.toTrelloEntity());
@@ -215,7 +201,7 @@ public class LocalDBCalls {
         return card;
     }
 
-    private Card updateCard(Task task) throws InvalidKeyOrToken {
+    private Card updateCard(Task task) throws InvalidKeyTokenOrUrl {
         Gson gson = new Gson();
         String idCard = task.getTrelloId();
 
@@ -228,6 +214,10 @@ public class LocalDBCalls {
 
         return gson.fromJson(response, Card.class);
     }
+
+
+
+
 
     //TODO tidy this mess up and expose only the method to synchronize in a separate controller after you finish implementing the synchronization of checklist and checkmark
 
