@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.localDateTimeToString;
+import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.numberToString;
 
 @Builder
 @Getter
@@ -56,7 +57,8 @@ public class Checklist implements Model, LocalEntity {
         return ChecklistDTO.builder()
                 .idChecklist(idChecklist)
                 .nome(nome)
-                .task(task == null ? null : task.getTaskName())
+                .taskId(task == null ? null : numberToString(task.getIdTask()))
+                .taskName(task == null ? null : task.getTaskName())
                 .trelloId(trelloId)
                 .lastUpdate(localDateTimeToString(lastUpdate))
                 .build();

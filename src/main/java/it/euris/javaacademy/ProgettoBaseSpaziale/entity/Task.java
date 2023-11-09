@@ -94,10 +94,10 @@ public class Task implements Model, LocalEntity, ModelToPreInsert {
                 .tabella(tabella)
                 .taskName(taskName)
                 .descrizione(descrizione)
+                .trelloId(trelloId)
                 .dataScadenza(localDateTimeToString(dataScadenza))
                 .priorita(priorities.stream().map(Priority::getName).toList().toString())
                 .lastUpdate(lastUpdate.toString())
-                .trelloId(trelloId)
                 .build();
     }
 
@@ -106,7 +106,7 @@ public class Task implements Model, LocalEntity, ModelToPreInsert {
         return Card.builder()
                 .localId(String.valueOf(idTask))
                 .name(taskName)
-                .id(trelloId)
+                .id(String.valueOf(trelloId))
                 .due(String.valueOf(dataScadenza))
                 .idList(trelloListId)
                 .dateLastActivity(String.valueOf(lastUpdate))
@@ -119,10 +119,11 @@ public class Task implements Model, LocalEntity, ModelToPreInsert {
     @Override
     public TaskInsert toPreInsert() {
         return TaskInsert.builder()
-                .id(idTask)
+                .id(idTask)//
                 .taskName(taskName)
                 .descrizione(descrizione)
                 .tabella(tabella.toPreInsert())
+//                .trelloId(trelloId)
                 .build();
     }
 

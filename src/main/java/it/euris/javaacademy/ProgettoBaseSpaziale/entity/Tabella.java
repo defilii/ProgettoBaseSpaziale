@@ -31,7 +31,7 @@ public class Tabella implements Model, LocalEntity, ModelToPreInsert {
     @Column(name = "id")
     private Integer id;
 
-    @Column(name = "nome", nullable=false)
+    @Column(name = "nome", nullable = false)
     private String nome;
 
     @OneToMany(mappedBy = "tabella", fetch = FetchType.EAGER)
@@ -39,7 +39,7 @@ public class Tabella implements Model, LocalEntity, ModelToPreInsert {
     @Builder.Default
     private List<Task> tasks = new ArrayList<Task>();
 
-    @Column(name = "last_update", nullable=false)
+    @Column(name = "last_update", nullable = false)
     @Builder.Default
     private LocalDateTime lastUpdate = LocalDateTime.now();
 
@@ -49,6 +49,7 @@ public class Tabella implements Model, LocalEntity, ModelToPreInsert {
 
     @Column(name = "trello_board_id")
     private String trelloBoardId;
+
     @Override
     public TabellaDTO toDto() {
         return TabellaDTO.builder()

@@ -2,11 +2,11 @@ package it.euris.javaacademy.ProgettoBaseSpaziale.trello;
 
 import it.euris.javaacademy.ProgettoBaseSpaziale.converter.TrelloEntity;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Checklist;
-import it.euris.javaacademy.ProgettoBaseSpaziale.utils.Exclude;
 import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
+
 @Builder
 @Getter
 @Setter
@@ -17,6 +17,7 @@ public class TrelloChecklist implements TrelloEntity {
     String id;
     String name;
     String idCard;
+    String lastUpdate;
     List<CheckItem> checkItems = new ArrayList();
 
     @Override

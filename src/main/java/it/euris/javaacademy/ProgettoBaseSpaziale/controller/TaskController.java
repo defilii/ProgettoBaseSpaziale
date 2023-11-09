@@ -17,7 +17,9 @@ import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.TaskRepository;
 import it.euris.javaacademy.ProgettoBaseSpaziale.service.TabellaService;
 import it.euris.javaacademy.ProgettoBaseSpaziale.service.TaskService;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -122,10 +124,11 @@ public class TaskController {
     @Operation(description = """
             This method is used to update one task in the database<br>
             """)
-    public TaskInsert updateTask(@RequestBody TaskInsert taskInsert) {
+    public TaskDTO updateTask(@RequestBody TaskDTO taskDTO) {
         try {
-            Task task = taskInsert.toModel();
-            return taskService.update(task).toPreInsert();
+            Task task = taskDTO.toModel();
+            return taskService.update(task).toDto()
+                    ;
         } catch (IdMustNotBeNullException e) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, e.getMessage());
