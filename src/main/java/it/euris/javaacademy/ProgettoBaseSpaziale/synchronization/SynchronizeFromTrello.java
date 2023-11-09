@@ -75,7 +75,7 @@ public class SynchronizeFromTrello {
                         Tabella tabellaDb = tabellaRepository.findByTrelloId(trelloList.getId());
                         if (compareDate(trelloList, tabellaDb)
                         ) {
-                            System.out.println("fatto update");
+                            System.out.println("fatto update trello list");
                             Tabella tabellaToUpdate =
                                     trelloList.toLocalEntity();
                             tabellaToUpdate.setId(tabellaRepository
@@ -86,7 +86,7 @@ public class SynchronizeFromTrello {
 
                         }
                     } else {
-                        System.out.println("fatto insert");
+                        System.out.println("fatto insert trellolist");
 
                         Tabella tabellaToInsert = trelloList.toLocalEntity();
                         tabellaToInsert.setTrelloBoardId(idBoardToSet);
@@ -176,6 +176,10 @@ public class SynchronizeFromTrello {
                 .map(TrelloChecklist::getCheckItems)
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
+        allTrelloActions = allCard.stream()
+                .map(Card::getTrelloActions)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
         allTabella = tabellaService.findAll();
         allTasks = taskService.findAll();
         allComments = commentoService.findAll();
@@ -186,6 +190,15 @@ public class SynchronizeFromTrello {
     }
 
     private void deleteFromDatabase() {
+        allComments.stream()
+                .forEach(comment ->
+                {
+                    if (comment.getTrelloId() != null && !allTrelloActions.stream()
+                            .map(trelloAction -> trelloAction.getId())
+                            .toList().contains(comment.getTrelloId())) {
+                        commentoService.deleteById(comment.getIdCommento());
+                    }
+                });
         allCheckmark.stream()
                 .forEach(checkmark ->
                 {
@@ -237,7 +250,6 @@ public class SynchronizeFromTrello {
             insertChecklist(card, updatedTask);
             insertMemberTocard(card, updatedTask);
             insertLabelToCard(card, updatedTask);
-            System.out.println("fatto update");
             if (!card.getTrelloActions().isEmpty()) {
                 insertComment(card, updatedTask);
             }
@@ -255,7 +267,6 @@ public class SynchronizeFromTrello {
         insertMemberTocard(card, insertedTask);
         insertLabelToCard(card, insertedTask);
         insertComment(card, insertedTask);
-        System.out.println("fatto insert");
         return insertedTask;
     }
 
