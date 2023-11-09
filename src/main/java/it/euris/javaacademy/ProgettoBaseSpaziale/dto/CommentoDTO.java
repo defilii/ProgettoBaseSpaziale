@@ -8,6 +8,7 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
+import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.stringToInteger;
 import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.stringToLocalDateTime;
 
 @Builder
@@ -20,8 +21,10 @@ public class CommentoDTO implements Dto {
     private Integer idCommento;
     private String commento;
     private String dataCommento;
-    private String task;
-    private String user;
+    private String taskName;
+    private String taskId;
+    private String userId;
+    private String userName;
     private String trelloId;
 
     @Override
@@ -31,10 +34,9 @@ public class CommentoDTO implements Dto {
                 .commento(commento)
                 .dataCommento(dataCommento == null ? stringToLocalDateTime(dataCommento = LocalDateTime.now()
                         .toString()) : stringToLocalDateTime(dataCommento))
-//                .task(task)
-//                .user(user)
+                .task(Task.builder().idTask(stringToInteger(taskId)).build())
+                .user(User.builder().idUser(stringToInteger(userId)).build())
                 .trelloId(trelloId)
-
                 .build();
     }
 }

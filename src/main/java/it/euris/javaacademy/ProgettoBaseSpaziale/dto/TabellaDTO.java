@@ -26,7 +26,7 @@ public class TabellaDTO implements Dto {
         return Tabella.builder()
                 .id(id)
                 .nome(nome)
-                .lastUpdate(stringToLocalDateTime(lastUpdate))
+//                .lastUpdate(stringToLocalDateTime(lastUpdate))
                 .trelloId(trelloId)
                 .trelloBoardId(trelloBoardId)
                 .build();

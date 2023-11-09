@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -48,7 +49,7 @@ public class TrelloCalls {
                 .queryString("key", key)
                 .queryString("token", token)
                 .asJson();
-
+        System.out.println(response.getBody().toPrettyString());
         List<ListTrello> listTrellos = getList(response.getBody().toString(), ListTrello.class);
 
         for (ListTrello listTrello : listTrellos) {

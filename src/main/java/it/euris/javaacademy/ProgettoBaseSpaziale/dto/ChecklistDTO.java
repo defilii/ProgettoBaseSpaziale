@@ -21,7 +21,8 @@ public class ChecklistDTO implements Dto {
 
     private String nome;
 
-    private String task;
+    private String taskId;
+    private String taskName;
 
     private String lastUpdate;
     private String trelloId;
@@ -30,9 +31,9 @@ public class ChecklistDTO implements Dto {
     public Checklist toModel() {
         return Checklist.builder()
                 .idChecklist(idChecklist)
-//                .task(Task.builder().idTask(stringToInteger(task)).build())
+                .task(Task.builder().idTask(stringToInteger(taskId)).build())
                 .nome(nome)
-                .lastUpdate(stringToLocalDateTime(lastUpdate))
+//                .lastUpdate(stringToLocalDateTime(lastUpdate))
                 .trelloId(trelloId)
                 .build();
     }

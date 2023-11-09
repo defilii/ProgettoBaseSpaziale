@@ -13,7 +13,7 @@ import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 
-import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.localDateTimeToString;
+import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.*;
 
 @Builder
 @Getter
@@ -34,6 +34,7 @@ public class Commento implements Model, LocalEntity {
     private String commento;
 
     @Column(name = "data_commento", nullable = false)
+
     private LocalDateTime dataCommento;
 
     @Column(name = "trelloId")
@@ -61,8 +62,10 @@ public class Commento implements Model, LocalEntity {
                 .idCommento(idCommento)
                 .commento(commento)
                 .dataCommento(dataCommento == null ? localDateTimeToString(dataCommento = LocalDateTime.now()) : localDateTimeToString(dataCommento))
-                .task(task == null ? null : task.getTaskName())
-                .user(user == null ? null : user.getUsername())
+                .taskName(task == null ? null : task.getTaskName())
+                .taskId(task == null ? null : numberToString(task.getIdTask()))
+                .userId(user == null ? null : numberToString(user.getIdUser()))
+                .userName(user == null ? null : user.getUsername())
                 .trelloId(trelloId)
                 .build();
     }

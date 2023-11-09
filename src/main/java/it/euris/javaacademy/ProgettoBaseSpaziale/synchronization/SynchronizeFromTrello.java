@@ -7,9 +7,12 @@ import it.euris.javaacademy.ProgettoBaseSpaziale.trello.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.stringToLocalDateTime;
 
 @AllArgsConstructor
 @Service
@@ -58,20 +61,32 @@ public class SynchronizeFromTrello {
         allList.stream()
                 .forEach(trelloList ->
                 {
+                    System.out.println("prima di all");
                     if (allTabella.stream()
                             .map(tabella -> tabella.getTrelloId())
                             .collect(Collectors.toList())
                             .contains(trelloList.getId())) {
-                        Tabella tabellaToUpdate =
-                                trelloList.toLocalEntity();
-                        tabellaToUpdate.setId(tabellaRepository
-                                .findByTrelloId(trelloList.getId()).getId());
-                        tabellaToUpdate.setTrelloBoardId(idBoardToSet);
-                        tabellaService.update(tabellaToUpdate);
+
+                        Tabella tabellaDb = tabellaRepository.findByTrelloId(trelloList.getId());
+                        if (compareDate(trelloList, tabellaDb)
+                        ) {
+                            System.out.println("fatto update");
+                            Tabella tabellaToUpdate =
+                                    trelloList.toLocalEntity();
+                            tabellaToUpdate.setId(tabellaRepository
+                                    .findByTrelloId(trelloList.getId()).getId());
+                            tabellaToUpdate.setTrelloBoardId(idBoardToSet);
+                            tabellaToUpdate.setLastUpdate(getMostRescentLocalDateTime(trelloList));
+                            tabellaService.update(tabellaToUpdate);
+
+                        }
                     } else {
+                        System.out.println("fatto insert");
+
                         Tabella tabellaToInsert = trelloList.toLocalEntity();
                         tabellaToInsert.setTrelloBoardId(idBoardToSet);
                         tabellaService.insert(tabellaToInsert);
+
                     }
                 });
         allLabel.stream().
@@ -106,15 +121,29 @@ public class SynchronizeFromTrello {
                     if (allTasks.stream()
                             .map(Task::getTrelloId)
                             .toList()
-                            .contains(card.getId())) {
+                            .contains(card.getId())
+
+                    )
                         updateCard(card);
-                    } else {
+                    else {
                         insertCard(card);
                     }
                 });
 
 
         deleteFromDatabase();
+    }
+
+    private boolean compareDate(ListTrello trelloList, Tabella tabellaDb) {
+        return getMostRescentLocalDateTime(trelloList)
+                .isAfter(tabellaDb.getLastUpdate());
+    }
+
+    private LocalDateTime getMostRescentLocalDateTime(ListTrello trelloList) {
+        return trelloList.toLocalEntity().getTasks().stream()
+                .map(Task::getLastUpdate)
+                .max(LocalDateTime::compareTo)
+                .orElse(LocalDateTime.now().minusYears(1L));
     }
 
 
@@ -186,18 +215,24 @@ public class SynchronizeFromTrello {
     }
 
     private Task updateCard(Card card) {
-        Task newTask = card.toLocalEntity();
-        newTask.setIdTask(taskRepository
-                .findByTrelloId(card.getId()).getIdTask());
-        newTask.setTabella(tabellaRepository.findByTrelloId(card.getIdList()));
-        Task updatedTask = taskService.update(newTask);
-        insertChecklist(card, updatedTask);
-        insertMemberTocard(card, updatedTask);
-        insertLabelToCard(card, updatedTask);
-        if (!card.getTrelloActions().isEmpty()) {
-            insertComment(card, updatedTask);
+        Task dbTask = taskRepository.findByTrelloId(card.getId());
+        if (dbTask.getLastUpdate().isBefore(stringToLocalDateTime(card.toLocalEntity().getLastUpdate().toString()))) {
+            Task newTask = card.toLocalEntity();
+            newTask.setIdTask(taskRepository
+                    .findByTrelloId(card.getId()).getIdTask());
+            newTask.setTabella(tabellaRepository.findByTrelloId(card.getIdList()));
+            Task updatedTask = taskService.update(newTask);
+            insertChecklist(card, updatedTask);
+            insertMemberTocard(card, updatedTask);
+            insertLabelToCard(card, updatedTask);
+            System.out.println("fatto update");
+            if (!card.getTrelloActions().isEmpty()) {
+                insertComment(card, updatedTask);
+            }
+            return updatedTask;
+        } else {
+            return dbTask;
         }
-        return updatedTask;
     }
 
     private Task insertCard(Card card) {
@@ -208,6 +243,7 @@ public class SynchronizeFromTrello {
         insertMemberTocard(card, insertedTask);
         insertLabelToCard(card, insertedTask);
         insertComment(card, insertedTask);
+        System.out.println("fatto insert");
         return insertedTask;
     }
 
@@ -218,6 +254,7 @@ public class SynchronizeFromTrello {
             matchingPriority.addTask(insertedTask);
             insertedTask.addPriority(matchingPriority);
         }
+
     }
 
     private Priority insertLabel(TrelloLabel label) {
@@ -267,10 +304,12 @@ public class SynchronizeFromTrello {
                     .map(checklist -> checklist.getTrelloId())
                     .collect(Collectors.toList())
                     .contains(trelloChecklist.getId())) {
-
-                checklistToInsert.setIdChecklist(checklistrepository
-                        .findByTrelloId(trelloChecklist.getId()).getIdChecklist());
-                Checklist updatedChecklist = checklistService.update(checklistToInsert);
+                Checklist dbChecklist = checklistrepository.findByTrelloId(trelloChecklist.getId());
+                if (dbChecklist.getLastUpdate().isBefore(trelloChecklist.toLocalEntity().getLastUpdate())) {
+                    checklistToInsert.setIdChecklist(checklistrepository
+                            .findByTrelloId(trelloChecklist.getId()).getIdChecklist());
+                    Checklist updatedChecklist = checklistService.update(checklistToInsert);
+                }
 
 //                insertCheckmark(trelloChecklist,updatedChecklist);
             } else {
@@ -280,6 +319,7 @@ public class SynchronizeFromTrello {
             }
         }
     }
+
 
     private void insertComment(Card card, Task updatedTask) {
         List<TrelloAction> newComments = card.getTrelloActions();
@@ -292,10 +332,13 @@ public class SynchronizeFromTrello {
                     .map(Commento::getTrelloId)
                     .toList()
                     .contains(trelloComment.getId())) {
+                Commento dbCommento = commentoRepository.findByTrelloId(trelloComment.getId());
+                if (dbCommento.getLastUpdate().isBefore(trelloComment.toLocalEntity().getLastUpdate())) {
+                    commentToInsert.setIdCommento(commentoRepository
+                            .findByTrelloId(trelloComment.getId()).getIdCommento());
 
-                commentToInsert.setIdCommento(commentoRepository
-                        .findByTrelloId(trelloComment.getId()).getIdCommento());
-                Commento updatedChecklist = commentoService.update(commentToInsert);
+                    Commento updatedChecklist = commentoService.update(commentToInsert);
+                }
             } else {
                 Commento insertedChecklist = commentoService.insert(commentToInsert);
             }

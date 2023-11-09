@@ -55,10 +55,10 @@ public class TabellaController {
     @Operation(description = """
             This method is used to update a table from the database<br>
             """)
-    public TabellaInsert updateTabella(@RequestBody TabellaInsert tabellaInsert) {
+    public TabellaDTO updateTabella(@RequestBody TabellaDTO tabellaDTO) {
         try {
-            Tabella tabella = tabellaInsert.toModel();
-            return tabellaService.update(tabella).toPreInsert();
+            Tabella tabella = tabellaDTO.toModel();
+            return tabellaService.update(tabella).toDto();
         } catch (IdMustNotBeNullException e) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, e.getMessage());
