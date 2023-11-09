@@ -9,7 +9,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -68,31 +67,14 @@ public class SynchronizeFromTrello {
         allList.stream()
                 .forEach(trelloList ->
                 {
-                    System.out.println("prima di all");
                     if (allTabella.stream()
                             .map(tabella -> tabella.getTrelloId())
                             .collect(Collectors.toList())
                             .contains(trelloList.getId())) {
 
-                        Tabella tabellaDb = tabellaRepository.findByTrelloId(trelloList.getId());
-                        if (compareDate(trelloList, tabellaDb)
-                        ) {
-                            System.out.println("fatto update trello list");
-                            Tabella tabellaToUpdate =
-                                    trelloList.toLocalEntity();
-                            tabellaToUpdate.setId(tabellaRepository
-                                    .findByTrelloId(trelloList.getId()).getId());
-                            tabellaToUpdate.setTrelloBoardId(idBoardToSet);
-                            tabellaToUpdate.setLastUpdate(getMostRescentLocalDateTime(trelloList));
-                            tabellaService.update(tabellaToUpdate);
-
-                        }
+                        updateList(trelloList, idBoardToSet);
                     } else {
-                        System.out.println("fatto insert trellolist");
-
-                        Tabella tabellaToInsert = trelloList.toLocalEntity();
-                        tabellaToInsert.setTrelloBoardId(idBoardToSet);
-                        tabellaService.insert(tabellaToInsert);
+                        insertList(trelloList, idBoardToSet);
 
                     }
                 });
@@ -142,6 +124,26 @@ public class SynchronizeFromTrello {
         deleteFromDatabase();
     }
 
+    private void insertList(ListTrello trelloList, String idBoardToSet) {
+        Tabella tabellaToInsert = trelloList.toLocalEntity();
+        tabellaToInsert.setTrelloBoardId(idBoardToSet);
+        tabellaService.insert(tabellaToInsert);
+    }
+
+    private void updateList(ListTrello trelloList, String idBoardToSet) {
+        Tabella tabellaDb = tabellaRepository.findByTrelloId(trelloList.getId());
+        if (compareDate(trelloList, tabellaDb)
+        ) {
+            Tabella tabellaToUpdate = trelloList.toLocalEntity();
+            tabellaToUpdate.setId(tabellaRepository
+                    .findByTrelloId(trelloList.getId()).getId());
+            tabellaToUpdate.setTrelloBoardId(idBoardToSet);
+            tabellaToUpdate.setLastUpdate(getMostRescentLocalDateTime(trelloList));
+            tabellaService.update(tabellaToUpdate);
+
+        }
+    }
+
     private boolean compareDate(ListTrello trelloList, Tabella tabellaDb) {
         return getMostRescentLocalDateTime(trelloList)
                 .isAfter(tabellaDb.getLastUpdate());
@@ -154,24 +156,6 @@ public class SynchronizeFromTrello {
                 .orElse(LocalDateTime.now().minusYears(1L));
     }
 
-
-    private void updateList() throws InvalidKeyTokenOrUrl {
-        allListFromRestAndDB.updateList();
-        allList = allListFromRestAndDB.getAllList();
-        allCard = allListFromRestAndDB.allCard;
-        allLabel = allListFromRestAndDB.allLabel;
-        allMembers = allListFromRestAndDB.allMembers;
-        allTrelloChecklist = allListFromRestAndDB.allTrelloChecklist;
-        allCheckitems = allListFromRestAndDB.allCheckitems;
-        allTrelloActions = allListFromRestAndDB.allTrelloActions;
-        allTabella = allListFromRestAndDB.allTabella;
-        allTasks = allListFromRestAndDB.allTasks;
-        allComments = allListFromRestAndDB.allComments;
-        allChecklist = allListFromRestAndDB.allChecklist;
-        allCheckmark = allListFromRestAndDB.allCheckmark;
-        allPriority = allListFromRestAndDB.allPriority;
-        allUser = allListFromRestAndDB.allUser;
-    }
 
     private void deleteFromDatabase() {
         allComments.stream()
@@ -238,9 +222,9 @@ public class SynchronizeFromTrello {
                 insertComment(card, updatedTask);
             }
             return updatedTask;
-        } else {
-            return dbTask;
         }
+        return dbTask;
+
     }
 
     private Task insertCard(Card card) {
@@ -372,6 +356,24 @@ public class SynchronizeFromTrello {
             }
         }
 
+    }
+
+    private void updateList() throws InvalidKeyTokenOrUrl {
+        allListFromRestAndDB.updateList();
+        allList = allListFromRestAndDB.getAllList();
+        allCard = allListFromRestAndDB.allCard;
+        allLabel = allListFromRestAndDB.allLabel;
+        allMembers = allListFromRestAndDB.allMembers;
+        allTrelloChecklist = allListFromRestAndDB.allTrelloChecklist;
+        allCheckitems = allListFromRestAndDB.allCheckitems;
+        allTrelloActions = allListFromRestAndDB.allTrelloActions;
+        allTabella = allListFromRestAndDB.allTabella;
+        allTasks = allListFromRestAndDB.allTasks;
+        allComments = allListFromRestAndDB.allComments;
+        allChecklist = allListFromRestAndDB.allChecklist;
+        allCheckmark = allListFromRestAndDB.allCheckmark;
+        allPriority = allListFromRestAndDB.allPriority;
+        allUser = allListFromRestAndDB.allUser;
     }
 
 }

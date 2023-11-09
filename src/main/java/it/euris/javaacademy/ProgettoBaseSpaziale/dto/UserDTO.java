@@ -16,7 +16,6 @@ public class UserDTO implements Dto {
 
     private String fullName;
 
-   // private Task task;
    private String trelloId;
 
 
@@ -27,7 +26,6 @@ public class UserDTO implements Dto {
                 .username(username)
                 .fullName(fullName)
                 .trelloId(trelloId)
-
                 .build();
     }
 }

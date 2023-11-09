@@ -6,6 +6,7 @@ import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Commento;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
 
 @Builder
@@ -27,7 +28,7 @@ public class TrelloAction implements TrelloEntity {
                 .trelloId(id)
                 .dataCommento(ZonedDateTime.parse(date).toLocalDateTime())
                 .commento(data.getText())
-                .lastUpdate(null == data.getDateLastEdited() ? ZonedDateTime.parse(date).toLocalDateTime() : ZonedDateTime.parse(data.getDateLastEdited()).toLocalDateTime())
+                .lastUpdate(null == data.getDateLastEdited() ? OffsetDateTime.parse(date).toLocalDateTime() : OffsetDateTime.parse(data.getDateLastEdited()).toLocalDateTime())
                 .build();
     }
 }

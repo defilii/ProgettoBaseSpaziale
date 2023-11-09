@@ -33,7 +33,6 @@ public class ChecklistDTO implements Dto {
                 .idChecklist(idChecklist)
                 .task(Task.builder().idTask(stringToInteger(taskId)).build())
                 .nome(nome)
-//                .lastUpdate(stringToLocalDateTime(lastUpdate))
                 .trelloId(trelloId)
                 .build();
     }

@@ -38,10 +38,8 @@ public class TaskDTO implements Dto {
                 .idTask(idTask)
                 .tabella(tabella)
                 .taskName(taskName)
-//                .priorita(stringToPriorita(priorita))
                 .descrizione(descrizione)
                 .dataScadenza(stringToLocalDateTime(dataScadenza))
-//                .lastUpdate(stringToLocalDateTime(lastUpdate))
                 .trelloId(trelloId)
                 .trelloListId(trelloListId)
                 .build();

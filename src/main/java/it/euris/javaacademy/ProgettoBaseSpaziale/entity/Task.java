@@ -95,6 +95,7 @@ public class Task implements Model, LocalEntity, ModelToPreInsert {
                 .taskName(taskName)
                 .descrizione(descrizione)
                 .trelloId(trelloId)
+                .trelloListId(trelloListId)
                 .dataScadenza(localDateTimeToString(dataScadenza))
                 .priorita(priorities.stream().map(Priority::getName).toList().toString())
                 .lastUpdate(lastUpdate.toString())

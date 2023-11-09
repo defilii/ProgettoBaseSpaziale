@@ -32,7 +32,6 @@ public class CheckmarkDTO implements Dto {
                 .descrizione(descrizione)
                 .isItDone(isItDone)
                 .checklist(checklist)
-                .lastUpdate(stringToLocalDateTime(lastUpdate))
                 .trelloId(trelloId)
 
                 .build();

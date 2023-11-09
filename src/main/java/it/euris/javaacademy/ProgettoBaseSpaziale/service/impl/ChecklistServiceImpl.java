@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
+
 @Service
 @AllArgsConstructor
 public class ChecklistServiceImpl implements ChecklistService {
@@ -40,9 +42,12 @@ public class ChecklistServiceImpl implements ChecklistService {
         }     if (checklist.getTask() == null ||taskRepository.findById(checklist.getTask().getIdTask()).isEmpty()) {
             throw new ForeignKeyIdMustNotBeNullException();
         }
-        Task task= checklist.getTask();
-        task.setLastUpdate(LocalDateTime.now());
-        taskRepository.save(task);
+        Optional<Checklist> checklist1 = checklistRepository.findById(checklist.getIdChecklist());
+        if (checklist1.isPresent()) {
+            Task task = checklist1.get().getTask();
+            task.setLastUpdate(LocalDateTime.now());
+            taskRepository.save(task);
+        }
         return checklistRepository.save(checklist);
     }
 
