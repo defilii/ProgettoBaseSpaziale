@@ -161,10 +161,14 @@ public class SynchronizeFromTrello {
         allComments.stream()
                 .forEach(comment ->
                 {
-                    if (comment.getTrelloId() != null && !allTrelloActions.stream()
-                            .map(trelloAction -> trelloAction.getId())
-                            .toList().contains(comment.getTrelloId())) {
-                        commentoService.deleteById(comment.getIdCommento());
+                    if (!(comment.getTask().getTrelloId() != null && !allCard.stream()
+                            .map(card -> card.getId())
+                            .collect(Collectors.toList()).contains(comment.getTask().getTrelloId()))) {
+                        if (comment.getTrelloId() != null && !allTrelloActions.stream()
+                                .map(trelloAction -> trelloAction.getId())
+                                .toList().contains(comment.getTrelloId())) {
+                            commentoService.deleteById(comment.getIdCommento());
+                        }
                     }
                 });
         allCheckmark.stream()

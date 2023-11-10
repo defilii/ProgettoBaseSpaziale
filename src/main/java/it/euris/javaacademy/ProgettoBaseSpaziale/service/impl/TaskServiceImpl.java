@@ -8,6 +8,7 @@ import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.IdMustNotBeNullExcep
 import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.TabellaRepository;
 import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.TaskRepository;
 import it.euris.javaacademy.ProgettoBaseSpaziale.service.TaskService;
+import jakarta.persistence.EntityManager;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,7 @@ public class TaskServiceImpl implements TaskService {
     TabellaRepository tabellaRepository;
 
     TaskRepository taskRepository;
+    EntityManager entityManager;
 
     @Override
     public List<Task> findAll() {

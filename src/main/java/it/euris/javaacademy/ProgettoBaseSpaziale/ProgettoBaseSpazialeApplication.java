@@ -10,6 +10,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 public class ProgettoBaseSpazialeApplication {
 
 	public static void main(String[] args) {
+		System.setProperty("user.timezone", "GMT");
 		SpringApplication.run(ProgettoBaseSpazialeApplication.class, args);
 	}
 
