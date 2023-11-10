@@ -64,6 +64,7 @@ public class TrelloCalls {
 
 
         List<CheckItem> checkItems = getList(response, CheckItem.class);
+        System.out.println(checkItems.toString());
         trelloChecklist.setCheckItems(checkItems);
     }
 

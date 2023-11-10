@@ -113,13 +113,27 @@ public class SynchronizeFromTrello {
                             .map(Task::getTrelloId)
                             .toList()
                             .contains(card.getId())
-
                     )
                         updateCard(card);
                     else {
                         insertCard(card);
                     }
                 });
+        allCard.stream().forEach(card -> {
+                    List<String> idLabels = card.getIdLabels();
+                    for (String idLabel : idLabels) {
+                        Task task = taskRepository.findByTrelloId(card.getId());
+                        Priority priority = priorityRepository.findByTrelloId(idLabel);
+                       if(!task.getPriorities().contains(priority)) {
+                           task.addPriority(priorityRepository.findByTrelloId(idLabel));
+                           taskService.update(task);
+
+                           priority.addTask(taskRepository.findByTrelloId(card.getId()));
+                           priorityService.update(priority);
+                       }
+                    }
+                }
+        );
 
         deleteFromDatabase();
     }
@@ -175,7 +189,7 @@ public class SynchronizeFromTrello {
                 .forEach(checkmark ->
                 {
                     if (checkmark.getTrelloId() != null && !allCheckitems.stream()
-                            .map(checkitem -> checkitem.getIdCheckItem())
+                            .map(checkitem -> checkitem.getId())
                             .toList().contains(checkmark.getTrelloId())) {
                         checkmarkService.deleteById(checkmark.getIdCheckmark());
                     }
@@ -208,6 +222,15 @@ public class SynchronizeFromTrello {
                         tabellaService.deleteById(tabella.getId());
                     }
                 });
+        allPriority.stream()
+                .forEach(priority ->
+                {
+                    if (priority.getTrelloId() != null && !allLabel.stream()
+                            .map(listTrello -> listTrello.getId())
+                            .collect(Collectors.toList()).contains(priority.getTrelloId())) {
+                        priorityService.deleteById(priority.getId());
+                    }
+                });
 
     }
 
@@ -221,7 +244,6 @@ public class SynchronizeFromTrello {
             Task updatedTask = taskService.update(newTask);
             insertChecklist(card, updatedTask);
             insertMemberTocard(card, updatedTask);
-            insertLabelToCard(card, updatedTask);
             if (!card.getTrelloActions().isEmpty()) {
                 insertComment(card, updatedTask);
             }
@@ -237,19 +259,8 @@ public class SynchronizeFromTrello {
         Task insertedTask = taskService.insert(newTask);
         insertChecklist(card, insertedTask);
         insertMemberTocard(card, insertedTask);
-        insertLabelToCard(card, insertedTask);
         insertComment(card, insertedTask);
         return insertedTask;
-    }
-
-    private void insertLabelToCard(Card card, Task insertedTask) {
-        List<String> idLabels = card.getIdLabels();
-        for (String idLabel : idLabels) {
-            Priority matchingPriority = priorityRepository.findByTrelloId(idLabel);
-            matchingPriority.addTask(insertedTask);
-            insertedTask.addPriority(matchingPriority);
-        }
-
     }
 
     private Priority insertLabel(TrelloLabel label) {
@@ -295,6 +306,7 @@ public class SynchronizeFromTrello {
                 newChecklists) {
             Checklist checklistToInsert = trelloChecklist.toLocalEntity();
             checklistToInsert.setTask(updatedTask);
+            checklistToInsert.setLastUpdate(updatedTask.getLastUpdate());
             if (allChecklist.stream()
                     .map(checklist -> checklist.getTrelloId())
                     .collect(Collectors.toList())
@@ -304,13 +316,11 @@ public class SynchronizeFromTrello {
                     checklistToInsert.setIdChecklist(checklistrepository
                             .findByTrelloId(trelloChecklist.getId()).getIdChecklist());
                     Checklist updatedChecklist = checklistService.update(checklistToInsert);
+                    insertCheckmark(trelloChecklist, updatedChecklist);
                 }
-
-//                insertCheckmark(trelloChecklist,updatedChecklist);
             } else {
                 Checklist insertedChecklist = checklistService.insert(checklistToInsert);
-
-//                insertCheckmark(trelloChecklist,insertedChecklist);
+                insertCheckmark(trelloChecklist, insertedChecklist);
             }
         }
     }
@@ -332,10 +342,10 @@ public class SynchronizeFromTrello {
                     commentToInsert.setIdCommento(commentoRepository
                             .findByTrelloId(trelloComment.getId()).getIdCommento());
 
-                    Commento updatedChecklist = commentoService.update(commentToInsert);
+                    commentoService.update(commentToInsert);
                 }
             } else {
-                Commento insertedChecklist = commentoService.insert(commentToInsert);
+                commentoService.insert(commentToInsert);
             }
         }
     }
@@ -349,35 +359,34 @@ public class SynchronizeFromTrello {
             if (allCheckmark.stream()
                     .map(checkmark -> checkmark.getTrelloId())
                     .collect(Collectors.toList())
-                    .contains(checkitem.getIdCheckItem())) {
+                    .contains(checkitem.getId())) {
 
                 checkmarkToInsert.setIdCheckmark(checkmarkRepository
-                        .findByTrelloId(checkitem.getIdCheckItem()).getIdCheckmark());
+                        .findByTrelloId(checkitem.getId()).getIdCheckmark());
                 Checkmark updatedCheckmark = checkmarkService.update(checkmarkToInsert);
 
             } else {
                 Checkmark insertedCheckmark = checkmarkService.insert(checkmarkToInsert);
             }
         }
-
     }
 
     private void updateList() throws InvalidKeyTokenOrUrl {
         allListFromRestAndDB.updateList();
         allList = allListFromRestAndDB.getAllList();
-        allCard = allListFromRestAndDB.allCard;
-        allLabel = allListFromRestAndDB.allLabel;
-        allMembers = allListFromRestAndDB.allMembers;
-        allTrelloChecklist = allListFromRestAndDB.allTrelloChecklist;
-        allCheckitems = allListFromRestAndDB.allCheckitems;
-        allTrelloActions = allListFromRestAndDB.allTrelloActions;
-        allTabella = allListFromRestAndDB.allTabella;
-        allTasks = allListFromRestAndDB.allTasks;
-        allComments = allListFromRestAndDB.allComments;
-        allChecklist = allListFromRestAndDB.allChecklist;
-        allCheckmark = allListFromRestAndDB.allCheckmark;
-        allPriority = allListFromRestAndDB.allPriority;
-        allUser = allListFromRestAndDB.allUser;
+        allCard = allListFromRestAndDB.getAllCard();
+        allLabel = allListFromRestAndDB.getAllLabel();
+        allMembers = allListFromRestAndDB.getAllMembers();
+        allTrelloChecklist = allListFromRestAndDB.getAllTrelloChecklist();
+        allCheckitems = allListFromRestAndDB.getAllCheckitems();
+        allTrelloActions = allListFromRestAndDB.getAllTrelloActions();
+        allTabella = allListFromRestAndDB.getAllTabella();
+        allTasks = allListFromRestAndDB.getAllTasks();
+        allComments = allListFromRestAndDB.getAllComments();
+        allChecklist = allListFromRestAndDB.getAllChecklist();
+        allCheckmark = allListFromRestAndDB.getAllCheckmark();
+        allPriority = allListFromRestAndDB.getAllPriority();
+        allUser = allListFromRestAndDB.getAllUser();
     }
 
 }

@@ -2,7 +2,6 @@ package it.euris.javaacademy.ProgettoBaseSpaziale.trello;
 
 import it.euris.javaacademy.ProgettoBaseSpaziale.converter.TrelloEntity;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Checkmark;
-import it.euris.javaacademy.ProgettoBaseSpaziale.utils.Exclude;
 import lombok.*;
 
 @Builder
@@ -13,7 +12,7 @@ import lombok.*;
 @ToString
 public class CheckItem implements TrelloEntity {
 
-    private String idCheckItem;
+    private String id;
 
     private String state;
     private String name;
@@ -23,7 +22,7 @@ public class CheckItem implements TrelloEntity {
     public Checkmark toLocalEntity() {
         return Checkmark.builder()
                 .descrizione(name)
-                .trelloId(idCheckItem)
+                .trelloId(id)
                 .isItDone(state.equals("complete") ? true : false)
                 .build();
 
