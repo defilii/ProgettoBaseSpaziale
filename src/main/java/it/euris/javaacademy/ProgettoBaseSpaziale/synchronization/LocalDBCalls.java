@@ -37,8 +37,12 @@ public class LocalDBCalls {
     CheckmarkRepository checkmarkRepository;
     CheckmarkService checkmarkService;
 
+    ConfigService configService;
     DeleteEntitiesOnTrello delete;
 
+    private String getUrlFromConfig(String url) {
+        return configService.findById(url).getUrl();
+    }
 
     public void synchronize() {
         tabellaService.findAll().stream()
@@ -115,7 +119,8 @@ public class LocalDBCalls {
         String checklistJson = gson.toJson(checkmark.toTrelloEntity());
         System.out.println(checklistJson);
 
-        String url = "https://api.trello.com/1/checklists/" + checkmark.getChecklist().getTrelloId() + "/checkItems";
+        String urlAction = getUrlFromConfig("postNewCheckmark");
+        String url = String.format(urlAction, checkmark.getChecklist().getTrelloId());
         String response = postJsonString(url, checklistJson, apiKeyService);
         System.out.println(response);
         CheckItem checkItem = gson.fromJson(response, CheckItem.class);
@@ -126,8 +131,8 @@ public class LocalDBCalls {
     private void updateChecklist(Checklist checklist) throws InvalidKeyTokenOrUrl {
         Gson gson = new Gson();
         String checklistJson = gson.toJson(checklist.toTrelloEntity());
-        System.out.println(checklistJson);
-        String url = "https://api.trello.com/1/checklists/" + checklist.getTrelloId();
+        String urlAction = getUrlFromConfig("updateChecklist");
+        String url = String.format(urlAction, checklist.getTrelloId());
 
         putJsonString(url, checklistJson, apiKeyService);
         updateCheckItemsToTrello(checklist);
@@ -138,7 +143,8 @@ public class LocalDBCalls {
         Gson gson = new Gson();
         String checklistJson = gson.toJson(checklist.toTrelloEntity());
 
-        String url = "https://api.trello.com/1/checklists?idCard=" + checklist.getTask().getTrelloId();
+        String urlAction = getUrlFromConfig("updateChecklist");
+        String url = String.format(urlAction, checklist.getTask().getTrelloId());
         String response = postJsonString(url, checklistJson, apiKeyService);
 
         TrelloChecklist trelloChecklist = gson.fromJson(response, TrelloChecklist.class);
@@ -149,13 +155,15 @@ public class LocalDBCalls {
     }
 
     private void updateCheckItemsToTrello(Checklist checklist) throws InvalidKeyTokenOrUrl {
-        String urlCheckmark = "https://api.trello.com/1/checklists/" + checklist.getTrelloId() + "/checkItems";
+        String urlActionCheckmark = getUrlFromConfig("getCheckitemsFromChecklist");
+        String urlCheckmark = String.format(urlActionCheckmark, checklist.getTrelloId());
         String arrayOfCheckitems = getJsonStringFromUrlGetCall(urlCheckmark, apiKeyService);
         System.out.println(arrayOfCheckitems);
         List<CheckItem> checkItemsToDelete = getList(arrayOfCheckitems, CheckItem.class);
 
         checkItemsToDelete.forEach(checkItem -> {
-            String urlDeleteCheckmark = "https://api.trello.com/1/checklists/" + checklist.getTrelloId() + "/checkItems/" + checkItem.getId();
+            String urlActionDeleteCheckmark = getUrlFromConfig("deleteCheckitemsFromChecklist");
+            String urlDeleteCheckmark = String.format(urlActionDeleteCheckmark, checklist.getTrelloId(), checkItem.getId());
             try {
                 deleteWithRestCall(urlDeleteCheckmark, apiKeyService);
             } catch (InvalidKeyTokenOrUrl e) {
@@ -177,7 +185,8 @@ public class LocalDBCalls {
         Gson gson = new Gson();
         String labelJson = gson.toJson(priority.toTrelloEntity());
 
-        String url = "https://api.trello.com/1/labels/" + priority.getTrelloId();
+        String urlAction = getUrlFromConfig("updatePriority");
+        String url = String.format(urlAction, priority.getTrelloId());
         String response = putJsonString(url, labelJson, apiKeyService);
 
         if (response.contains("ERROR")) {
@@ -188,10 +197,11 @@ public class LocalDBCalls {
     public void postNewPriority(Priority priority) throws ColorInputWrongOrNotSupportedException, InvalidKeyTokenOrUrl {
         Gson gson = new Gson();
 
-        String boardId = "652d5727a3301d21fa288a27";
+        String boardId = getUrlFromConfig("boardId");
         String labelJson = gson.toJson(priority.toTrelloEntity());
 
-        String url = "https://api.trello.com/1/labels?idBoard=" + boardId;
+        String urlAction = getUrlFromConfig("postNewPriority");
+        String url = String.format(urlAction, boardId);
         String response = postJsonString(url, labelJson, apiKeyService);
 
         if (response.contains("ERROR")) {
@@ -206,10 +216,13 @@ public class LocalDBCalls {
 
     private void updateCommento(Commento commento) throws InvalidKeyTokenOrUrl {
         Gson gson = new Gson();
-        String urlOfGet = "https://api.trello.com/1/actions/" + commento.getTrelloId();
+        String urlAction = getUrlFromConfig("getCommento");
+        String urlOfGet = String.format(urlAction,commento.getTrelloId());
+
         TrelloAction trelloAction = gson.fromJson(getJsonStringFromUrlGetCall(urlOfGet, apiKeyService), TrelloAction.class);
         if (commento.getLastUpdate().isAfter(stringToLocalDateTime(trelloAction.toLocalEntity().getLastUpdate().toString()))) {
-            String url = "https://api.trello.com/1/actions/" + commento.getTrelloId() + "?text=" + commento.getCommento();
+            String urlActionUpdate = getUrlFromConfig("updateCommento");
+            String url = String.format(urlActionUpdate, commento.getTrelloId(), commento.getCommento());
             putJsonString(url, null, apiKeyService);
 
         }
@@ -219,7 +232,8 @@ public class LocalDBCalls {
         Gson gson = new Gson();
         String idCard = commento.getTask().getTrelloId();
 
-        String url = "https://api.trello.com/1/cards/" + idCard + "/actions/comments?text=" + commento.getCommento();
+        String urlAction = getUrlFromConfig("postNewCommento");
+        String url = String.format(urlAction, idCard, commento.getCommento());
         String response = postJsonString(url, null, apiKeyService);
 
         TrelloAction trelloAction = gson.fromJson(response, TrelloAction.class);
@@ -230,15 +244,14 @@ public class LocalDBCalls {
 
     private ListTrello postNewTabella(Tabella tabella) throws InvalidKeyTokenOrUrl {
         Gson gson = new Gson();
-        String check = "missing board id";
+
         String idBoard = tabellaService.findAll().stream()
                 .map(Tabella::getTrelloBoardId)
                 .filter(Objects::nonNull)
-                .findFirst().orElse(check);
-        if (idBoard.equals(check)) {
-            throw new BoardIdMissingException();
-        }
-        String url = "https://api.trello.com/1/lists?name=" + tabella.getNome() + "&idBoard=" + idBoard;
+                .findFirst().orElse(getUrlFromConfig("boardId"));
+
+        String urlAction = getUrlFromConfig("postNewTabella");
+        String url = String.format(urlAction, tabella.getNome(), idBoard);
         String response = postJsonString(url, null, apiKeyService);
 
         ListTrello listTrello = gson.fromJson(response, ListTrello.class);
@@ -251,7 +264,9 @@ public class LocalDBCalls {
     private ListTrello updateTabella(Tabella tabella) throws InvalidKeyTokenOrUrl {
         Gson gson = new Gson();
 
-        String url = "https://api.trello.com/1/lists/" + tabella.getTrelloId();
+
+        String urlAction = getUrlFromConfig("updateNewTabella");
+        String url = String.format(urlAction, tabella.getTrelloId());
         String listJson = gson.toJson(tabella.toTrelloEntity());
         String response = putJsonString(url, listJson, apiKeyService);
 
@@ -266,7 +281,8 @@ public class LocalDBCalls {
 
         String listId = task.getTabella().getTrelloId();
 
-        String url = "https://api.trello.com/1/cards?idList=" + listId;
+        String urlAction = getUrlFromConfig("postNewCard");
+        String url = String.format(urlAction, listId);
         String response = postJsonString(url, cardJson, apiKeyService);
 
         Card card = gson.fromJson(response, Card.class);
@@ -281,14 +297,16 @@ public class LocalDBCalls {
         Gson gson = new Gson();
         String idCard = task.getTrelloId();
 
-        String urlOfGet = "https://api.trello.com/1/cards/" + task.getTrelloId();
+        String urlOfActionGet = getUrlFromConfig("getCard");
+        String urlOfGet = String.format(urlOfActionGet, task.getTrelloId());
         Card trelloCard = gson.fromJson(getJsonStringFromUrlGetCall(urlOfGet, apiKeyService), Card.class);
         if (task.getLastUpdate().isAfter(stringToLocalDateTime(trelloCard.toLocalEntity().getLastUpdate().toString()))) {
             Card cardToUpdate = task.toTrelloEntity();
             cardToUpdate.setIdList(task.getTabella().getTrelloId());
 
             String cardJson = gson.toJson(cardToUpdate);
-            String url = "https://api.trello.com/1/cards/" + idCard;
+            String urlAction = getUrlFromConfig("updateCard");
+            String url = String.format(urlAction, idCard);
             String response = putJsonString(url, cardJson, apiKeyService);
 
             return gson.fromJson(response, Card.class);
@@ -296,8 +314,5 @@ public class LocalDBCalls {
         }
         return task.toTrelloEntity();
     }
-
-
-    //TODO add method to update and post checkmark and checklist, with delete too
 
 }
