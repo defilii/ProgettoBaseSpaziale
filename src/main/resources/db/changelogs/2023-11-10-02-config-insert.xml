@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd"
+        objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+
+    <changeSet id="2023-11-10-01-insert-insert.xml" author="De Filippi Ale">
+        <preConditions onFail="HALT">
+            <tableExists tableName="config"/>
+        </preConditions>
+
+        <insert tableName="config">
+            <column name="action" value="boardId"/>
+            <column name="url" value="652d5727a3301d21fa288a27"/>
+        </insert>
+
+        <insert tableName="config">
+            <column name="action" value="postNewCheckmark"/>
+            <column name="url" value="https://api.trello.com/1/checklists/%s/checkItems"/>
+        </insert>
+
+        <insert tableName="config">
+            <column name="action" value="updateChecklist"/>
+            <column name="url" value="https://api.trello.com/1/checklists/%s"/>
+        </insert>
+
+        <insert tableName="config">
+            <column name="action" value="postNewChecklist"/>
+            <column name="url" value="https://api.trello.com/1/checklists?idCard=%s"/>
+        </insert>
+
+        <insert tableName="config">
+            <column name="action" value="getCheckitemsFromChecklist"/>
+            <column name="url" value="https://https://api.trello.com/1/checklists/%s/checkItems"/>
+        </insert>
+
+        <insert tableName="config">
+            <column name="action" value="deleteCheckitemsFromChecklist"/>
+            <column name="url" value="https://api.trello.com/1/checklists/%s/checkItems/%s"/>
+        </insert>
+
+        <insert tableName="config">
+            <column name="action" value="updatePriority"/>
+            <column name="url" value="https://api.trello.com/1/labels/%s"/>
+        </insert>
+
+        <insert tableName="config">
+            <column name="action" value="postNewPriority"/>
+            <column name="url" value="https://api.trello.com/1/labels?idBoard=%s"/>
+        </insert>
+
+        <insert tableName="config">
+            <column name="action" value="updateCommento"/>
+            <column name="url" value="https://api.trello.com/1/actions/%s?text=%s"/>
+        </insert>
+
+        <insert tableName="config">
+            <column name="action" value="getCommento"/>
+            <column name="url" value="https://api.trello.com/1/actions/%s"/>
+        </insert>
+
+        <insert tableName="config">
+            <column name="action" value="postNewCommento"/>
+            <column name="url" value="https://api.trello.com/1/cards/%s/actions/comments?text=%s"/>
+        </insert>
+
+        <insert tableName="config">
+            <column name="action" value="postNewTabella"/>
+            <column name="url" value="https://api.trello.com/1/lists?name=%sidBoard=%s"/>
+        </insert>
+
+        <insert tableName="config">
+            <column name="action" value="updateNewTabella"/>
+            <column name="url" value="https://api.trello.com/1/lists/%s"/>
+        </insert>
+
+        <insert tableName="config">
+            <column name="action" value="postNewCard"/>
+            <column name="url" value="https://api.trello.com/1/cards?idList=%s"/>
+        </insert>
+
+        <insert tableName="config">
+            <column name="action" value="getCard"/>
+            <column name="url" value="https://api.trello.com/1/cards/%s"/>
+        </insert>
+
+        <insert tableName="config">
+            <column name="action" value="updateCard"/>
+            <column name="url" value="https://api.trello.com/1/cards/%s"/>
+        </insert>
+
+        <insert tableName="config">
+            <column name="action" value="getAllLists"/>
+            <column name="url" value="https://api.trello.com/1/boards/%s/lists"/>
+        </insert>
+
+        <insert tableName="config">
+            <column name="action" value="getAllCardsFromList"/>
+            <column name="url" value="https://api.trello.com/1/lists/%s/cards"/>
+        </insert>
+
+        <insert tableName="config">
+            <column name="action" value="getAllChecklists"/>
+            <column name="url" value="https://api.trello.com/1/cards/%s/checklists"/>
+        </insert>
+
+        <insert tableName="config">
+            <column name="action" value="getAllLabels"/>
+            <column name="url" value="https://api.trello.com/1/boards/%s/labels"/>
+        </insert>
+
+        <insert tableName="config">
+            <column name="action" value="getAllMembers"/>
+            <column name="url" value="https://api.trello.com/1/boards/%s/members"/>
+        </insert>
+
+        <insert tableName="config">
+            <column name="action" value="getAllComments"/>
+            <column name="url" value="https://api.trello.com/1/cards/%s/actions"/>
+        </insert>
+
+        <insert tableName="config">
+            <column name="action" value="deletePriority"/>
+            <column name="url" value="https://api.trello.com/1/labels/%s"/>
+        </insert>
+
+        <insert tableName="config">
+            <column name="action" value="deleteCommento"/>
+            <column name="url" value="https://api.trello.com/1/cards/%s/actions/%s/comments"/>
+        </insert>
+
+        <insert tableName="config">
+            <column name="action" value="deleteCard"/>
+            <column name="url" value="https://api.trello.com/1/cards/%s"/>
+        </insert>
+
+        <insert tableName="config">
+            <column name="action" value="deleteTabella"/>
+            <column name="url" value="https://api.trello.com/1/lists/%s"/>
+        </insert>
+
+    </changeSet>
+
+</databaseChangeLog>
