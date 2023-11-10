@@ -51,7 +51,7 @@ public class Checkmark implements Model, LocalEntity {
                 .idCheckmark(idCheckmark)
                 .descrizione(descrizione)
                 .isItDone(isItDone)
-                .checklist(checklist)
+                .checklist(null == checklist ? null : checklist.getIdChecklist() + " " + checklist.getNome())
                 .trelloId(trelloId)
                 .lastUpdate(localDateTimeToString(lastUpdate))
                 .build();

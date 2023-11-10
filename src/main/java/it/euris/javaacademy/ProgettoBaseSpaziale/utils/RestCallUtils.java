@@ -1,7 +1,12 @@
 package it.euris.javaacademy.ProgettoBaseSpaziale.utils;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.InvalidKeyTokenOrUrl;
+import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.RejectWebTrafficExceeded;
 import it.euris.javaacademy.ProgettoBaseSpaziale.service.ApiKeyService;
+import it.euris.javaacademy.ProgettoBaseSpaziale.trello.ErrorBody;
 import kong.unirest.core.HttpResponse;
 import kong.unirest.core.JsonNode;
 import kong.unirest.core.Unirest;
@@ -10,6 +15,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class RestCallUtils {
+
+    private static void checkForErrors(HttpResponse<JsonNode> response) {
+        Gson gson = new Gson();
+        JsonElement jsonElement = JsonParser.parseString(response.getBody().toPrettyString());
+        if (jsonElement.isJsonObject()) {
+            ErrorBody errorBody = gson.fromJson(jsonElement, ErrorBody.class);
+            if (null != errorBody.getMessage() && errorBody.getError().contains("REJECT_WEB_TRAFFIC_EXCEEDED")) {
+                try {
+                    throw new RejectWebTrafficExceeded();
+                } catch (RejectWebTrafficExceeded e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+    }
 
     public static String getJsonStringFromUrlGetCall(String url, ApiKeyService apiKeyService) throws InvalidKeyTokenOrUrl {
         String key = apiKeyService.findMostRecent().getKey();
@@ -22,6 +42,7 @@ public class RestCallUtils {
         if (null == response.getBody()) {
             throw new InvalidKeyTokenOrUrl();
         }
+        checkForErrors(response);
 
         System.out.println(response.getBody().toPrettyString());
         return response.getBody().toPrettyString();
@@ -43,6 +64,8 @@ public class RestCallUtils {
         if (null == response.getBody()) {
             throw new InvalidKeyTokenOrUrl();
         }
+
+        checkForErrors(response);
 
         return response.getBody().toPrettyString();
     }
@@ -66,6 +89,8 @@ public class RestCallUtils {
             throw new InvalidKeyTokenOrUrl();
         }
 
+        checkForErrors(response);
+
         return response.getBody().toPrettyString();
     }
 
@@ -84,6 +109,8 @@ public class RestCallUtils {
         if (null == response.getBody()) {
             throw new InvalidKeyTokenOrUrl();
         }
+
+        checkForErrors(response);
 
         return response.getBody().toPrettyString();
     }

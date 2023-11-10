@@ -12,9 +12,11 @@ import it.euris.javaacademy.ProgettoBaseSpaziale.trello.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 
 import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.stringToLocalDateTime;
+import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.GsonUtils.getList;
 import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.RestCallUtils.*;
 
 @AllArgsConstructor
@@ -100,18 +102,6 @@ public class LocalDBCalls {
                         throw new RuntimeException(e);
                     }
                 });
-//        checkmarkRepository.findAll().stream()
-//                .forEach(priority -> {
-//                    try {
-//                        if (null == priority.getTrelloId()) {
-//                            postNewPriority(priority);
-//                        } else {
-//                            updatePriority(priority);
-//                        }
-//                    } catch (ColorInputWrongOrNotSupportedException | InvalidKeyTokenOrUrl e) {
-//                        throw new RuntimeException(e);
-//                    }
-//                });
         try {
             delete.deleteTrelloEntities();
         } catch (InvalidKeyTokenOrUrl e) {
@@ -119,12 +109,28 @@ public class LocalDBCalls {
         }
     }
 
+
+    private void postNewCheckmark(Checkmark checkmark) throws InvalidKeyTokenOrUrl {
+        Gson gson = new Gson();
+        String checklistJson = gson.toJson(checkmark.toTrelloEntity());
+        System.out.println(checklistJson);
+
+        String url = "https://api.trello.com/1/checklists/" + checkmark.getChecklist().getTrelloId() + "/checkItems";
+        String response = postJsonString(url, checklistJson, apiKeyService);
+        System.out.println(response);
+        CheckItem checkItem = gson.fromJson(response, CheckItem.class);
+        checkmark.setTrelloId(checkItem.getId());
+        checkmarkService.update(checkmark);
+    }
+
     private void updateChecklist(Checklist checklist) throws InvalidKeyTokenOrUrl {
         Gson gson = new Gson();
         String checklistJson = gson.toJson(checklist.toTrelloEntity());
-
+        System.out.println(checklistJson);
         String url = "https://api.trello.com/1/checklists/" + checklist.getTrelloId();
+
         putJsonString(url, checklistJson, apiKeyService);
+        updateCheckItemsToTrello(checklist);
 
     }
 
@@ -138,6 +144,32 @@ public class LocalDBCalls {
         TrelloChecklist trelloChecklist = gson.fromJson(response, TrelloChecklist.class);
         checklist.setTrelloId(trelloChecklist.getId());
         checklistService.update(checklist);
+
+        updateCheckItemsToTrello(checklist);
+    }
+
+    private void updateCheckItemsToTrello(Checklist checklist) throws InvalidKeyTokenOrUrl {
+        String urlCheckmark = "https://api.trello.com/1/checklists/" + checklist.getTrelloId() + "/checkItems";
+        String arrayOfCheckitems = getJsonStringFromUrlGetCall(urlCheckmark, apiKeyService);
+        System.out.println(arrayOfCheckitems);
+        List<CheckItem> checkItemsToDelete = getList(arrayOfCheckitems, CheckItem.class);
+
+        checkItemsToDelete.forEach(checkItem -> {
+            String urlDeleteCheckmark = "https://api.trello.com/1/checklists/" + checklist.getTrelloId() + "/checkItems/" + checkItem.getId();
+            try {
+                deleteWithRestCall(urlDeleteCheckmark, apiKeyService);
+            } catch (InvalidKeyTokenOrUrl e) {
+                throw new RuntimeException(e);
+            }
+        });
+        checklist.getChecklist()
+                .forEach(checkItem -> {
+                    try {
+                        postNewCheckmark(checkItem);
+                    } catch (InvalidKeyTokenOrUrl e) {
+                        throw new RuntimeException(e);
+                    }
+                });
     }
 
 

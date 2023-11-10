@@ -23,7 +23,7 @@ public class CheckmarkDTO implements Dto {
     private Boolean isItDone;
     private String trelloId;
 
-    private Checklist checklist;
+    private String checklist;
     private String lastUpdate;
     @Override
     public Checkmark toModel() {
@@ -31,9 +31,8 @@ public class CheckmarkDTO implements Dto {
                 .idCheckmark(idCheckmark)
                 .descrizione(descrizione)
                 .isItDone(isItDone)
-                .checklist(checklist)
+                .checklist(Checklist.builder().idChecklist(Integer.valueOf(checklist)).build())
                 .trelloId(trelloId)
-
                 .build();
     }
 }
