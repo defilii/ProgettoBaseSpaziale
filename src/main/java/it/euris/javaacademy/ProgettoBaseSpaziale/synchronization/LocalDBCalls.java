@@ -6,15 +6,9 @@ import it.euris.javaacademy.ProgettoBaseSpaziale.entity.*;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.BoardIdMissingException;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.ColorInputWrongOrNotSupportedException;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.InvalidKeyTokenOrUrl;
-import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.CommentoRepository;
-import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.PriorityRepository;
-import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.TabellaRepository;
-import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.TaskRepository;
+import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.*;
 import it.euris.javaacademy.ProgettoBaseSpaziale.service.*;
-import it.euris.javaacademy.ProgettoBaseSpaziale.trello.Card;
-import it.euris.javaacademy.ProgettoBaseSpaziale.trello.ListTrello;
-import it.euris.javaacademy.ProgettoBaseSpaziale.trello.TrelloAction;
-import it.euris.javaacademy.ProgettoBaseSpaziale.trello.TrelloLabel;
+import it.euris.javaacademy.ProgettoBaseSpaziale.trello.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -36,8 +30,13 @@ public class LocalDBCalls {
     CommentoRepository commentoRepository;
     PriorityService priorityService;
     PriorityRepository priorityRepository;
+    ChecklistRepository checklistRepository;
+    ChecklistService checklistService;
+    CheckmarkRepository checkmarkRepository;
+    CheckmarkService checkmarkService;
 
     DeleteEntitiesOnTrello delete;
+
 
     public void synchronize() {
         tabellaService.findAll().stream()
@@ -89,11 +88,56 @@ public class LocalDBCalls {
                         throw new RuntimeException(e);
                     }
                 });
+        checklistRepository.findAll().stream()
+                .forEach(checklist -> {
+                    try {
+                        if (null == checklist.getTrelloId()) {
+                            postNewChecklist(checklist);
+                        } else {
+                            updateChecklist(checklist);
+                        }
+                    } catch (InvalidKeyTokenOrUrl e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+//        checkmarkRepository.findAll().stream()
+//                .forEach(priority -> {
+//                    try {
+//                        if (null == priority.getTrelloId()) {
+//                            postNewPriority(priority);
+//                        } else {
+//                            updatePriority(priority);
+//                        }
+//                    } catch (ColorInputWrongOrNotSupportedException | InvalidKeyTokenOrUrl e) {
+//                        throw new RuntimeException(e);
+//                    }
+//                });
         try {
             delete.deleteTrelloEntities();
         } catch (InvalidKeyTokenOrUrl e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void updateChecklist(Checklist checklist) throws InvalidKeyTokenOrUrl {
+        Gson gson = new Gson();
+        String checklistJson = gson.toJson(checklist.toTrelloEntity());
+
+        String url = "https://api.trello.com/1/checklists/" + checklist.getTrelloId();
+        putJsonString(url, checklistJson, apiKeyService);
+
+    }
+
+    private void postNewChecklist(Checklist checklist) throws InvalidKeyTokenOrUrl {
+        Gson gson = new Gson();
+        String checklistJson = gson.toJson(checklist.toTrelloEntity());
+
+        String url = "https://api.trello.com/1/checklists?idCard=" + checklist.getTask().getTrelloId();
+        String response = postJsonString(url, checklistJson, apiKeyService);
+
+        TrelloChecklist trelloChecklist = gson.fromJson(response, TrelloChecklist.class);
+        checklist.setTrelloId(trelloChecklist.getId());
+        checklistService.update(checklist);
     }
 
 
@@ -222,6 +266,6 @@ public class LocalDBCalls {
     }
 
 
-    //TODO tidy this mess up and expose only the method to synchronize in a separate controller after you finish implementing the synchronization of checklist and checkmark
+    //TODO add method to update and post checkmark and checklist, with delete too
 
 }
