@@ -2,6 +2,7 @@ package it.euris.javaacademy.ProgettoBaseSpaziale.synchronization;
 
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.InvalidKeyTokenOrUrl;
 import it.euris.javaacademy.ProgettoBaseSpaziale.service.ApiKeyService;
+import it.euris.javaacademy.ProgettoBaseSpaziale.service.ConfigService;
 import it.euris.javaacademy.ProgettoBaseSpaziale.trello.*;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -18,10 +19,16 @@ import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.RestCallUtils.getJ
 public class TrelloCalls {
 
     ApiKeyService apiKeyService;
+    ConfigService configService;
+
+    private String getUrlFromConfig(String url) {
+        return configService.findById(url).getUrl();
+    }
 
     public List<ListTrello> allTrelloListFromJsonListWithReturn() throws InvalidKeyTokenOrUrl {
-        String idBoard = "652d5727a3301d21fa288a27";
-        String url = "https://api.trello.com/1/boards/" + idBoard + "/lists";
+        String idBoard = getUrlFromConfig("boardId");
+        String urlAction = getUrlFromConfig("getAllLists");;
+        String url = String.format(urlAction, idBoard);
         String response = getJsonStringFromUrlGetCall(url, apiKeyService);
 
         List<ListTrello> listTrellos = getList(response, ListTrello.class);
@@ -33,8 +40,11 @@ public class TrelloCalls {
         return listTrellos;
     }
 
+
+
     public List<Card> cardsFromJsonListId(String listId) throws InvalidKeyTokenOrUrl {
-        String url = "https://api.trello.com/1/lists/" + listId + "/cards";
+        String urlAction = getUrlFromConfig("getAllCardsFromList");;
+        String url = String.format(urlAction, listId);
         String response = getJsonStringFromUrlGetCall(url, apiKeyService);
 
         List<Card> cards = getList(response, Card.class);
@@ -48,7 +58,8 @@ public class TrelloCalls {
     }
 
     private void getChecklistsAndSetItToCard(Card card) throws InvalidKeyTokenOrUrl {
-        String url = "https://api.trello.com/1/cards/" + card.getId() + "/checklists";
+        String urlAction = getUrlFromConfig("getAllChecklists");;
+        String url = String.format(urlAction, card.getId());
         String response = getJsonStringFromUrlGetCall(url, apiKeyService);
 
         List<TrelloChecklist> checklists = getList(response, TrelloChecklist.class);
@@ -59,7 +70,8 @@ public class TrelloCalls {
     }
 
     private void getCheckmarksAndSetItToChecklist(TrelloChecklist trelloChecklist) throws InvalidKeyTokenOrUrl {
-        String url = "https://api.trello.com/1/checklists/" + trelloChecklist.getId() + "/checkItems";
+        String urlAction = getUrlFromConfig("getCheckitemsFromChecklist");
+        String url = String.format(urlAction, trelloChecklist.getId());
         String response = getJsonStringFromUrlGetCall(url, apiKeyService);
 
 
@@ -69,8 +81,9 @@ public class TrelloCalls {
     }
 
     public List<TrelloLabel> getAllTrelloLabels() throws InvalidKeyTokenOrUrl {
-        String idBoard = "652d5727a3301d21fa288a27";
-        String url = "https://api.trello.com/1/boards/" + idBoard + "/labels";
+        String idBoard = getUrlFromConfig("boardId");
+        String urlAction = getUrlFromConfig("getAllLabels");
+        String url = String.format(urlAction, idBoard);
         String response = getJsonStringFromUrlGetCall(url, apiKeyService);
 
         List<TrelloLabel> trelloLabels = getList(response, TrelloLabel.class);
@@ -78,8 +91,9 @@ public class TrelloCalls {
     }
 
     public List<Members> getAllMembers() throws InvalidKeyTokenOrUrl {
-        String idBoard = "652d5727a3301d21fa288a27";
-        String url = "https://api.trello.com/1/boards/" + idBoard + "/members";
+        String idBoard = getUrlFromConfig("boardId");
+        String urlAction = getUrlFromConfig("getAllMembers");
+        String url = String.format(urlAction, idBoard);
         String response = getJsonStringFromUrlGetCall(url, apiKeyService);
 
         List<Members> members = getList(response, Members.class);
@@ -87,7 +101,8 @@ public class TrelloCalls {
     }
 
     public List<TrelloAction> getAllCommentsFromCard(Card card) throws InvalidKeyTokenOrUrl {
-        String url = "https://api.trello.com/1/cards/" + card.getId() + "/actions";
+        String urlAction = getUrlFromConfig("getAllComments");
+        String url = String.format(urlAction, card.getId());
         String response = getJsonStringFromUrlGetCall(url, apiKeyService);
 
         List<TrelloAction> trelloActions = getList(response, TrelloAction.class);

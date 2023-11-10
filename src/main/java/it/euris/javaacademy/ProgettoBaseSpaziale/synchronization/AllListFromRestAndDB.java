@@ -46,9 +46,10 @@ public class AllListFromRestAndDB {
     ChecklistService checklistService;
     CheckmarkService checkmarkService;
     UserRepository userRepository;
+    ConfigService configService;
 
     public void updateList() throws InvalidKeyTokenOrUrl {
-        TrelloCalls client = new TrelloCalls(apiKeyService);
+        TrelloCalls client = new TrelloCalls(apiKeyService, configService);
         allList = client.allTrelloListFromJsonListWithReturn();
         allCard = allList.stream()
                 .map(listTrello -> {
