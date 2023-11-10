@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>it.euris.javaacademy</groupId>
 	<artifactId>ProgettoBaseSpaziale</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>1.0.0-RELEASE</version>
 	<name>ProgettoBaseSpaziale</name>
 	<description>Demo project for antartic base</description>
 	<properties>
