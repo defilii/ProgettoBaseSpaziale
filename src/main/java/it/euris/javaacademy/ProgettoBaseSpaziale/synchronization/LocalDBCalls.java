@@ -219,10 +219,12 @@ public class LocalDBCalls {
         String urlAction = getUrlFromConfig("getCommento");
         String urlOfGet = String.format(urlAction,commento.getTrelloId());
 
+
         TrelloAction trelloAction = gson.fromJson(getJsonStringFromUrlGetCall(urlOfGet, apiKeyService), TrelloAction.class);
         if (commento.getLastUpdate().isAfter(stringToLocalDateTime(trelloAction.toLocalEntity().getLastUpdate().toString()))) {
             String urlActionUpdate = getUrlFromConfig("updateCommento");
             String url = String.format(urlActionUpdate, commento.getTrelloId(), commento.getCommento());
+
             putJsonString(url, null, apiKeyService);
 
         }
@@ -304,10 +306,14 @@ public class LocalDBCalls {
             Card cardToUpdate = task.toTrelloEntity();
             cardToUpdate.setIdList(task.getTabella().getTrelloId());
 
+            Tabella tabella = tabellaService.findById(task.getTabella().getId());
+            cardToUpdate.setIdList(tabella.getTrelloId());
             String cardJson = gson.toJson(cardToUpdate);
+
             String urlAction = getUrlFromConfig("updateCard");
             String url = String.format(urlAction, idCard);
             String response = putJsonString(url, cardJson, apiKeyService);
+
 
             return gson.fromJson(response, Card.class);
 
