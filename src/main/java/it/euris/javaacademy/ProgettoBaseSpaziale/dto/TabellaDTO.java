@@ -5,10 +5,6 @@ import it.euris.javaacademy.ProgettoBaseSpaziale.dto.archetype.Dto;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Tabella;
 import lombok.*;
 
-import java.time.LocalDateTime;
-
-import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.stringToLocalDateTime;
-
 @Builder
 @Getter
 @Setter

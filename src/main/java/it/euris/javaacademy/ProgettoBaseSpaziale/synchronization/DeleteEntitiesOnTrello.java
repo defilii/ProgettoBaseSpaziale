@@ -31,6 +31,8 @@ public class DeleteEntitiesOnTrello {
     CheckmarkService checkmarkService;
     UserRepository userRepository;
 
+    ConfigService configService;
+
     AllListFromRestAndDB allListFromRestAndDB;
 
     List<ListTrello> allList;
@@ -47,6 +49,11 @@ public class DeleteEntitiesOnTrello {
     List<User> allUser;
     List<Commento> allComments;
     List<TrelloAction> allTrelloActions;
+
+
+    private String getUrlFromConfig(String url) {
+        return configService.findById(url).getUrl();
+    }
 
     public void deleteTrelloEntities() throws InvalidKeyTokenOrUrl {
         updateList();
@@ -93,29 +100,33 @@ public class DeleteEntitiesOnTrello {
     }
 
     public void deletePriority(Priority priority) throws InvalidKeyTokenOrUrl {
-        String url = "https://api.trello.com/1/labels/" + priority.getTrelloId();
+        String urlAction = getUrlFromConfig("deletePriority");
+        String url = String.format(urlAction, priority.getTrelloId());
         deleteWithRestCall(url, apiKeyService);
     }
 
     private void deleteCommento(TrelloAction trelloAction) throws InvalidKeyTokenOrUrl {
         String idCard = trelloAction.getData().getCard().getId();
 
-        String url = "https://api.trello.com/1/cards/" + idCard + "/actions/" + trelloAction.getId() + "/comments";
-        System.out.println(url);
+        String urlAction = getUrlFromConfig("deleteCommento");
+        String url = String.format(urlAction, idCard, trelloAction.getId());
+
         deleteWithRestCall(url, apiKeyService);
     }
 
     private void deleteCard(Task task) throws InvalidKeyTokenOrUrl {
         String idCard = task.getTrelloId();
 
-        String url = "https://api.trello.com/1/cards/" + idCard;
+        String urlAction = getUrlFromConfig("deleteCard");
+        String url = String.format(urlAction, idCard);
         deleteWithRestCall(url, apiKeyService);
     }
 
     private ListTrello deleteTabella(Tabella tabella) throws InvalidKeyTokenOrUrl {
         Gson gson = new Gson();
 
-        String url = "https://api.trello.com/1/lists/" + tabella.getTrelloId();
+        String urlAction = getUrlFromConfig("deleteTabella");
+        String url = String.format(urlAction, tabella.getTrelloId());
 
         ListTrello trelloEntity = tabella.toTrelloEntity();
         trelloEntity.setClosed(true);

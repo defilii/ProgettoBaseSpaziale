@@ -1,6 +1,5 @@
 package it.euris.javaacademy.ProgettoBaseSpaziale;
 
-import it.euris.javaacademy.ProgettoBaseSpaziale.synchronization.TrelloCalls;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;

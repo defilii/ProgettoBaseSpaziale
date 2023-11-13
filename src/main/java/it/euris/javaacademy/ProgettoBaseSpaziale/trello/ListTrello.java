@@ -2,14 +2,7 @@ package it.euris.javaacademy.ProgettoBaseSpaziale.trello;
 
 import it.euris.javaacademy.ProgettoBaseSpaziale.converter.TrelloEntity;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Tabella;
-import it.euris.javaacademy.ProgettoBaseSpaziale.utils.Exclude;
 import lombok.*;
-
-import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
-import java.util.List;
-
-import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.stringToLocalDateTime;
 
 @Builder
 @Getter

@@ -1,9 +1,7 @@
 package it.euris.javaacademy.ProgettoBaseSpaziale.trello;
 
-import it.euris.javaacademy.ProgettoBaseSpaziale.converter.LocalEntity;
 import it.euris.javaacademy.ProgettoBaseSpaziale.converter.TrelloEntity;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Priority;
-import it.euris.javaacademy.ProgettoBaseSpaziale.entity.enums.Priorita;
 import lombok.*;
 
 @Builder

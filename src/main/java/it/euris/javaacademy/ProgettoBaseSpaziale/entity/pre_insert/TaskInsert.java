@@ -2,10 +2,7 @@ package it.euris.javaacademy.ProgettoBaseSpaziale.entity.pre_insert;
 
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.archetype.PreInsert;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Task;
-import it.euris.javaacademy.ProgettoBaseSpaziale.trello.Card;
 import lombok.*;
-
-import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.numberToString;
 
 @Builder
 @Getter

@@ -39,6 +39,8 @@ public class SynchronizeFromTrello {
     CommentoService commentoService;
     CommentoRepository commentoRepository;
 
+    SynchronizeLabelsToCardsFromTrello synchronizeLabelsToCardsFromTrello;
+
     List<ListTrello> allList;
     List<Card> allCard;
     List<TrelloChecklist> allTrelloChecklist;
@@ -119,21 +121,6 @@ public class SynchronizeFromTrello {
                         insertCard(card);
                     }
                 });
-        allCard.stream().forEach(card -> {
-                    List<String> idLabels = card.getIdLabels();
-                    for (String idLabel : idLabels) {
-                        Task task = taskRepository.findByTrelloId(card.getId());
-                        Priority priority = priorityRepository.findByTrelloId(idLabel);
-                       if(!task.getPriorities().contains(priority)) {
-                           task.addPriority(priorityRepository.findByTrelloId(idLabel));
-                           taskService.update(task);
-
-                           priority.addTask(taskRepository.findByTrelloId(card.getId()));
-                           priorityService.update(priority);
-                       }
-                    }
-                }
-        );
 
         deleteFromDatabase();
     }

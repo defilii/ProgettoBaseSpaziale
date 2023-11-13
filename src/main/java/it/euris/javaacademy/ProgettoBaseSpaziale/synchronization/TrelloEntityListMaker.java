@@ -2,7 +2,6 @@ package it.euris.javaacademy.ProgettoBaseSpaziale.synchronization;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Tabella;
 import it.euris.javaacademy.ProgettoBaseSpaziale.service.TabellaService;
 import it.euris.javaacademy.ProgettoBaseSpaziale.trello.Card;
 import it.euris.javaacademy.ProgettoBaseSpaziale.trello.ListTrello;
@@ -11,12 +10,8 @@ import kong.unirest.core.JsonNode;
 import kong.unirest.core.Unirest;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.time.ZonedDateTime;
-import java.util.Collection;
 import java.util.List;
 
 import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.GsonUtils.getList;

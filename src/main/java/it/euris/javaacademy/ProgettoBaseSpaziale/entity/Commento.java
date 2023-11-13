@@ -2,7 +2,6 @@ package it.euris.javaacademy.ProgettoBaseSpaziale.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import it.euris.javaacademy.ProgettoBaseSpaziale.converter.LocalEntity;
-import it.euris.javaacademy.ProgettoBaseSpaziale.converter.TrelloEntity;
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.CommentoDTO;
 import it.euris.javaacademy.ProgettoBaseSpaziale.dto.archetype.Model;
 import it.euris.javaacademy.ProgettoBaseSpaziale.trello.TrelloAction;
@@ -13,7 +12,8 @@ import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 
-import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.*;
+import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.localDateTimeToString;
+import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.numberToString;
 
 @Builder
 @Getter
