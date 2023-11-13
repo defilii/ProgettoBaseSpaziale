@@ -5,10 +5,7 @@ import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Checklist;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Task;
 import lombok.*;
 
-import java.time.LocalDateTime;
-
 import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.stringToInteger;
-import static it.euris.javaacademy.ProgettoBaseSpaziale.utils.Converter.stringToLocalDateTime;
 
 @Builder
 @Getter

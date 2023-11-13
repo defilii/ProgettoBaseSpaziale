@@ -3,7 +3,6 @@ package it.euris.javaacademy.ProgettoBaseSpaziale.synchronization;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.*;
-import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.BoardIdMissingException;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.ColorInputWrongOrNotSupportedException;
 import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.InvalidKeyTokenOrUrl;
 import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.*;
