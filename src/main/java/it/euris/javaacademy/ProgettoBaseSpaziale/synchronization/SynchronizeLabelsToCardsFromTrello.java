@@ -2,6 +2,7 @@ package it.euris.javaacademy.ProgettoBaseSpaziale.synchronization;
 
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Priority;
 import it.euris.javaacademy.ProgettoBaseSpaziale.entity.Task;
+import it.euris.javaacademy.ProgettoBaseSpaziale.exceptions.InvalidKeyTokenOrUrl;
 import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.PriorityRepository;
 import it.euris.javaacademy.ProgettoBaseSpaziale.repositoy.TaskRepository;
 import it.euris.javaacademy.ProgettoBaseSpaziale.service.PriorityService;
@@ -11,6 +12,9 @@ import it.euris.javaacademy.ProgettoBaseSpaziale.trello.Card;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 @AllArgsConstructor
@@ -25,6 +29,11 @@ public class SynchronizeLabelsToCardsFromTrello {
     AllListFromRestAndDB allListFromRestAndDB;
 
     public void updateLabelsToCard() {
+        try {
+            allListFromRestAndDB.updateList();
+        } catch (InvalidKeyTokenOrUrl e) {
+            throw new RuntimeException(e);
+        }
         allCard = allListFromRestAndDB.getAllCard();
         allCard.stream().forEach(card -> {
                     List<String> idLabels = card.getIdLabels();
@@ -33,14 +42,11 @@ public class SynchronizeLabelsToCardsFromTrello {
                         Task task = taskRepository.findByTrelloId(card.getId()) == null ? Task.builder().build() : taskRepository.findByTrelloId(card.getId());
                         Priority priority = priorityRepository.findByTrelloId(idLabel);
                         if (!task.getPriorities().contains(priority)) {
+                            List<Priority> priorityList = new LinkedList<>(task.getPriorities());
+                            priorityList.add(priority);
+                            task.setPriorities(priorityList);
 
-                            System.out.println(task.getIdTask());
-
-                            task.addPriority(priority);
-                            priority.addTask(task);
-
-                            taskService.update(task);
-                            priorityService.update(priority);
+                            taskRepository.save(task);
                         }
                     }
                 }

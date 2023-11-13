@@ -49,16 +49,16 @@ public class Task implements Model, LocalEntity, ModelToPreInsert {
     @Builder.Default
     private List<Commento> commenti = new ArrayList<>();
 
-        @ManyToMany(fetch = FetchType.EAGER,
-                cascade = {
-                        CascadeType.PERSIST,
-                        CascadeType.MERGE
-                })
-        @JoinTable(name = "task_has_user",
-                joinColumns = {@JoinColumn(name = "task_id")},
-                inverseJoinColumns = {@JoinColumn(name = "user_id")})
-        @Builder.Default
-        private List<User> users = new ArrayList<>();
+    @ManyToMany(fetch = FetchType.EAGER,
+            cascade = {
+                    CascadeType.PERSIST,
+                    CascadeType.MERGE
+            })
+    @JoinTable(name = "task_has_user",
+            joinColumns = {@JoinColumn(name = "task_id")},
+            inverseJoinColumns = {@JoinColumn(name = "user_id")})
+    @Builder.Default
+    private List<User> users = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.EAGER,
             cascade = {
@@ -129,9 +129,9 @@ public class Task implements Model, LocalEntity, ModelToPreInsert {
     }
 
 
-        public void addUser(User user) {
-                users.add(user);
-        }
+    public void addUser(User user) {
+        users.add(user);
+    }
 
     public void addPriority(Priority priority) {
         priorities.add(priority);

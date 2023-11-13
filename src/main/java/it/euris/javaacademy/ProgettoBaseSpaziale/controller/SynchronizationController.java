@@ -26,15 +26,15 @@ public class SynchronizationController {
     LocalDBCalls synchronizeToTrello;
 
 
-    @Scheduled(cron = "3 * * ? * *")
+    @Scheduled(cron = "0 */11 * * * ?")
     @PutMapping("/synchronizeToTrello")
-    public void synchronize() {
+    public void synchronizeToTrello() {
         synchronizeToTrello.synchronize();
     }
 
-    @Scheduled(cron = "3 * * ? * *")
+    @Scheduled(cron = "0 */3 * * * ?")
     @PutMapping("/synchronizeFromTrello")
-    private void insertsSmooth() {
+    private void synchronizeFromTrello() {
         synchronizeFromTrello.updateAllTaskAndTabella();
         synchronizeLabelsToCardsFromTrello.updateLabelsToCard();
     }
