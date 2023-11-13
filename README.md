@@ -21,5 +21,5 @@ al databse, dove se una modifica svolta su trello risulta meno recente di una mo
 sarà la modifica svolta nel database locale dato che è la più recente.
 
 # LIMITAZIONI
-- Alcuni campi su trello non hanno un modo per comparare l'ultimo aggiornamento, per esempio le liste su trello non hanno un field che segna quando è stato modificato il nome. Quindi in fase di sincronizzazione vincerà sempre la modifica, a differenza dei sottocampi come checklist
+- Alcuni campi su trello non hanno un modo per comparare l'ultimo aggiornamento, per esempio le liste su trello non hanno un field che segna quando è stato modificato il nome. Quindi in fase di sincronizzazione vincerà sempre la modifica, a differenza dei sottocampi come checklist dove l'ultima modifica viene presa dalla card a cui appartengono
 - I commenti potranno essere modificati solo dall'user a cui appartiene la key e il token, se un commento viene modificato in database locale ed è stato scritto da un user di cui l'api key non appartiene, la modifica non verrà svolta
